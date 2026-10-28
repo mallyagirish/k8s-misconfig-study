@@ -1,9 +1,12 @@
 # Provisional precision under protocol v3 + addendum (2026-10-27)
 
-**Status: PROVISIONAL.** Computed from the v2 pre-labels with the 92 divergence rows
-replaced by their v3/addendum recommendations (`results/verification_divergence.csv`).
-These numbers become final only after the author's verification pass; any override
-recomputes from the same script inputs. Non-divergence rows carry their pre-labels.
+**Status: VERIFIED by the author 2026-10-27.** Computed from the v2 pre-labels with the
+92 divergence rows replaced by their v3/addendum recommendations
+(`results/verification_divergence.csv`). The author reviewed the worklist and these
+results and accepted the recommendations without override, so the divergence rows now
+carry author-verified labels. Non-divergence rows carry their pre-labels under the
+protocol's blank-equals-accept rule; a later spot-check override would recompute from
+the same inputs. Adjusted prevalence remains subject to the frame-drift caveat below.
 
 **Overall precision: 0.630 [95% Wilson CI 0.584, 0.673]** over 279 TP / 164 FP decided rows
 (7 TP-hardening in their own tier, 7 evidence-absent rows excluded). For comparison, the

@@ -76,3 +76,9 @@
 - Adjusted true findings ~19,062 of 27,460 raw — with a frame-drift caveat: the sample was drawn from engine-v2 findings while population counts are v3 (SEC_PRIVILEGED sample 79 > v3 population 74; HOST_IPC 17 > 16). Precision stands; adjusted prevalence for small-count rules needs a row-level sample-to-v3 reconciliation before the paper run.
 - K8S-012 resolved: per-grant inspection shows one wildcard grant in the core group (verbs * on secrets) alongside five Crossplane-group grants, so amendment 11's own-groups test fails and the row stays TP. The addendum flag is closed with no label change.
 - NEXT: Girish's verification pass on the worklist (his overrides recompute everything), the sample-to-v3 reconciliation, then taxonomy v2 and the draft.
+
+## 2026-10-27 (late) — Author verified the divergence worklist; precision stands
+
+- Girish reviewed the 92-row verification worklist and the provisional precision results and accepted the v3/addendum recommendations without override ("the numbers look good"). The divergence rows now carry author-verified labels; precision_provisional.md is re-marked VERIFIED. Non-divergence rows stand on their pre-labels under blank-equals-accept.
+- Standing results: overall precision 0.630 [0.584, 0.673]; per-rule table in results/precision_provisional.md (rename to precision_final at the paper run, after the frame reconciliation).
+- NEXT: sample-to-v3 frame reconciliation for adjusted prevalence; taxonomy v2; checker release packaging; January EMSE draft.
