@@ -21,3 +21,11 @@ corpus_src/
 # sheet, then the key is committed with the replication package
 results/second_rater/KEY_sealed.csv
 results/second_rater/*.zip
+
+# LaTeX build artifacts (sources in paper/latex/ are the record)
+paper/latex/*.aux
+paper/latex/*.log
+paper/latex/*.out
+paper/latex/*.bbl
+paper/latex/*.blg
+paper/latex/main.pdf

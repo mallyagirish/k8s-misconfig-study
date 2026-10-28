@@ -117,3 +117,10 @@
 - Bibliography: the last pending references are pinned and verified — Yin et al., SOSP 2011 (configuration errors in commercial and open-source systems) and Xu & Zhou, ACM Computing Surveys 47(4):70, 2015 (DOI 10.1145/2791577) — now cited in Section 7.1 and listed in References, which no longer carries a "verification pending" note for named works.
 - CITATION.cff added at the repo root (title, author, repo, Apache-2.0, abstract); version and date-released fields land with the tagged release.
 - REMAINING before January 2027 EMSE submission: second-rater labels (packet out, awaiting a rater), LaTeX conversion + Springer formatting (incl. the formal AI-use declarations line), Zenodo DOI at the tagged release, author proofread.
+
+## 2026-10-28 (night) — LaTeX conversion compiles
+
+- paper/latex/ now holds the submission-format build: convert.py (markdown -> LaTeX pipeline: splits the draft's meta block/abstract/keywords, maps the bracket citation keys to \cite, converts unicode math, strips section numbers, unnumbers Data Availability), main_skeleton.tex (article-class preamble + title block + Declarations), main.tex (generated), references.bib (the five verified papers + CIS/NSA/Kubernetes/tool documents).
+- Declarations added per Springer requirements: funding (none), competing interests (none), ethics (n/a — public artifacts), sole-author contributions, and a Use of AI tools statement disclosing the v2 pre-labeling with v3 author verification and the AI assistance in development/editing, with author responsibility stated.
+- Compiles clean with pdflatex + bibtex: 12 pages A4, no errors, no undefined citations. Known polish items for the submission pass: swap article for Springer's sn-jnl class, and tune the three wide tables (worst overfull ~51pt, positioning table) to the journal measure.
+- REMAINING before January 2027 EMSE submission: second-rater labels (packet out), author proofread of the compiled PDF, sn-jnl swap + table polish, tagged release + Zenodo DOI.
