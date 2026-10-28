@@ -6,15 +6,21 @@
 results and accepted the recommendations without override, so the divergence rows now
 carry author-verified labels. Non-divergence rows carry their pre-labels under the
 protocol's blank-equals-accept rule; a later spot-check override would recompute from
-the same inputs. Adjusted prevalence remains subject to the frame-drift caveat below.
+the same inputs. Adjusted prevalence was reconciled row-by-row against engine v3 on 2026-10-28
+(`results/reconciliation_v3_DRAFT.md`, adopted with the manuscript draft): the headline
+figures below are the reconciled ones.
 
 **Overall precision: 0.630 [95% Wilson CI 0.584, 0.673]** over 279 TP / 164 FP decided rows
+on the full sample; on the 451 rows that still exist in engine v3 (the reconciled frame
+used by the paper): **0.633 [0.587, 0.676]**, 279 TP / 162 FP. Distinct-finding sensitivity
+(one vote per unique key): 0.626
 (7 TP-hardening in their own tier, 7 evidence-absent rows excluded). For comparison, the
 v2 definitional draft precision was ~0.73; the drop is the v3 contextual standards at work
 (production scoping of RES/REL rules, the credential-material test, the infra class,
 least-privilege capability exclusions), concentrated in the rows below.
 
-Adjusted true-findings estimate: 19,062 of 27,460 raw engine-v3 findings.
+Adjusted true-findings estimate: 19,199 of 27,460 raw engine-v3 findings (reconciled;
+19,062 on the unreconciled frame).
 
 | rule | TP | FP | hard. | excl. | precision | 95% CI | pop. | adjusted |
 |---|---:|---:|---:|---:|---:|---|---:|---:|
@@ -29,7 +35,7 @@ Adjusted true-findings estimate: 19,062 of 27,460 raw engine-v3 findings.
 | RBAC_WILDCARD_RESOURCES | 11 | 6 | 0 | 0 | 0.647 | [0.41, 0.83] | 138 | 89 |
 | RBAC_WILDCARD_VERBS | 11 | 4 | 0 | 0 | 0.733 | [0.48, 0.89] | 186 | 136 |
 | REL_NO_LIVENESS_PROBE | 3 | 11 | 0 | 0 | 0.214 | [0.08, 0.48] | 1893 | 406 |
-| REL_NO_READINESS_PROBE | 7 | 8 | 0 | 0 | 0.467 | [0.25, 0.70] | 1900 | 887 |
+| REL_NO_READINESS_PROBE | 7 | 6 | 0 | 0 | 0.538 | [0.29, 0.77] | 1900 | 1,023 |
 | RES_NO_CPU_LIMIT | 6 | 8 | 0 | 0 | 0.429 | [0.21, 0.67] | 2731 | 1,170 |
 | RES_NO_MEM_LIMIT | 6 | 10 | 0 | 0 | 0.375 | [0.18, 0.61] | 2709 | 1,016 |
 | RES_NO_REQUESTS | 8 | 9 | 0 | 0 | 0.471 | [0.26, 0.69] | 2347 | 1,104 |
@@ -46,11 +52,14 @@ Adjusted true-findings estimate: 19,062 of 27,460 raw engine-v3 findings.
 
 ## Caveats for the final run
 
-- **Frame drift:** the validation sample was drawn from engine-v2 findings; the population
-  column is engine v3. For small-count rules the sample can exceed the v3 population
-  (SEC_PRIVILEGED 79 sampled vs 74 in v3; HOST_IPC 17 vs 16). Precision (a within-sample
-  quantity) is unaffected; adjusted prevalence for those rules is unreliable until the
-  sample is reconciled against v3 findings row by row.
+- **Frame drift: RESOLVED 2026-10-28** (`results/reconciliation_v3_DRAFT.md`). The sample
+  was drawn from engine-v2 findings; every row was matched against engine v3 on
+  (arm, source, kind, name, container, rule): 451 of 457 rows persist in v3. The 6 that
+  left (4 already EXCLUDED, 2 REL_NO_READINESS_PROBE FPs) move only that rule's numbers
+  (row above). The sample-exceeds-population cases (SEC_PRIVILEGED 79 vs 74, HOST_IPC
+  17 vs 16) are explained by the sample's design, not drift: the build took ALL findings
+  of those rules plus ~10% intentional duplicate rows (457 rows = 413 distinct keys; all
+  44 duplicate pairs agree in final label).
 - DEPRECATED_API and the IMG_NO_DIGEST hardening tier are reported as separate tiers
   per v3 amendments 4 and 1; they are included in the table but the paper's headline
   misconfiguration precision should be quoted with the tier treatment stated.
