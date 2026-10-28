@@ -1,0 +1,505 @@
+sample_id,source_file,kind,name,container,rule,family,final_label,tool,classification,match_level,fired_checks,check_exists,semantics,merged
+K8S-004,helm/artifact-hub.yaml,CronJob,tracker,check-db-ready,RES_NO_REQUESTS,Resources,TP,kube-linter,DETECTED,container,"unset-cpu-requirements,unset-memory-requirements",yes,merged: also the limit rules,yes
+K8S-004,helm/artifact-hub.yaml,CronJob,tracker,check-db-ready,RES_NO_REQUESTS,Resources,TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-004,helm/artifact-hub.yaml,CronJob,tracker,check-db-ready,RES_NO_REQUESTS,Resources,TP,Polaris,MISSED,none,"cpuRequestsMissing,memoryRequestsMissing",yes,union,no
+K8S-004,helm/artifact-hub.yaml,CronJob,tracker,check-db-ready,RES_NO_REQUESTS,Resources,TP,Checkov,DETECTED,object,"CKV_K8S_10,CKV_K8S_12",yes,union,no
+K8S-010,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,liveness-prometheus,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-010,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,liveness-prometheus,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-010,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,liveness-prometheus,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-010,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,liveness-prometheus,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-012,helm/crossplane.yaml,ClusterRole,crossplane:aggregate-to-edit,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-012,helm/crossplane.yaml,ClusterRole,crossplane:aggregate-to-edit,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-012,helm/crossplane.yaml,ClusterRole,crossplane:aggregate-to-edit,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,Polaris,NO_CHECK,none,,no,,no
+K8S-012,helm/crossplane.yaml,ClusterRole,crossplane:aggregate-to-edit,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,Checkov,MISSED,none,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_VERBS; partial,yes
+K8S-013,helm/zammad.yaml,Deployment,pilot-zammad-nginx,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-013,helm/zammad.yaml,Deployment,pilot-zammad-nginx,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-013,helm/zammad.yaml,Deployment,pilot-zammad-nginx,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-013,helm/zammad.yaml,Deployment,pilot-zammad-nginx,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-014,helm/elasticsearch.yaml,StatefulSet,elasticsearch-master,configure-sysctl,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kube-linter,DETECTED,container,run-as-non-root,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-014,helm/elasticsearch.yaml,StatefulSet,elasticsearch-master,configure-sysctl,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kubeaudit,DETECTED,container,"RunAsUserCSCRoot,RunAsUserPSCRoot",yes,union,no
+K8S-014,helm/elasticsearch.yaml,StatefulSet,elasticsearch-master,configure-sysctl,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Polaris,DETECTED,container,runAsRootAllowed,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-014,helm/elasticsearch.yaml,StatefulSet,elasticsearch-master,configure-sysctl,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Checkov,MISSED,none,CKV_K8S_23,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-015,helm/openebs.yaml,DaemonSet,pilot-csi-node,csi-node,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-015,helm/openebs.yaml,DaemonSet,pilot-csi-node,csi-node,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-015,helm/openebs.yaml,DaemonSet,pilot-csi-node,csi-node,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-015,helm/openebs.yaml,DaemonSet,pilot-csi-node,csi-node,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-022,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,,HOST_NETWORK,Host & identity,FP,kube-linter,DETECTED,object,host-network,yes,exact,no
+K8S-022,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,,HOST_NETWORK,Host & identity,FP,kubeaudit,DETECTED,object,NamespaceHostNetworkTrue,yes,exact,no
+K8S-022,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,,HOST_NETWORK,Host & identity,FP,Polaris,NO_CHECK,none,,no,,no
+K8S-022,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,,HOST_NETWORK,Host & identity,FP,Checkov,DETECTED,object,CKV_K8S_19,yes,exact,no
+K8S-026,helm/datadog.yaml,Deployment,pilot-datadog-cluster-agent,init-volume,RES_NO_MEM_LIMIT,Resources,TP,kube-linter,DETECTED,container,unset-memory-requirements,yes,merged: also RES_NO_REQUESTS,yes
+K8S-026,helm/datadog.yaml,Deployment,pilot-datadog-cluster-agent,init-volume,RES_NO_MEM_LIMIT,Resources,TP,kubeaudit,DETECTED,container,"LimitsMemoryNotSet,LimitsNotSet",yes,union; LimitsNotSet is pod-level,no
+K8S-026,helm/datadog.yaml,Deployment,pilot-datadog-cluster-agent,init-volume,RES_NO_MEM_LIMIT,Resources,TP,Polaris,MISSED,none,memoryLimitsMissing,yes,exact,no
+K8S-026,helm/datadog.yaml,Deployment,pilot-datadog-cluster-agent,init-volume,RES_NO_MEM_LIMIT,Resources,TP,Checkov,DETECTED,object,CKV_K8S_13,yes,exact,no
+K8S-029,helm/vault.yaml,Pod,pilot-vault-server-test,pilot-server-test,RES_NO_MEM_LIMIT,Resources,TP,kube-linter,DETECTED,container,unset-memory-requirements,yes,merged: also RES_NO_REQUESTS,yes
+K8S-029,helm/vault.yaml,Pod,pilot-vault-server-test,pilot-server-test,RES_NO_MEM_LIMIT,Resources,TP,kubeaudit,DETECTED,container,"LimitsMemoryNotSet,LimitsNotSet",yes,union; LimitsNotSet is pod-level,no
+K8S-029,helm/vault.yaml,Pod,pilot-vault-server-test,pilot-server-test,RES_NO_MEM_LIMIT,Resources,TP,Polaris,DETECTED,container,memoryLimitsMissing,yes,exact,no
+K8S-029,helm/vault.yaml,Pod,pilot-vault-server-test,pilot-server-test,RES_NO_MEM_LIMIT,Resources,TP,Checkov,DETECTED,object,CKV_K8S_13,yes,exact,no
+K8S-030,helm/consul.yaml,PodDisruptionBudget,pilot-consul-connect-injector,,DEPRECATED_API,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-030,helm/consul.yaml,PodDisruptionBudget,pilot-consul-connect-injector,,DEPRECATED_API,"RBAC, secrets & API",TP,kubeaudit,DETECTED,object,DeprecatedAPIUsed,yes,exact,no
+K8S-030,helm/consul.yaml,PodDisruptionBudget,pilot-consul-connect-injector,,DEPRECATED_API,"RBAC, secrets & API",TP,Polaris,NO_CHECK,none,,no,,no
+K8S-030,helm/consul.yaml,PodDisruptionBudget,pilot-consul-connect-injector,,DEPRECATED_API,"RBAC, secrets & API",TP,Checkov,NO_CHECK,none,,no,,no
+K8S-031,helm/netbox.yaml,StatefulSet,pilot-postgresql,postgresql,SECRET_LITERAL_ENV,"RBAC, secrets & API",FP,kube-linter,MISSED,none,env-var-secret,yes,narrower; messages redacted -> object-level match,no
+K8S-031,helm/netbox.yaml,StatefulSet,pilot-postgresql,postgresql,SECRET_LITERAL_ENV,"RBAC, secrets & API",FP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-031,helm/netbox.yaml,StatefulSet,pilot-postgresql,postgresql,SECRET_LITERAL_ENV,"RBAC, secrets & API",FP,Polaris,AMBIGUOUS_JOIN,unknown,sensitiveContainerEnvVar,yes,exact,no
+K8S-031,helm/netbox.yaml,StatefulSet,pilot-postgresql,postgresql,SECRET_LITERAL_ENV,"RBAC, secrets & API",FP,Checkov,MISSED,none,CKV_K8S_35,yes,broader,no
+K8S-040,helm/coredns.yaml,Deployment,pilot-coredns,coredns,SEC_CAPABILITY_ADDED,Security context,FP,kube-linter,MISSED,none,drop-net-raw-capability,yes,narrower: NET_RAW only,no
+K8S-040,helm/coredns.yaml,Deployment,pilot-coredns,coredns,SEC_CAPABILITY_ADDED,Security context,FP,kubeaudit,DETECTED,container,CapabilityAdded,yes,broader: any capability,no
+K8S-040,helm/coredns.yaml,Deployment,pilot-coredns,coredns,SEC_CAPABILITY_ADDED,Security context,FP,Polaris,MISSED,none,insecureCapabilities,yes,broader: incl. not dropping,no
+K8S-040,helm/coredns.yaml,Deployment,pilot-coredns,coredns,SEC_CAPABILITY_ADDED,Security context,FP,Checkov,MISSED,none,CKV_K8S_37,yes,broader: incl. defaults,no
+K8S-042,helm/metallb.yaml,DaemonSet,pilot-frr-k8s,reloader,RES_NO_CPU_LIMIT,Resources,TP,kube-linter,DETECTED,container,unset-cpu-requirements,yes,merged: also RES_NO_REQUESTS,yes
+K8S-042,helm/metallb.yaml,DaemonSet,pilot-frr-k8s,reloader,RES_NO_CPU_LIMIT,Resources,TP,kubeaudit,DETECTED,container,"LimitsCPUNotSet,LimitsNotSet",yes,union; LimitsNotSet is pod-level,no
+K8S-042,helm/metallb.yaml,DaemonSet,pilot-frr-k8s,reloader,RES_NO_CPU_LIMIT,Resources,TP,Polaris,DETECTED,container,cpuLimitsMissing,yes,exact,no
+K8S-042,helm/metallb.yaml,DaemonSet,pilot-frr-k8s,reloader,RES_NO_CPU_LIMIT,Resources,TP,Checkov,DETECTED,object,CKV_K8S_11,yes,exact,no
+K8S-043,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,driver-registrar,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-043,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,driver-registrar,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-043,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,driver-registrar,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-043,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,driver-registrar,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-045,helm/zammad.yaml,Job,pilot-zammad-test-connection,wget,IMG_UNTAGGED,Images,TP,kube-linter,DETECTED,container,latest-tag,yes,merged: also IMG_LATEST,yes
+K8S-045,helm/zammad.yaml,Job,pilot-zammad-test-connection,wget,IMG_UNTAGGED,Images,TP,kubeaudit,DETECTED,container,ImageTagMissing,yes,exact,no
+K8S-045,helm/zammad.yaml,Job,pilot-zammad-test-connection,wget,IMG_UNTAGGED,Images,TP,Polaris,DETECTED,container,tagNotSpecified,yes,merged: also IMG_LATEST,yes
+K8S-045,helm/zammad.yaml,Job,pilot-zammad-test-connection,wget,IMG_UNTAGGED,Images,TP,Checkov,DETECTED,object,CKV_K8S_14,yes,merged: also IMG_LATEST,yes
+K8S-052,helm/chaos-mesh.yaml,DaemonSet,chaos-daemon,,HOST_PID,Host & identity,FP,kube-linter,DETECTED,object,host-pid,yes,exact,no
+K8S-052,helm/chaos-mesh.yaml,DaemonSet,chaos-daemon,,HOST_PID,Host & identity,FP,kubeaudit,DETECTED,object,NamespaceHostPIDTrue,yes,exact,no
+K8S-052,helm/chaos-mesh.yaml,DaemonSet,chaos-daemon,,HOST_PID,Host & identity,FP,Polaris,NO_CHECK,none,,no,,no
+K8S-052,helm/chaos-mesh.yaml,DaemonSet,chaos-daemon,,HOST_PID,Host & identity,FP,Checkov,DETECTED,object,CKV_K8S_17,yes,exact,no
+K8S-055,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,liveness-prometheus,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-055,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,liveness-prometheus,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-055,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,liveness-prometheus,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-055,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,liveness-prometheus,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-059,helm/linkerd-viz.yaml,ClusterRole,linkerd-default-tap-admin,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",FP,kube-linter,NO_CHECK,none,,no,,no
+K8S-059,helm/linkerd-viz.yaml,ClusterRole,linkerd-default-tap-admin,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",FP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-059,helm/linkerd-viz.yaml,ClusterRole,linkerd-default-tap-admin,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",FP,Polaris,NO_CHECK,none,,no,,no
+K8S-059,helm/linkerd-viz.yaml,ClusterRole,linkerd-default-tap-admin,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",FP,Checkov,MISSED,none,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_VERBS; partial,yes
+K8S-061,helm/openfaas.yaml,Secret,basic-auth,,SECRET_COMMITTED,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-061,helm/openfaas.yaml,Secret,basic-auth,,SECRET_COMMITTED,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-061,helm/openfaas.yaml,Secret,basic-auth,,SECRET_COMMITTED,"RBAC, secrets & API",TP,Polaris,NO_CHECK,none,,no,,no
+K8S-061,helm/openfaas.yaml,Secret,basic-auth,,SECRET_COMMITTED,"RBAC, secrets & API",TP,Checkov,NO_CHECK,none,,no,,no
+K8S-062,helm/openebs.yaml,DaemonSet,pilot-csi-node,csi-node,SEC_NO_SECCOMP,Security context,TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-062,helm/openebs.yaml,DaemonSet,pilot-csi-node,csi-node,SEC_NO_SECCOMP,Security context,TP,kubeaudit,DETECTED,object,SeccompProfileMissing,yes,exact,no
+K8S-062,helm/openebs.yaml,DaemonSet,pilot-csi-node,csi-node,SEC_NO_SECCOMP,Security context,TP,Polaris,DETECTED,container,linuxHardening,yes,composite: seccomp+AppArmor+SELinux,no
+K8S-062,helm/openebs.yaml,DaemonSet,pilot-csi-node,csi-node,SEC_NO_SECCOMP,Security context,TP,Checkov,DETECTED,object,CKV_K8S_31,yes,exact,no
+K8S-063,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,,HOST_NETWORK,Host & identity,FP,kube-linter,DETECTED,object,host-network,yes,exact,no
+K8S-063,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,,HOST_NETWORK,Host & identity,FP,kubeaudit,DETECTED,object,NamespaceHostNetworkTrue,yes,exact,no
+K8S-063,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,,HOST_NETWORK,Host & identity,FP,Polaris,NO_CHECK,none,,no,,no
+K8S-063,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,,HOST_NETWORK,Host & identity,FP,Checkov,DETECTED,object,CKV_K8S_19,yes,exact,no
+K8S-065,helm/home-assistant.yaml,Pod,pilot-home-assistant-test-connection,wget,SEC_APE_NOT_DISABLED,Security context,TP,kube-linter,MISSED,none,privilege-escalation-container,yes,exact,no
+K8S-065,helm/home-assistant.yaml,Pod,pilot-home-assistant-test-connection,wget,SEC_APE_NOT_DISABLED,Security context,TP,kubeaudit,DETECTED,container,"AllowPrivilegeEscalationNil,AllowPrivilegeEscalationTrue",yes,union,no
+K8S-065,helm/home-assistant.yaml,Pod,pilot-home-assistant-test-connection,wget,SEC_APE_NOT_DISABLED,Security context,TP,Polaris,DETECTED,container,privilegeEscalationAllowed,yes,exact,no
+K8S-065,helm/home-assistant.yaml,Pod,pilot-home-assistant-test-connection,wget,SEC_APE_NOT_DISABLED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_20,yes,exact,no
+K8S-076,helm/kyverno.yaml,Pod,pilot-kyverno-admission-controller-metrics,test,IMG_LATEST,Images,TP,kube-linter,DETECTED,container,latest-tag,yes,merged: also IMG_UNTAGGED,yes
+K8S-076,helm/kyverno.yaml,Pod,pilot-kyverno-admission-controller-metrics,test,IMG_LATEST,Images,TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-076,helm/kyverno.yaml,Pod,pilot-kyverno-admission-controller-metrics,test,IMG_LATEST,Images,TP,Polaris,DETECTED,container,tagNotSpecified,yes,merged: also IMG_UNTAGGED,yes
+K8S-076,helm/kyverno.yaml,Pod,pilot-kyverno-admission-controller-metrics,test,IMG_LATEST,Images,TP,Checkov,DETECTED,object,CKV_K8S_14,yes,merged: also IMG_UNTAGGED,yes
+K8S-077,helm/gitea.yaml,Deployment,pilot-gitea,configure-gitea,SEC_NO_SECCOMP,Security context,TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-077,helm/gitea.yaml,Deployment,pilot-gitea,configure-gitea,SEC_NO_SECCOMP,Security context,TP,kubeaudit,DETECTED,object,SeccompProfileMissing,yes,exact,no
+K8S-077,helm/gitea.yaml,Deployment,pilot-gitea,configure-gitea,SEC_NO_SECCOMP,Security context,TP,Polaris,DETECTED,container,linuxHardening,yes,composite: seccomp+AppArmor+SELinux,no
+K8S-077,helm/gitea.yaml,Deployment,pilot-gitea,configure-gitea,SEC_NO_SECCOMP,Security context,TP,Checkov,DETECTED,object,CKV_K8S_31,yes,exact,no
+K8S-081,helm/openebs.yaml,DaemonSet,pilot-zfs-localpv-node,openebs-zfs-plugin,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-081,helm/openebs.yaml,DaemonSet,pilot-zfs-localpv-node,openebs-zfs-plugin,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-081,helm/openebs.yaml,DaemonSet,pilot-zfs-localpv-node,openebs-zfs-plugin,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-081,helm/openebs.yaml,DaemonSet,pilot-zfs-localpv-node,openebs-zfs-plugin,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-084,helm/headlamp.yaml,ClusterRoleBinding,pilot-headlamp-admin,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-084,helm/headlamp.yaml,ClusterRoleBinding,pilot-headlamp-admin,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-084,helm/headlamp.yaml,ClusterRoleBinding,pilot-headlamp-admin,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,Polaris,DETECTED,object,"clusterrolebindingClusterAdmin,rolebindingClusterAdminRole",yes,union; broader,no
+K8S-084,helm/headlamp.yaml,ClusterRoleBinding,pilot-headlamp-admin,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,Checkov,NO_CHECK,none,,no,,no
+K8S-085,helm/velero.yaml,ClusterRoleBinding,pilot-velero-server,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-085,helm/velero.yaml,ClusterRoleBinding,pilot-velero-server,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-085,helm/velero.yaml,ClusterRoleBinding,pilot-velero-server,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,Polaris,DETECTED,object,"clusterrolebindingClusterAdmin,rolebindingClusterAdminRole",yes,union; broader,no
+K8S-085,helm/velero.yaml,ClusterRoleBinding,pilot-velero-server,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,Checkov,NO_CHECK,none,,no,,no
+K8S-087,helm/victoria-metrics-operator.yaml,ClusterRole,pilot-victoria-metrics-operator,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-087,helm/victoria-metrics-operator.yaml,ClusterRole,pilot-victoria-metrics-operator,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-087,helm/victoria-metrics-operator.yaml,ClusterRole,pilot-victoria-metrics-operator,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",TP,Polaris,NO_CHECK,none,,no,,no
+K8S-087,helm/victoria-metrics-operator.yaml,ClusterRole,pilot-victoria-metrics-operator,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",TP,Checkov,MISSED,none,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_RESOURCES; partial,yes
+K8S-093,helm/vpa.yaml,Job,pilot-vpa-admission-certgen,,SA_TOKEN_AUTOMOUNTED,Host & identity,FP,kube-linter,NO_CHECK,none,,no,,no
+K8S-093,helm/vpa.yaml,Job,pilot-vpa-admission-certgen,,SA_TOKEN_AUTOMOUNTED,Host & identity,FP,kubeaudit,MISSED,none,AutomountServiceAccountTokenTrueAndDefaultSA,yes,narrower: default SA only,no
+K8S-093,helm/vpa.yaml,Job,pilot-vpa-admission-certgen,,SA_TOKEN_AUTOMOUNTED,Host & identity,FP,Polaris,NO_CHECK,none,,no,,no
+K8S-093,helm/vpa.yaml,Job,pilot-vpa-admission-certgen,,SA_TOKEN_AUTOMOUNTED,Host & identity,FP,Checkov,DETECTED,object,CKV_K8S_38,yes,exact,no
+K8S-094,helm/k10.yaml,ClusterRoleBinding,kasten-cluster-admin,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-094,helm/k10.yaml,ClusterRoleBinding,kasten-cluster-admin,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-094,helm/k10.yaml,ClusterRoleBinding,kasten-cluster-admin,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,Polaris,DETECTED,object,"clusterrolebindingClusterAdmin,rolebindingClusterAdminRole",yes,union; broader,no
+K8S-094,helm/k10.yaml,ClusterRoleBinding,kasten-cluster-admin,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,Checkov,NO_CHECK,none,,no,,no
+K8S-098,helm/openebs.yaml,Deployment,pilot-lvm-localpv-controller,openebs-lvm-plugin,REL_NO_READINESS_PROBE,Reliability,TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-098,helm/openebs.yaml,Deployment,pilot-lvm-localpv-controller,openebs-lvm-plugin,REL_NO_READINESS_PROBE,Reliability,TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-098,helm/openebs.yaml,Deployment,pilot-lvm-localpv-controller,openebs-lvm-plugin,REL_NO_READINESS_PROBE,Reliability,TP,Polaris,DETECTED,container,readinessProbeMissing,yes,exact,no
+K8S-098,helm/openebs.yaml,Deployment,pilot-lvm-localpv-controller,openebs-lvm-plugin,REL_NO_READINESS_PROBE,Reliability,TP,Checkov,DETECTED,object,CKV_K8S_9,yes,exact,no
+K8S-102,helm/harbor.yaml,Secret,pilot-harbor-trivy,,SECRET_COMMITTED,"RBAC, secrets & API",FP,kube-linter,NO_CHECK,none,,no,,no
+K8S-102,helm/harbor.yaml,Secret,pilot-harbor-trivy,,SECRET_COMMITTED,"RBAC, secrets & API",FP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-102,helm/harbor.yaml,Secret,pilot-harbor-trivy,,SECRET_COMMITTED,"RBAC, secrets & API",FP,Polaris,NO_CHECK,none,,no,,no
+K8S-102,helm/harbor.yaml,Secret,pilot-harbor-trivy,,SECRET_COMMITTED,"RBAC, secrets & API",FP,Checkov,NO_CHECK,none,,no,,no
+K8S-106,helm/rancher.yaml,ClusterRoleBinding,pilot-rancher,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-106,helm/rancher.yaml,ClusterRoleBinding,pilot-rancher,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-106,helm/rancher.yaml,ClusterRoleBinding,pilot-rancher,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,Polaris,DETECTED,object,"clusterrolebindingClusterAdmin,rolebindingClusterAdminRole",yes,union; broader,no
+K8S-106,helm/rancher.yaml,ClusterRoleBinding,pilot-rancher,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,Checkov,NO_CHECK,none,,no,,no
+K8S-109,helm/metallb.yaml,DaemonSet,pilot-frr-k8s,controller,SEC_CAPABILITY_ADDED,Security context,FP,kube-linter,DETECTED,container,drop-net-raw-capability,yes,narrower: NET_RAW only,no
+K8S-109,helm/metallb.yaml,DaemonSet,pilot-frr-k8s,controller,SEC_CAPABILITY_ADDED,Security context,FP,kubeaudit,DETECTED,container,CapabilityAdded,yes,broader: any capability,no
+K8S-109,helm/metallb.yaml,DaemonSet,pilot-frr-k8s,controller,SEC_CAPABILITY_ADDED,Security context,FP,Polaris,MISSED,none,insecureCapabilities,yes,broader: incl. not dropping,no
+K8S-109,helm/metallb.yaml,DaemonSet,pilot-frr-k8s,controller,SEC_CAPABILITY_ADDED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_37,yes,broader: incl. defaults,no
+K8S-111,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,,HOST_PID,Host & identity,FP,kube-linter,DETECTED,object,host-pid,yes,exact,no
+K8S-111,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,,HOST_PID,Host & identity,FP,kubeaudit,DETECTED,object,NamespaceHostPIDTrue,yes,exact,no
+K8S-111,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,,HOST_PID,Host & identity,FP,Polaris,NO_CHECK,none,,no,,no
+K8S-111,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,,HOST_PID,Host & identity,FP,Checkov,DETECTED,object,CKV_K8S_17,yes,exact,no
+K8S-116,helm/velero.yaml,Role,pilot-velero-server,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-116,helm/velero.yaml,Role,pilot-velero-server,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-116,helm/velero.yaml,Role,pilot-velero-server,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,Polaris,NO_CHECK,none,,no,,no
+K8S-116,helm/velero.yaml,Role,pilot-velero-server,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,Checkov,DETECTED,object,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_VERBS; partial,yes
+K8S-118,helm/velero.yaml,Role,pilot-velero-server,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-118,helm/velero.yaml,Role,pilot-velero-server,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-118,helm/velero.yaml,Role,pilot-velero-server,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,Polaris,NO_CHECK,none,,no,,no
+K8S-118,helm/velero.yaml,Role,pilot-velero-server,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,Checkov,DETECTED,object,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_VERBS; partial,yes
+K8S-125,helm/k10.yaml,Deployment,crypto-svc,repositories-svc,RES_NO_CPU_LIMIT,Resources,TP,kube-linter,MISSED,none,unset-cpu-requirements,yes,merged: also RES_NO_REQUESTS,yes
+K8S-125,helm/k10.yaml,Deployment,crypto-svc,repositories-svc,RES_NO_CPU_LIMIT,Resources,TP,kubeaudit,DETECTED,container,"LimitsCPUNotSet,LimitsNotSet",yes,union; LimitsNotSet is pod-level,no
+K8S-125,helm/k10.yaml,Deployment,crypto-svc,repositories-svc,RES_NO_CPU_LIMIT,Resources,TP,Polaris,DETECTED,container,cpuLimitsMissing,yes,exact,no
+K8S-125,helm/k10.yaml,Deployment,crypto-svc,repositories-svc,RES_NO_CPU_LIMIT,Resources,TP,Checkov,DETECTED,object,CKV_K8S_11,yes,exact,no
+K8S-131,helm/zammad.yaml,Job,pilot-zammad-init-1,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-131,helm/zammad.yaml,Job,pilot-zammad-init-1,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-131,helm/zammad.yaml,Job,pilot-zammad-init-1,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-131,helm/zammad.yaml,Job,pilot-zammad-init-1,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-132,helm/keda.yaml,ClusterRole,keda-operator,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-132,helm/keda.yaml,ClusterRole,keda-operator,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-132,helm/keda.yaml,ClusterRole,keda-operator,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,Polaris,NO_CHECK,none,,no,,no
+K8S-132,helm/keda.yaml,ClusterRole,keda-operator,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,Checkov,MISSED,none,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_VERBS; partial,yes
+K8S-134,helm/ceph-csi-cephfs.yaml,Deployment,pilot-ceph-csi-cephfs-provisioner,csi-attacher,SEC_APE_NOT_DISABLED,Security context,TP,kube-linter,MISSED,none,privilege-escalation-container,yes,exact,no
+K8S-134,helm/ceph-csi-cephfs.yaml,Deployment,pilot-ceph-csi-cephfs-provisioner,csi-attacher,SEC_APE_NOT_DISABLED,Security context,TP,kubeaudit,DETECTED,container,"AllowPrivilegeEscalationNil,AllowPrivilegeEscalationTrue",yes,union,no
+K8S-134,helm/ceph-csi-cephfs.yaml,Deployment,pilot-ceph-csi-cephfs-provisioner,csi-attacher,SEC_APE_NOT_DISABLED,Security context,TP,Polaris,DETECTED,container,privilegeEscalationAllowed,yes,exact,no
+K8S-134,helm/ceph-csi-cephfs.yaml,Deployment,pilot-ceph-csi-cephfs-provisioner,csi-attacher,SEC_APE_NOT_DISABLED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_20,yes,exact,no
+K8S-135,helm/datadog.yaml,Deployment,pilot-datadog-cluster-agent,init-volume,RES_NO_MEM_LIMIT,Resources,TP,kube-linter,DETECTED,container,unset-memory-requirements,yes,merged: also RES_NO_REQUESTS,yes
+K8S-135,helm/datadog.yaml,Deployment,pilot-datadog-cluster-agent,init-volume,RES_NO_MEM_LIMIT,Resources,TP,kubeaudit,DETECTED,container,"LimitsMemoryNotSet,LimitsNotSet",yes,union; LimitsNotSet is pod-level,no
+K8S-135,helm/datadog.yaml,Deployment,pilot-datadog-cluster-agent,init-volume,RES_NO_MEM_LIMIT,Resources,TP,Polaris,MISSED,none,memoryLimitsMissing,yes,exact,no
+K8S-135,helm/datadog.yaml,Deployment,pilot-datadog-cluster-agent,init-volume,RES_NO_MEM_LIMIT,Resources,TP,Checkov,DETECTED,object,CKV_K8S_13,yes,exact,no
+K8S-139,helm/flux2.yaml,ClusterRoleBinding,cluster-reconciler,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-139,helm/flux2.yaml,ClusterRoleBinding,cluster-reconciler,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-139,helm/flux2.yaml,ClusterRoleBinding,cluster-reconciler,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,Polaris,DETECTED,object,"clusterrolebindingClusterAdmin,rolebindingClusterAdminRole",yes,union; broader,no
+K8S-139,helm/flux2.yaml,ClusterRoleBinding,cluster-reconciler,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,Checkov,NO_CHECK,none,,no,,no
+K8S-141,helm/kured.yaml,DaemonSet,pilot-kured,kured,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-141,helm/kured.yaml,DaemonSet,pilot-kured,kured,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-141,helm/kured.yaml,DaemonSet,pilot-kured,kured,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-141,helm/kured.yaml,DaemonSet,pilot-kured,kured,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-142,helm/keda.yaml,ClusterRole,keda-operator,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-142,helm/keda.yaml,ClusterRole,keda-operator,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-142,helm/keda.yaml,ClusterRole,keda-operator,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,Polaris,NO_CHECK,none,,no,,no
+K8S-142,helm/keda.yaml,ClusterRole,keda-operator,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,Checkov,MISSED,none,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_VERBS; partial,yes
+K8S-144,helm/flux2.yaml,ClusterRole,crd-controller,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",FP,kube-linter,NO_CHECK,none,,no,,no
+K8S-144,helm/flux2.yaml,ClusterRole,crd-controller,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",FP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-144,helm/flux2.yaml,ClusterRole,crd-controller,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",FP,Polaris,NO_CHECK,none,,no,,no
+K8S-144,helm/flux2.yaml,ClusterRole,crd-controller,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",FP,Checkov,DETECTED,object,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_RESOURCES; partial,yes
+K8S-148,helm/netdata.yaml,DaemonSet,netdata-child,,HOST_PID,Host & identity,FP,kube-linter,DETECTED,object,host-pid,yes,exact,no
+K8S-148,helm/netdata.yaml,DaemonSet,netdata-child,,HOST_PID,Host & identity,FP,kubeaudit,DETECTED,object,NamespaceHostPIDTrue,yes,exact,no
+K8S-148,helm/netdata.yaml,DaemonSet,netdata-child,,HOST_PID,Host & identity,FP,Polaris,NO_CHECK,none,,no,,no
+K8S-148,helm/netdata.yaml,DaemonSet,netdata-child,,HOST_PID,Host & identity,FP,Checkov,DETECTED,object,CKV_K8S_17,yes,exact,no
+K8S-149,helm/elasticsearch.yaml,StatefulSet,elasticsearch-master,configure-sysctl,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kube-linter,DETECTED,container,run-as-non-root,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-149,helm/elasticsearch.yaml,StatefulSet,elasticsearch-master,configure-sysctl,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kubeaudit,DETECTED,container,"RunAsUserCSCRoot,RunAsUserPSCRoot",yes,union,no
+K8S-149,helm/elasticsearch.yaml,StatefulSet,elasticsearch-master,configure-sysctl,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Polaris,DETECTED,container,runAsRootAllowed,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-149,helm/elasticsearch.yaml,StatefulSet,elasticsearch-master,configure-sysctl,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Checkov,MISSED,none,CKV_K8S_23,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-157,helm/netdata.yaml,DaemonSet,netdata-child,,HOST_IPC,Host & identity,FP,kube-linter,DETECTED,object,host-ipc,yes,exact,no
+K8S-157,helm/netdata.yaml,DaemonSet,netdata-child,,HOST_IPC,Host & identity,FP,kubeaudit,DETECTED,object,NamespaceHostIPCTrue,yes,exact,no
+K8S-157,helm/netdata.yaml,DaemonSet,netdata-child,,HOST_IPC,Host & identity,FP,Polaris,NO_CHECK,none,,no,,no
+K8S-157,helm/netdata.yaml,DaemonSet,netdata-child,,HOST_IPC,Host & identity,FP,Checkov,DETECTED,object,CKV_K8S_18,yes,exact,no
+K8S-160,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,csi-cephfsplugin,SEC_DANGEROUS_CAPABILITY,Security context,FP,kube-linter,NO_CHECK,none,,no,,no
+K8S-160,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,csi-cephfsplugin,SEC_DANGEROUS_CAPABILITY,Security context,FP,kubeaudit,DETECTED,container,CapabilityShouldDropAll,yes,broader proxy: added caps without drop ALL,no
+K8S-160,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,csi-cephfsplugin,SEC_DANGEROUS_CAPABILITY,Security context,FP,Polaris,DETECTED,container,dangerousCapabilities,yes,exact,no
+K8S-160,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,csi-cephfsplugin,SEC_DANGEROUS_CAPABILITY,Security context,FP,Checkov,DETECTED,object,CKV_K8S_39,yes,narrower: SYS_ADMIN only,no
+K8S-161,helm/nats.yaml,StatefulSet,pilot-nats,reloader,SEC_ROOT_NOT_PREVENTED,Security context,TP,kube-linter,DETECTED,container,run-as-non-root,yes,merged: also SEC_RUN_AS_ROOT_EXPLICIT,yes
+K8S-161,helm/nats.yaml,StatefulSet,pilot-nats,reloader,SEC_ROOT_NOT_PREVENTED,Security context,TP,kubeaudit,DETECTED,container,RunAsNonRootPSCNilCSCNil,yes,exact,no
+K8S-161,helm/nats.yaml,StatefulSet,pilot-nats,reloader,SEC_ROOT_NOT_PREVENTED,Security context,TP,Polaris,DETECTED,container,runAsRootAllowed,yes,merged: also SEC_RUN_AS_ROOT_EXPLICIT,yes
+K8S-161,helm/nats.yaml,StatefulSet,pilot-nats,reloader,SEC_ROOT_NOT_PREVENTED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_23,yes,narrower,no
+K8S-162,helm/portainer.yaml,ClusterRoleBinding,pilot-portainer,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-162,helm/portainer.yaml,ClusterRoleBinding,pilot-portainer,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-162,helm/portainer.yaml,ClusterRoleBinding,pilot-portainer,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,Polaris,DETECTED,object,"clusterrolebindingClusterAdmin,rolebindingClusterAdminRole",yes,union; broader,no
+K8S-162,helm/portainer.yaml,ClusterRoleBinding,pilot-portainer,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,Checkov,NO_CHECK,none,,no,,no
+K8S-168,helm/openebs.yaml,DaemonSet,pilot-csi-node,csi-driver-registrar,REL_NO_READINESS_PROBE,Reliability,TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-168,helm/openebs.yaml,DaemonSet,pilot-csi-node,csi-driver-registrar,REL_NO_READINESS_PROBE,Reliability,TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-168,helm/openebs.yaml,DaemonSet,pilot-csi-node,csi-driver-registrar,REL_NO_READINESS_PROBE,Reliability,TP,Polaris,DETECTED,container,readinessProbeMissing,yes,exact,no
+K8S-168,helm/openebs.yaml,DaemonSet,pilot-csi-node,csi-driver-registrar,REL_NO_READINESS_PROBE,Reliability,TP,Checkov,DETECTED,object,CKV_K8S_9,yes,exact,no
+K8S-179,helm/falco.yaml,DaemonSet,pilot-falco,falco-driver-loader,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-179,helm/falco.yaml,DaemonSet,pilot-falco,falco-driver-loader,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-179,helm/falco.yaml,DaemonSet,pilot-falco,falco-driver-loader,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-179,helm/falco.yaml,DaemonSet,pilot-falco,falco-driver-loader,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-181,helm/k10.yaml,Deployment,catalog-svc,upgrade-init,SEC_CAPABILITY_ADDED,Security context,FP,kube-linter,DETECTED,container,drop-net-raw-capability,yes,narrower: NET_RAW only,no
+K8S-181,helm/k10.yaml,Deployment,catalog-svc,upgrade-init,SEC_CAPABILITY_ADDED,Security context,FP,kubeaudit,DETECTED,container,CapabilityAdded,yes,broader: any capability,no
+K8S-181,helm/k10.yaml,Deployment,catalog-svc,upgrade-init,SEC_CAPABILITY_ADDED,Security context,FP,Polaris,DETECTED,container,insecureCapabilities,yes,broader: incl. not dropping,no
+K8S-181,helm/k10.yaml,Deployment,catalog-svc,upgrade-init,SEC_CAPABILITY_ADDED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_37,yes,broader: incl. defaults,no
+K8S-187,helm/metabase.yaml,Deployment,pilot-metabase,metabase,SECRET_LITERAL_ENV,"RBAC, secrets & API",FP,kube-linter,MISSED,none,env-var-secret,yes,narrower; messages redacted -> object-level match,no
+K8S-187,helm/metabase.yaml,Deployment,pilot-metabase,metabase,SECRET_LITERAL_ENV,"RBAC, secrets & API",FP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-187,helm/metabase.yaml,Deployment,pilot-metabase,metabase,SECRET_LITERAL_ENV,"RBAC, secrets & API",FP,Polaris,DETECTED,container,sensitiveContainerEnvVar,yes,exact,no
+K8S-187,helm/metabase.yaml,Deployment,pilot-metabase,metabase,SECRET_LITERAL_ENV,"RBAC, secrets & API",FP,Checkov,MISSED,none,CKV_K8S_35,yes,broader,no
+K8S-192,helm/redpanda.yaml,StatefulSet,pilot,tuning,SEC_PRIVILEGED,Security context,TP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-192,helm/redpanda.yaml,StatefulSet,pilot,tuning,SEC_PRIVILEGED,Security context,TP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-192,helm/redpanda.yaml,StatefulSet,pilot,tuning,SEC_PRIVILEGED,Security context,TP,Polaris,AMBIGUOUS_JOIN,unknown,runAsPrivileged,yes,exact,no
+K8S-192,helm/redpanda.yaml,StatefulSet,pilot,tuning,SEC_PRIVILEGED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-193,helm/victoria-metrics-operator.yaml,ClusterRole,pilot-victoria-metrics-operator,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-193,helm/victoria-metrics-operator.yaml,ClusterRole,pilot-victoria-metrics-operator,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-193,helm/victoria-metrics-operator.yaml,ClusterRole,pilot-victoria-metrics-operator,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",TP,Polaris,NO_CHECK,none,,no,,no
+K8S-193,helm/victoria-metrics-operator.yaml,ClusterRole,pilot-victoria-metrics-operator,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",TP,Checkov,MISSED,none,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_RESOURCES; partial,yes
+K8S-194,helm/jaeger.yaml,Deployment,pilot-jaeger,jaeger,RES_NO_CPU_LIMIT,Resources,TP,kube-linter,DETECTED,container,unset-cpu-requirements,yes,merged: also RES_NO_REQUESTS,yes
+K8S-194,helm/jaeger.yaml,Deployment,pilot-jaeger,jaeger,RES_NO_CPU_LIMIT,Resources,TP,kubeaudit,DETECTED,container,"LimitsCPUNotSet,LimitsNotSet",yes,union; LimitsNotSet is pod-level,no
+K8S-194,helm/jaeger.yaml,Deployment,pilot-jaeger,jaeger,RES_NO_CPU_LIMIT,Resources,TP,Polaris,DETECTED,container,cpuLimitsMissing,yes,exact,no
+K8S-194,helm/jaeger.yaml,Deployment,pilot-jaeger,jaeger,RES_NO_CPU_LIMIT,Resources,TP,Checkov,DETECTED,object,CKV_K8S_11,yes,exact,no
+K8S-202,helm/qdrant.yaml,StatefulSet,pilot-qdrant,ensure-dir-ownership,REL_NO_READINESS_PROBE,Reliability,FP,kube-linter,NO_CHECK,none,,no,,no
+K8S-202,helm/qdrant.yaml,StatefulSet,pilot-qdrant,ensure-dir-ownership,REL_NO_READINESS_PROBE,Reliability,FP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-202,helm/qdrant.yaml,StatefulSet,pilot-qdrant,ensure-dir-ownership,REL_NO_READINESS_PROBE,Reliability,FP,Polaris,MISSED,none,readinessProbeMissing,yes,exact,no
+K8S-202,helm/qdrant.yaml,StatefulSet,pilot-qdrant,ensure-dir-ownership,REL_NO_READINESS_PROBE,Reliability,FP,Checkov,MISSED,none,CKV_K8S_9,yes,exact,no
+K8S-203,helm/kube-prometheus-stack.yaml,DaemonSet,pilot-prometheus-node-exporter,,HOST_PID,Host & identity,FP,kube-linter,DETECTED,object,host-pid,yes,exact,no
+K8S-203,helm/kube-prometheus-stack.yaml,DaemonSet,pilot-prometheus-node-exporter,,HOST_PID,Host & identity,FP,kubeaudit,DETECTED,object,NamespaceHostPIDTrue,yes,exact,no
+K8S-203,helm/kube-prometheus-stack.yaml,DaemonSet,pilot-prometheus-node-exporter,,HOST_PID,Host & identity,FP,Polaris,NO_CHECK,none,,no,,no
+K8S-203,helm/kube-prometheus-stack.yaml,DaemonSet,pilot-prometheus-node-exporter,,HOST_PID,Host & identity,FP,Checkov,DETECTED,object,CKV_K8S_17,yes,exact,no
+K8S-208,helm/zammad.yaml,Deployment,pilot-zammad-railsserver,zammad-volume-permissions,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kube-linter,DETECTED,container,run-as-non-root,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-208,helm/zammad.yaml,Deployment,pilot-zammad-railsserver,zammad-volume-permissions,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kubeaudit,DETECTED,container,"RunAsUserCSCRoot,RunAsUserPSCRoot",yes,union,no
+K8S-208,helm/zammad.yaml,Deployment,pilot-zammad-railsserver,zammad-volume-permissions,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Polaris,DETECTED,container,runAsRootAllowed,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-208,helm/zammad.yaml,Deployment,pilot-zammad-railsserver,zammad-volume-permissions,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Checkov,MISSED,none,CKV_K8S_23,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-211,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,driver-registrar,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-211,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,driver-registrar,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-211,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,driver-registrar,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-211,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,driver-registrar,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-214,helm/flux2.yaml,ClusterRole,crd-controller,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",FP,kube-linter,NO_CHECK,none,,no,,no
+K8S-214,helm/flux2.yaml,ClusterRole,crd-controller,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",FP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-214,helm/flux2.yaml,ClusterRole,crd-controller,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",FP,Polaris,NO_CHECK,none,,no,,no
+K8S-214,helm/flux2.yaml,ClusterRole,crd-controller,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",FP,Checkov,DETECTED,object,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_VERBS; partial,yes
+K8S-215,helm/rocketchat.yaml,Deployment,pilot-authorization,authorization-service,REL_NO_LIVENESS_PROBE,Reliability,TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-215,helm/rocketchat.yaml,Deployment,pilot-authorization,authorization-service,REL_NO_LIVENESS_PROBE,Reliability,TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-215,helm/rocketchat.yaml,Deployment,pilot-authorization,authorization-service,REL_NO_LIVENESS_PROBE,Reliability,TP,Polaris,DETECTED,container,livenessProbeMissing,yes,exact,no
+K8S-215,helm/rocketchat.yaml,Deployment,pilot-authorization,authorization-service,REL_NO_LIVENESS_PROBE,Reliability,TP,Checkov,DETECTED,object,CKV_K8S_8,yes,exact,no
+K8S-218,helm/zammad.yaml,CronJob,pilot-zammad-cronjob-reindex,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-218,helm/zammad.yaml,CronJob,pilot-zammad-cronjob-reindex,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,kubeaudit,MISSED,none,PrivilegedTrue,yes,exact,no
+K8S-218,helm/zammad.yaml,CronJob,pilot-zammad-cronjob-reindex,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-218,helm/zammad.yaml,CronJob,pilot-zammad-cronjob-reindex,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-227,helm/prometheus.yaml,DaemonSet,pilot-prometheus-node-exporter,,HOST_PID,Host & identity,FP,kube-linter,DETECTED,object,host-pid,yes,exact,no
+K8S-227,helm/prometheus.yaml,DaemonSet,pilot-prometheus-node-exporter,,HOST_PID,Host & identity,FP,kubeaudit,DETECTED,object,NamespaceHostPIDTrue,yes,exact,no
+K8S-227,helm/prometheus.yaml,DaemonSet,pilot-prometheus-node-exporter,,HOST_PID,Host & identity,FP,Polaris,NO_CHECK,none,,no,,no
+K8S-227,helm/prometheus.yaml,DaemonSet,pilot-prometheus-node-exporter,,HOST_PID,Host & identity,FP,Checkov,DETECTED,object,CKV_K8S_17,yes,exact,no
+K8S-231,helm/redpanda.yaml,Job,pilot-configuration,post-install,RES_NO_CPU_LIMIT,Resources,TP,kube-linter,DETECTED,container,unset-cpu-requirements,yes,merged: also RES_NO_REQUESTS,yes
+K8S-231,helm/redpanda.yaml,Job,pilot-configuration,post-install,RES_NO_CPU_LIMIT,Resources,TP,kubeaudit,DETECTED,container,"LimitsCPUNotSet,LimitsNotSet",yes,union; LimitsNotSet is pod-level,no
+K8S-231,helm/redpanda.yaml,Job,pilot-configuration,post-install,RES_NO_CPU_LIMIT,Resources,TP,Polaris,DETECTED,container,cpuLimitsMissing,yes,exact,no
+K8S-231,helm/redpanda.yaml,Job,pilot-configuration,post-install,RES_NO_CPU_LIMIT,Resources,TP,Checkov,DETECTED,object,CKV_K8S_11,yes,exact,no
+K8S-233,helm/flux2.yaml,ClusterRole,crd-controller,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",FP,kube-linter,NO_CHECK,none,,no,,no
+K8S-233,helm/flux2.yaml,ClusterRole,crd-controller,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",FP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-233,helm/flux2.yaml,ClusterRole,crd-controller,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",FP,Polaris,NO_CHECK,none,,no,,no
+K8S-233,helm/flux2.yaml,ClusterRole,crd-controller,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",FP,Checkov,DETECTED,object,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_RESOURCES; partial,yes
+K8S-237,helm/openmetadata.yaml,Pod,openmetadata-test-connection,wget,IMG_UNTAGGED,Images,TP,kube-linter,DETECTED,container,latest-tag,yes,merged: also IMG_LATEST,yes
+K8S-237,helm/openmetadata.yaml,Pod,openmetadata-test-connection,wget,IMG_UNTAGGED,Images,TP,kubeaudit,DETECTED,container,ImageTagMissing,yes,exact,no
+K8S-237,helm/openmetadata.yaml,Pod,openmetadata-test-connection,wget,IMG_UNTAGGED,Images,TP,Polaris,DETECTED,container,tagNotSpecified,yes,merged: also IMG_LATEST,yes
+K8S-237,helm/openmetadata.yaml,Pod,openmetadata-test-connection,wget,IMG_UNTAGGED,Images,TP,Checkov,DETECTED,object,CKV_K8S_14,yes,merged: also IMG_LATEST,yes
+K8S-238,helm/csi-driver-nfs.yaml,DaemonSet,csi-nfs-node,nfs,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-238,helm/csi-driver-nfs.yaml,DaemonSet,csi-nfs-node,nfs,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-238,helm/csi-driver-nfs.yaml,DaemonSet,csi-nfs-node,nfs,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-238,helm/csi-driver-nfs.yaml,DaemonSet,csi-nfs-node,nfs,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-248,helm/openebs.yaml,Deployment,pilot-csi-controller,csi-attacher,REL_NO_LIVENESS_PROBE,Reliability,TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-248,helm/openebs.yaml,Deployment,pilot-csi-controller,csi-attacher,REL_NO_LIVENESS_PROBE,Reliability,TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-248,helm/openebs.yaml,Deployment,pilot-csi-controller,csi-attacher,REL_NO_LIVENESS_PROBE,Reliability,TP,Polaris,DETECTED,container,livenessProbeMissing,yes,exact,no
+K8S-248,helm/openebs.yaml,Deployment,pilot-csi-controller,csi-attacher,REL_NO_LIVENESS_PROBE,Reliability,TP,Checkov,DETECTED,object,CKV_K8S_8,yes,exact,no
+K8S-251,helm/jenkins.yaml,Pod,pilot-ui-test-cqymk,pilot-ui-test,SEC_ROOT_NOT_PREVENTED,Security context,TP,kube-linter,DETECTED,container,run-as-non-root,yes,merged: also SEC_RUN_AS_ROOT_EXPLICIT,yes
+K8S-251,helm/jenkins.yaml,Pod,pilot-ui-test-cqymk,pilot-ui-test,SEC_ROOT_NOT_PREVENTED,Security context,TP,kubeaudit,DETECTED,container,RunAsNonRootPSCNilCSCNil,yes,exact,no
+K8S-251,helm/jenkins.yaml,Pod,pilot-ui-test-cqymk,pilot-ui-test,SEC_ROOT_NOT_PREVENTED,Security context,TP,Polaris,DETECTED,container,runAsRootAllowed,yes,merged: also SEC_RUN_AS_ROOT_EXPLICIT,yes
+K8S-251,helm/jenkins.yaml,Pod,pilot-ui-test-cqymk,pilot-ui-test,SEC_ROOT_NOT_PREVENTED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_23,yes,narrower,no
+K8S-256,helm/zammad.yaml,Deployment,pilot-zammad-websocket,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-256,helm/zammad.yaml,Deployment,pilot-zammad-websocket,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-256,helm/zammad.yaml,Deployment,pilot-zammad-websocket,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-256,helm/zammad.yaml,Deployment,pilot-zammad-websocket,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-257,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,driver-registrar,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-257,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,driver-registrar,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-257,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,driver-registrar,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-257,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,driver-registrar,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-259,helm/openebs.yaml,StatefulSet,pilot-nats,nats,IMG_NO_DIGEST,Images,TP-hardening,kube-linter,NO_CHECK,none,,no,,no
+K8S-259,helm/openebs.yaml,StatefulSet,pilot-nats,nats,IMG_NO_DIGEST,Images,TP-hardening,kubeaudit,NO_CHECK,none,,no,,no
+K8S-259,helm/openebs.yaml,StatefulSet,pilot-nats,nats,IMG_NO_DIGEST,Images,TP-hardening,Polaris,NO_CHECK,none,,no,,no
+K8S-259,helm/openebs.yaml,StatefulSet,pilot-nats,nats,IMG_NO_DIGEST,Images,TP-hardening,Checkov,DETECTED,object,CKV_K8S_43,yes,exact,no
+K8S-263,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,csi-cephfsplugin,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-263,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,csi-cephfsplugin,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-263,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,csi-cephfsplugin,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-263,helm/ceph-csi-cephfs.yaml,DaemonSet,pilot-ceph-csi-cephfs-nodeplugin,csi-cephfsplugin,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-267,helm/openebs.yaml,DaemonSet,pilot-csi-node,csi-driver-registrar,REL_NO_READINESS_PROBE,Reliability,TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-267,helm/openebs.yaml,DaemonSet,pilot-csi-node,csi-driver-registrar,REL_NO_READINESS_PROBE,Reliability,TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-267,helm/openebs.yaml,DaemonSet,pilot-csi-node,csi-driver-registrar,REL_NO_READINESS_PROBE,Reliability,TP,Polaris,DETECTED,container,readinessProbeMissing,yes,exact,no
+K8S-267,helm/openebs.yaml,DaemonSet,pilot-csi-node,csi-driver-registrar,REL_NO_READINESS_PROBE,Reliability,TP,Checkov,DETECTED,object,CKV_K8S_9,yes,exact,no
+K8S-269,helm/artifact-hub.yaml,CronJob,tracker,check-db-ready,RES_NO_REQUESTS,Resources,TP,kube-linter,DETECTED,container,"unset-cpu-requirements,unset-memory-requirements",yes,merged: also the limit rules,yes
+K8S-269,helm/artifact-hub.yaml,CronJob,tracker,check-db-ready,RES_NO_REQUESTS,Resources,TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-269,helm/artifact-hub.yaml,CronJob,tracker,check-db-ready,RES_NO_REQUESTS,Resources,TP,Polaris,MISSED,none,"cpuRequestsMissing,memoryRequestsMissing",yes,union,no
+K8S-269,helm/artifact-hub.yaml,CronJob,tracker,check-db-ready,RES_NO_REQUESTS,Resources,TP,Checkov,DETECTED,object,"CKV_K8S_10,CKV_K8S_12",yes,union,no
+K8S-275,helm/mariadb-operator.yaml,Deployment,pilot-mariadb-operator,controller,SEC_APE_NOT_DISABLED,Security context,TP,kube-linter,MISSED,none,privilege-escalation-container,yes,exact,no
+K8S-275,helm/mariadb-operator.yaml,Deployment,pilot-mariadb-operator,controller,SEC_APE_NOT_DISABLED,Security context,TP,kubeaudit,DETECTED,container,"AllowPrivilegeEscalationNil,AllowPrivilegeEscalationTrue",yes,union,no
+K8S-275,helm/mariadb-operator.yaml,Deployment,pilot-mariadb-operator,controller,SEC_APE_NOT_DISABLED,Security context,TP,Polaris,DETECTED,container,privilegeEscalationAllowed,yes,exact,no
+K8S-275,helm/mariadb-operator.yaml,Deployment,pilot-mariadb-operator,controller,SEC_APE_NOT_DISABLED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_20,yes,exact,no
+K8S-280,helm/zammad.yaml,Deployment,pilot-zammad-nginx,zammad-nginx,RES_NO_REQUESTS,Resources,TP,kube-linter,DETECTED,container,"unset-cpu-requirements,unset-memory-requirements",yes,merged: also the limit rules,yes
+K8S-280,helm/zammad.yaml,Deployment,pilot-zammad-nginx,zammad-nginx,RES_NO_REQUESTS,Resources,TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-280,helm/zammad.yaml,Deployment,pilot-zammad-nginx,zammad-nginx,RES_NO_REQUESTS,Resources,TP,Polaris,DETECTED,container,"cpuRequestsMissing,memoryRequestsMissing",yes,union,no
+K8S-280,helm/zammad.yaml,Deployment,pilot-zammad-nginx,zammad-nginx,RES_NO_REQUESTS,Resources,TP,Checkov,DETECTED,object,"CKV_K8S_10,CKV_K8S_12",yes,union,no
+K8S-283,helm/k10.yaml,Deployment,logging-svc,upgrade-init,SEC_CAPABILITY_ADDED,Security context,FP,kube-linter,DETECTED,container,drop-net-raw-capability,yes,narrower: NET_RAW only,no
+K8S-283,helm/k10.yaml,Deployment,logging-svc,upgrade-init,SEC_CAPABILITY_ADDED,Security context,FP,kubeaudit,DETECTED,container,CapabilityAdded,yes,broader: any capability,no
+K8S-283,helm/k10.yaml,Deployment,logging-svc,upgrade-init,SEC_CAPABILITY_ADDED,Security context,FP,Polaris,DETECTED,container,insecureCapabilities,yes,broader: incl. not dropping,no
+K8S-283,helm/k10.yaml,Deployment,logging-svc,upgrade-init,SEC_CAPABILITY_ADDED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_37,yes,broader: incl. defaults,no
+K8S-286,helm/rocketchat.yaml,StatefulSet,pilot-mongodb,volume-permissions,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kube-linter,DETECTED,container,run-as-non-root,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-286,helm/rocketchat.yaml,StatefulSet,pilot-mongodb,volume-permissions,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kubeaudit,DETECTED,container,"RunAsUserCSCRoot,RunAsUserPSCRoot",yes,union,no
+K8S-286,helm/rocketchat.yaml,StatefulSet,pilot-mongodb,volume-permissions,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Polaris,DETECTED,container,runAsRootAllowed,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-286,helm/rocketchat.yaml,StatefulSet,pilot-mongodb,volume-permissions,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Checkov,MISSED,none,CKV_K8S_23,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-287,helm/datadog.yaml,ClusterRole,pilot-operator,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-287,helm/datadog.yaml,ClusterRole,pilot-operator,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-287,helm/datadog.yaml,ClusterRole,pilot-operator,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,Polaris,NO_CHECK,none,,no,,no
+K8S-287,helm/datadog.yaml,ClusterRole,pilot-operator,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,Checkov,MISSED,none,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_VERBS; partial,yes
+K8S-293,helm/gitlab-agent.yaml,ClusterRoleBinding,default:pilot-gitlab-agent-cluster-admin,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-293,helm/gitlab-agent.yaml,ClusterRoleBinding,default:pilot-gitlab-agent-cluster-admin,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-293,helm/gitlab-agent.yaml,ClusterRoleBinding,default:pilot-gitlab-agent-cluster-admin,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,Polaris,DETECTED,object,"clusterrolebindingClusterAdmin,rolebindingClusterAdminRole",yes,union; broader,no
+K8S-293,helm/gitlab-agent.yaml,ClusterRoleBinding,default:pilot-gitlab-agent-cluster-admin,,RBAC_CLUSTER_ADMIN_BINDING,"RBAC, secrets & API",TP,Checkov,NO_CHECK,none,,no,,no
+K8S-299,helm/nexus3.yaml,StatefulSet,pilot-nexus3,tail-tasks-log,IMG_LATEST,Images,TP,kube-linter,DETECTED,container,latest-tag,yes,merged: also IMG_UNTAGGED,yes
+K8S-299,helm/nexus3.yaml,StatefulSet,pilot-nexus3,tail-tasks-log,IMG_LATEST,Images,TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-299,helm/nexus3.yaml,StatefulSet,pilot-nexus3,tail-tasks-log,IMG_LATEST,Images,TP,Polaris,DETECTED,container,tagNotSpecified,yes,merged: also IMG_UNTAGGED,yes
+K8S-299,helm/nexus3.yaml,StatefulSet,pilot-nexus3,tail-tasks-log,IMG_LATEST,Images,TP,Checkov,DETECTED,object,CKV_K8S_14,yes,merged: also IMG_UNTAGGED,yes
+K8S-301,helm/cilium.yaml,DaemonSet,cilium,mount-bpf-fs,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-301,helm/cilium.yaml,DaemonSet,cilium,mount-bpf-fs,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-301,helm/cilium.yaml,DaemonSet,cilium,mount-bpf-fs,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-301,helm/cilium.yaml,DaemonSet,cilium,mount-bpf-fs,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-302,helm/solr-operator.yaml,Deployment,pilot-zookeeper-operator,pilot-zookeeper-operator,SEC_NO_SECCOMP,Security context,TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-302,helm/solr-operator.yaml,Deployment,pilot-zookeeper-operator,pilot-zookeeper-operator,SEC_NO_SECCOMP,Security context,TP,kubeaudit,DETECTED,object,SeccompProfileMissing,yes,exact,no
+K8S-302,helm/solr-operator.yaml,Deployment,pilot-zookeeper-operator,pilot-zookeeper-operator,SEC_NO_SECCOMP,Security context,TP,Polaris,DETECTED,container,linuxHardening,yes,composite: seccomp+AppArmor+SELinux,no
+K8S-302,helm/solr-operator.yaml,Deployment,pilot-zookeeper-operator,pilot-zookeeper-operator,SEC_NO_SECCOMP,Security context,TP,Checkov,DETECTED,object,CKV_K8S_31,yes,exact,no
+K8S-304,helm/opensearch.yaml,StatefulSet,opensearch-cluster-master,fsgroup-volume,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kube-linter,DETECTED,container,run-as-non-root,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-304,helm/opensearch.yaml,StatefulSet,opensearch-cluster-master,fsgroup-volume,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kubeaudit,DETECTED,container,"RunAsUserCSCRoot,RunAsUserPSCRoot",yes,union,no
+K8S-304,helm/opensearch.yaml,StatefulSet,opensearch-cluster-master,fsgroup-volume,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Polaris,DETECTED,container,runAsRootAllowed,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-304,helm/opensearch.yaml,StatefulSet,opensearch-cluster-master,fsgroup-volume,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Checkov,MISSED,none,CKV_K8S_23,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-305,helm/chaos-mesh.yaml,DaemonSet,chaos-daemon,chaos-daemon,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-305,helm/chaos-mesh.yaml,DaemonSet,chaos-daemon,chaos-daemon,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-305,helm/chaos-mesh.yaml,DaemonSet,chaos-daemon,chaos-daemon,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-305,helm/chaos-mesh.yaml,DaemonSet,chaos-daemon,chaos-daemon,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-308,helm/apisix.yaml,Secret,pilot-etcd-jwt-token,,SECRET_COMMITTED,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-308,helm/apisix.yaml,Secret,pilot-etcd-jwt-token,,SECRET_COMMITTED,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-308,helm/apisix.yaml,Secret,pilot-etcd-jwt-token,,SECRET_COMMITTED,"RBAC, secrets & API",TP,Polaris,NO_CHECK,none,,no,,no
+K8S-308,helm/apisix.yaml,Secret,pilot-etcd-jwt-token,,SECRET_COMMITTED,"RBAC, secrets & API",TP,Checkov,NO_CHECK,none,,no,,no
+K8S-311,helm/openebs.yaml,DaemonSet,pilot-io-engine,io-engine,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-311,helm/openebs.yaml,DaemonSet,pilot-io-engine,io-engine,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-311,helm/openebs.yaml,DaemonSet,pilot-io-engine,io-engine,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-311,helm/openebs.yaml,DaemonSet,pilot-io-engine,io-engine,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-314,helm/victoria-metrics-k8s-stack.yaml,Job,pilot-victoria-metrics-k8s-stack-sync-job,sync-job,RES_NO_REQUESTS,Resources,TP,kube-linter,DETECTED,container,"unset-cpu-requirements,unset-memory-requirements",yes,merged: also the limit rules,yes
+K8S-314,helm/victoria-metrics-k8s-stack.yaml,Job,pilot-victoria-metrics-k8s-stack-sync-job,sync-job,RES_NO_REQUESTS,Resources,TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-314,helm/victoria-metrics-k8s-stack.yaml,Job,pilot-victoria-metrics-k8s-stack-sync-job,sync-job,RES_NO_REQUESTS,Resources,TP,Polaris,DETECTED,container,"cpuRequestsMissing,memoryRequestsMissing",yes,union,no
+K8S-314,helm/victoria-metrics-k8s-stack.yaml,Job,pilot-victoria-metrics-k8s-stack-sync-job,sync-job,RES_NO_REQUESTS,Resources,TP,Checkov,DETECTED,object,"CKV_K8S_10,CKV_K8S_12",yes,union,no
+K8S-325,helm/graylog.yaml,StatefulSet,opensearch-cluster-master,fsgroup-volume,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kube-linter,DETECTED,container,run-as-non-root,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-325,helm/graylog.yaml,StatefulSet,opensearch-cluster-master,fsgroup-volume,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kubeaudit,DETECTED,container,"RunAsUserCSCRoot,RunAsUserPSCRoot",yes,union,no
+K8S-325,helm/graylog.yaml,StatefulSet,opensearch-cluster-master,fsgroup-volume,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Polaris,DETECTED,container,runAsRootAllowed,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-325,helm/graylog.yaml,StatefulSet,opensearch-cluster-master,fsgroup-volume,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Checkov,MISSED,none,CKV_K8S_23,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-327,helm/metallb.yaml,DaemonSet,pilot-frr-k8s,controller,SEC_CAPABILITY_ADDED,Security context,FP,kube-linter,DETECTED,container,drop-net-raw-capability,yes,narrower: NET_RAW only,no
+K8S-327,helm/metallb.yaml,DaemonSet,pilot-frr-k8s,controller,SEC_CAPABILITY_ADDED,Security context,FP,kubeaudit,DETECTED,container,CapabilityAdded,yes,broader: any capability,no
+K8S-327,helm/metallb.yaml,DaemonSet,pilot-frr-k8s,controller,SEC_CAPABILITY_ADDED,Security context,FP,Polaris,MISSED,none,insecureCapabilities,yes,broader: incl. not dropping,no
+K8S-327,helm/metallb.yaml,DaemonSet,pilot-frr-k8s,controller,SEC_CAPABILITY_ADDED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_37,yes,broader: incl. defaults,no
+K8S-331,helm/confluence.yaml,StatefulSet,pilot-confluence,nfs-permission-fixer,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kube-linter,DETECTED,container,run-as-non-root,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-331,helm/confluence.yaml,StatefulSet,pilot-confluence,nfs-permission-fixer,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kubeaudit,DETECTED,container,"RunAsUserCSCRoot,RunAsUserPSCRoot",yes,union,no
+K8S-331,helm/confluence.yaml,StatefulSet,pilot-confluence,nfs-permission-fixer,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Polaris,DETECTED,container,runAsRootAllowed,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-331,helm/confluence.yaml,StatefulSet,pilot-confluence,nfs-permission-fixer,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Checkov,DETECTED,object,CKV_K8S_23,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-334,helm/elasticsearch.yaml,StatefulSet,elasticsearch-master,configure-sysctl,SEC_PRIVILEGED,Security context,TP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-334,helm/elasticsearch.yaml,StatefulSet,elasticsearch-master,configure-sysctl,SEC_PRIVILEGED,Security context,TP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-334,helm/elasticsearch.yaml,StatefulSet,elasticsearch-master,configure-sysctl,SEC_PRIVILEGED,Security context,TP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-334,helm/elasticsearch.yaml,StatefulSet,elasticsearch-master,configure-sysctl,SEC_PRIVILEGED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-338,helm/zammad.yaml,Job,pilot-zammad-init-1,zammad-volume-permissions,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kube-linter,DETECTED,container,run-as-non-root,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-338,helm/zammad.yaml,Job,pilot-zammad-init-1,zammad-volume-permissions,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kubeaudit,DETECTED,container,"RunAsUserCSCRoot,RunAsUserPSCRoot",yes,union,no
+K8S-338,helm/zammad.yaml,Job,pilot-zammad-init-1,zammad-volume-permissions,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Polaris,DETECTED,container,runAsRootAllowed,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-338,helm/zammad.yaml,Job,pilot-zammad-init-1,zammad-volume-permissions,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Checkov,MISSED,none,CKV_K8S_23,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-348,helm/openebs.yaml,DaemonSet,pilot-lvm-localpv-node,openebs-lvm-plugin,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-348,helm/openebs.yaml,DaemonSet,pilot-lvm-localpv-node,openebs-lvm-plugin,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-348,helm/openebs.yaml,DaemonSet,pilot-lvm-localpv-node,openebs-lvm-plugin,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-348,helm/openebs.yaml,DaemonSet,pilot-lvm-localpv-node,openebs-lvm-plugin,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-349,helm/k10.yaml,ClusterRole,pilot-basic,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",FP,kube-linter,NO_CHECK,none,,no,,no
+K8S-349,helm/k10.yaml,ClusterRole,pilot-basic,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",FP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-349,helm/k10.yaml,ClusterRole,pilot-basic,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",FP,Polaris,NO_CHECK,none,,no,,no
+K8S-349,helm/k10.yaml,ClusterRole,pilot-basic,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",FP,Checkov,DETECTED,object,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_RESOURCES; partial,yes
+K8S-350,helm/datadog.yaml,ClusterRole,pilot-operator,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-350,helm/datadog.yaml,ClusterRole,pilot-operator,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-350,helm/datadog.yaml,ClusterRole,pilot-operator,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,Polaris,NO_CHECK,none,,no,,no
+K8S-350,helm/datadog.yaml,ClusterRole,pilot-operator,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",TP,Checkov,MISSED,none,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_VERBS; partial,yes
+K8S-351,helm/csi-driver-nfs.yaml,Deployment,csi-nfs-controller,nfs,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-351,helm/csi-driver-nfs.yaml,Deployment,csi-nfs-controller,nfs,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-351,helm/csi-driver-nfs.yaml,Deployment,csi-nfs-controller,nfs,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-351,helm/csi-driver-nfs.yaml,Deployment,csi-nfs-controller,nfs,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-355,helm/eck-operator.yaml,StatefulSet,elastic-operator,manager,SECRET_LITERAL_ENV,"RBAC, secrets & API",FP,kube-linter,DETECTED,container,env-var-secret,yes,narrower; messages redacted -> object-level match,no
+K8S-355,helm/eck-operator.yaml,StatefulSet,elastic-operator,manager,SECRET_LITERAL_ENV,"RBAC, secrets & API",FP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-355,helm/eck-operator.yaml,StatefulSet,elastic-operator,manager,SECRET_LITERAL_ENV,"RBAC, secrets & API",FP,Polaris,DETECTED,container,sensitiveContainerEnvVar,yes,exact,no
+K8S-355,helm/eck-operator.yaml,StatefulSet,elastic-operator,manager,SECRET_LITERAL_ENV,"RBAC, secrets & API",FP,Checkov,MISSED,none,CKV_K8S_35,yes,broader,no
+K8S-361,helm/openebs.yaml,ClusterRole,pilot-localpv-provisioner,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-361,helm/openebs.yaml,ClusterRole,pilot-localpv-provisioner,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-361,helm/openebs.yaml,ClusterRole,pilot-localpv-provisioner,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",TP,Polaris,NO_CHECK,none,,no,,no
+K8S-361,helm/openebs.yaml,ClusterRole,pilot-localpv-provisioner,,RBAC_WILDCARD_VERBS,"RBAC, secrets & API",TP,Checkov,DETECTED,object,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_RESOURCES; partial,yes
+K8S-362,helm/jenkins.yaml,Pod,pilot-ui-test-cqymk,pilot-ui-test,SEC_ROOT_NOT_PREVENTED,Security context,TP,kube-linter,DETECTED,container,run-as-non-root,yes,merged: also SEC_RUN_AS_ROOT_EXPLICIT,yes
+K8S-362,helm/jenkins.yaml,Pod,pilot-ui-test-cqymk,pilot-ui-test,SEC_ROOT_NOT_PREVENTED,Security context,TP,kubeaudit,DETECTED,container,RunAsNonRootPSCNilCSCNil,yes,exact,no
+K8S-362,helm/jenkins.yaml,Pod,pilot-ui-test-cqymk,pilot-ui-test,SEC_ROOT_NOT_PREVENTED,Security context,TP,Polaris,DETECTED,container,runAsRootAllowed,yes,merged: also SEC_RUN_AS_ROOT_EXPLICIT,yes
+K8S-362,helm/jenkins.yaml,Pod,pilot-ui-test-cqymk,pilot-ui-test,SEC_ROOT_NOT_PREVENTED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_23,yes,narrower,no
+K8S-364,helm/gateway.yaml,Deployment,pilot,istio-proxy,IMG_UNTAGGED,Images,FP,kube-linter,DETECTED,container,latest-tag,yes,merged: also IMG_LATEST,yes
+K8S-364,helm/gateway.yaml,Deployment,pilot,istio-proxy,IMG_UNTAGGED,Images,FP,kubeaudit,DETECTED,container,ImageTagMissing,yes,exact,no
+K8S-364,helm/gateway.yaml,Deployment,pilot,istio-proxy,IMG_UNTAGGED,Images,FP,Polaris,DETECTED,container,tagNotSpecified,yes,merged: also IMG_LATEST,yes
+K8S-364,helm/gateway.yaml,Deployment,pilot,istio-proxy,IMG_UNTAGGED,Images,FP,Checkov,DETECTED,object,CKV_K8S_14,yes,merged: also IMG_LATEST,yes
+K8S-365,helm/falco.yaml,DaemonSet,pilot-falco,falco,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-365,helm/falco.yaml,DaemonSet,pilot-falco,falco,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-365,helm/falco.yaml,DaemonSet,pilot-falco,falco,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-365,helm/falco.yaml,DaemonSet,pilot-falco,falco,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-366,helm/ceph-csi-cephfs.yaml,Deployment,pilot-ceph-csi-cephfs-provisioner,csi-snapshotter,SEC_ROOT_NOT_PREVENTED,Security context,TP,kube-linter,DETECTED,container,run-as-non-root,yes,merged: also SEC_RUN_AS_ROOT_EXPLICIT,yes
+K8S-366,helm/ceph-csi-cephfs.yaml,Deployment,pilot-ceph-csi-cephfs-provisioner,csi-snapshotter,SEC_ROOT_NOT_PREVENTED,Security context,TP,kubeaudit,DETECTED,container,RunAsNonRootPSCNilCSCNil,yes,exact,no
+K8S-366,helm/ceph-csi-cephfs.yaml,Deployment,pilot-ceph-csi-cephfs-provisioner,csi-snapshotter,SEC_ROOT_NOT_PREVENTED,Security context,TP,Polaris,DETECTED,container,runAsRootAllowed,yes,merged: also SEC_RUN_AS_ROOT_EXPLICIT,yes
+K8S-366,helm/ceph-csi-cephfs.yaml,Deployment,pilot-ceph-csi-cephfs-provisioner,csi-snapshotter,SEC_ROOT_NOT_PREVENTED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_23,yes,narrower,no
+K8S-372,helm/zammad.yaml,Job,pilot-zammad-run-helm-test-rake-task,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-372,helm/zammad.yaml,Job,pilot-zammad-run-helm-test-rake-task,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-372,helm/zammad.yaml,Job,pilot-zammad-run-helm-test-rake-task,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-372,helm/zammad.yaml,Job,pilot-zammad-run-helm-test-rake-task,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-377,helm/kubeview.yaml,Deployment,pilot-kubeview,kubeview,IMG_LATEST,Images,TP,kube-linter,DETECTED,container,latest-tag,yes,merged: also IMG_UNTAGGED,yes
+K8S-377,helm/kubeview.yaml,Deployment,pilot-kubeview,kubeview,IMG_LATEST,Images,TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-377,helm/kubeview.yaml,Deployment,pilot-kubeview,kubeview,IMG_LATEST,Images,TP,Polaris,DETECTED,container,tagNotSpecified,yes,merged: also IMG_UNTAGGED,yes
+K8S-377,helm/kubeview.yaml,Deployment,pilot-kubeview,kubeview,IMG_LATEST,Images,TP,Checkov,DETECTED,object,CKV_K8S_14,yes,merged: also IMG_UNTAGGED,yes
+K8S-381,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,csi-rbdplugin,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-381,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,csi-rbdplugin,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-381,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,csi-rbdplugin,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-381,helm/ceph-csi-rbd.yaml,DaemonSet,pilot-ceph-csi-rbd-nodeplugin,csi-rbdplugin,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-388,helm/openebs.yaml,Deployment,pilot-zfs-localpv-controller,csi-snapshotter,REL_NO_READINESS_PROBE,Reliability,TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-388,helm/openebs.yaml,Deployment,pilot-zfs-localpv-controller,csi-snapshotter,REL_NO_READINESS_PROBE,Reliability,TP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-388,helm/openebs.yaml,Deployment,pilot-zfs-localpv-controller,csi-snapshotter,REL_NO_READINESS_PROBE,Reliability,TP,Polaris,DETECTED,container,readinessProbeMissing,yes,exact,no
+K8S-388,helm/openebs.yaml,Deployment,pilot-zfs-localpv-controller,csi-snapshotter,REL_NO_READINESS_PROBE,Reliability,TP,Checkov,DETECTED,object,CKV_K8S_9,yes,exact,no
+K8S-392,helm/tigera-operator.yaml,Job,tigera-operator-uninstall,,HOST_NETWORK,Host & identity,FP,kube-linter,DETECTED,object,host-network,yes,exact,no
+K8S-392,helm/tigera-operator.yaml,Job,tigera-operator-uninstall,,HOST_NETWORK,Host & identity,FP,kubeaudit,DETECTED,object,NamespaceHostNetworkTrue,yes,exact,no
+K8S-392,helm/tigera-operator.yaml,Job,tigera-operator-uninstall,,HOST_NETWORK,Host & identity,FP,Polaris,NO_CHECK,none,,no,,no
+K8S-392,helm/tigera-operator.yaml,Job,tigera-operator-uninstall,,HOST_NETWORK,Host & identity,FP,Checkov,DETECTED,object,CKV_K8S_19,yes,exact,no
+K8S-398,helm/victoria-metrics-k8s-stack.yaml,DaemonSet,pilot-prometheus-node-exporter,,HOST_PID,Host & identity,FP,kube-linter,DETECTED,object,host-pid,yes,exact,no
+K8S-398,helm/victoria-metrics-k8s-stack.yaml,DaemonSet,pilot-prometheus-node-exporter,,HOST_PID,Host & identity,FP,kubeaudit,DETECTED,object,NamespaceHostPIDTrue,yes,exact,no
+K8S-398,helm/victoria-metrics-k8s-stack.yaml,DaemonSet,pilot-prometheus-node-exporter,,HOST_PID,Host & identity,FP,Polaris,NO_CHECK,none,,no,,no
+K8S-398,helm/victoria-metrics-k8s-stack.yaml,DaemonSet,pilot-prometheus-node-exporter,,HOST_PID,Host & identity,FP,Checkov,DETECTED,object,CKV_K8S_17,yes,exact,no
+K8S-406,helm/consul.yaml,PodDisruptionBudget,pilot-consul-server,,DEPRECATED_API,"RBAC, secrets & API",TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-406,helm/consul.yaml,PodDisruptionBudget,pilot-consul-server,,DEPRECATED_API,"RBAC, secrets & API",TP,kubeaudit,DETECTED,object,DeprecatedAPIUsed,yes,exact,no
+K8S-406,helm/consul.yaml,PodDisruptionBudget,pilot-consul-server,,DEPRECATED_API,"RBAC, secrets & API",TP,Polaris,NO_CHECK,none,,no,,no
+K8S-406,helm/consul.yaml,PodDisruptionBudget,pilot-consul-server,,DEPRECATED_API,"RBAC, secrets & API",TP,Checkov,NO_CHECK,none,,no,,no
+K8S-407,helm/zammad.yaml,Deployment,pilot-zammad-railsserver,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-407,helm/zammad.yaml,Deployment,pilot-zammad-railsserver,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-407,helm/zammad.yaml,Deployment,pilot-zammad-railsserver,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-407,helm/zammad.yaml,Deployment,pilot-zammad-railsserver,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-411,helm/zammad.yaml,Job,pilot-zammad-run-helm-test-rake-task,zammad-volume-permissions,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kube-linter,DETECTED,container,run-as-non-root,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-411,helm/zammad.yaml,Job,pilot-zammad-run-helm-test-rake-task,zammad-volume-permissions,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,kubeaudit,DETECTED,container,"RunAsUserCSCRoot,RunAsUserPSCRoot",yes,union,no
+K8S-411,helm/zammad.yaml,Job,pilot-zammad-run-helm-test-rake-task,zammad-volume-permissions,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Polaris,DETECTED,container,runAsRootAllowed,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-411,helm/zammad.yaml,Job,pilot-zammad-run-helm-test-rake-task,zammad-volume-permissions,SEC_RUN_AS_ROOT_EXPLICIT,Security context,TP,Checkov,MISSED,none,CKV_K8S_23,yes,merged: also SEC_ROOT_NOT_PREVENTED,yes
+K8S-413,helm/gitea.yaml,Deployment,pilot-gitea,configure-gitea,SEC_NO_SECCOMP,Security context,TP,kube-linter,NO_CHECK,none,,no,,no
+K8S-413,helm/gitea.yaml,Deployment,pilot-gitea,configure-gitea,SEC_NO_SECCOMP,Security context,TP,kubeaudit,DETECTED,object,SeccompProfileMissing,yes,exact,no
+K8S-413,helm/gitea.yaml,Deployment,pilot-gitea,configure-gitea,SEC_NO_SECCOMP,Security context,TP,Polaris,DETECTED,container,linuxHardening,yes,composite: seccomp+AppArmor+SELinux,no
+K8S-413,helm/gitea.yaml,Deployment,pilot-gitea,configure-gitea,SEC_NO_SECCOMP,Security context,TP,Checkov,DETECTED,object,CKV_K8S_31,yes,exact,no
+K8S-417,helm/zammad.yaml,Deployment,pilot-zammad-scheduler,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-417,helm/zammad.yaml,Deployment,pilot-zammad-scheduler,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-417,helm/zammad.yaml,Deployment,pilot-zammad-scheduler,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-417,helm/zammad.yaml,Deployment,pilot-zammad-scheduler,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-427,helm/flux2.yaml,ClusterRole,crd-controller,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",FP,kube-linter,NO_CHECK,none,,no,,no
+K8S-427,helm/flux2.yaml,ClusterRole,crd-controller,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",FP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-427,helm/flux2.yaml,ClusterRole,crd-controller,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",FP,Polaris,NO_CHECK,none,,no,,no
+K8S-427,helm/flux2.yaml,ClusterRole,crd-controller,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",FP,Checkov,DETECTED,object,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_VERBS; partial,yes
+K8S-428,helm/datadog.yaml,ClusterRole,pilot-datadog-orchestrator-explorer,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",FP,kube-linter,NO_CHECK,none,,no,,no
+K8S-428,helm/datadog.yaml,ClusterRole,pilot-datadog-orchestrator-explorer,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",FP,kubeaudit,NO_CHECK,none,,no,,no
+K8S-428,helm/datadog.yaml,ClusterRole,pilot-datadog-orchestrator-explorer,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",FP,Polaris,NO_CHECK,none,,no,,no
+K8S-428,helm/datadog.yaml,ClusterRole,pilot-datadog-orchestrator-explorer,,RBAC_WILDCARD_RESOURCES,"RBAC, secrets & API",FP,Checkov,MISSED,none,CKV_K8S_49,yes,merged: also RBAC_WILDCARD_VERBS; partial,yes
+K8S-432,helm/cilium.yaml,DaemonSet,cilium,mount-cgroup,SEC_DANGEROUS_CAPABILITY,Security context,FP,kube-linter,NO_CHECK,none,,no,,no
+K8S-432,helm/cilium.yaml,DaemonSet,cilium,mount-cgroup,SEC_DANGEROUS_CAPABILITY,Security context,FP,kubeaudit,MISSED,none,CapabilityShouldDropAll,yes,broader proxy: added caps without drop ALL,no
+K8S-432,helm/cilium.yaml,DaemonSet,cilium,mount-cgroup,SEC_DANGEROUS_CAPABILITY,Security context,FP,Polaris,DETECTED,container,dangerousCapabilities,yes,exact,no
+K8S-432,helm/cilium.yaml,DaemonSet,cilium,mount-cgroup,SEC_DANGEROUS_CAPABILITY,Security context,FP,Checkov,DETECTED,object,CKV_K8S_39,yes,narrower: SYS_ADMIN only,no
+K8S-436,helm/k10.yaml,Deployment,metering-svc,,SA_TOKEN_AUTOMOUNTED,Host & identity,EXCLUDED,kube-linter,EXCLUDED_FROM_ANALYSIS,,,,,
+K8S-436,helm/k10.yaml,Deployment,metering-svc,,SA_TOKEN_AUTOMOUNTED,Host & identity,EXCLUDED,kubeaudit,EXCLUDED_FROM_ANALYSIS,,,,,
+K8S-436,helm/k10.yaml,Deployment,metering-svc,,SA_TOKEN_AUTOMOUNTED,Host & identity,EXCLUDED,Polaris,EXCLUDED_FROM_ANALYSIS,,,,,
+K8S-436,helm/k10.yaml,Deployment,metering-svc,,SA_TOKEN_AUTOMOUNTED,Host & identity,EXCLUDED,Checkov,EXCLUDED_FROM_ANALYSIS,,,,,
+K8S-443,helm/zammad.yaml,Deployment,pilot-zammad-railsserver,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-443,helm/zammad.yaml,Deployment,pilot-zammad-railsserver,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-443,helm/zammad.yaml,Deployment,pilot-zammad-railsserver,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-443,helm/zammad.yaml,Deployment,pilot-zammad-railsserver,zammad-volume-permissions,SEC_PRIVILEGED,Security context,TP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-448,helm/openebs.yaml,DaemonSet,pilot-agent-ha-node,agent-ha-node,SEC_PRIVILEGED,Security context,FP,kube-linter,DETECTED,container,privileged-container,yes,exact,no
+K8S-448,helm/openebs.yaml,DaemonSet,pilot-agent-ha-node,agent-ha-node,SEC_PRIVILEGED,Security context,FP,kubeaudit,DETECTED,container,PrivilegedTrue,yes,exact,no
+K8S-448,helm/openebs.yaml,DaemonSet,pilot-agent-ha-node,agent-ha-node,SEC_PRIVILEGED,Security context,FP,Polaris,DETECTED,container,runAsPrivileged,yes,exact,no
+K8S-448,helm/openebs.yaml,DaemonSet,pilot-agent-ha-node,agent-ha-node,SEC_PRIVILEGED,Security context,FP,Checkov,DETECTED,object,CKV_K8S_16,yes,exact,no
+K8S-455,helm/ceph-csi-cephfs.yaml,Deployment,pilot-ceph-csi-cephfs-provisioner,csi-snapshotter,IMG_NO_DIGEST,Images,TP-hardening,kube-linter,NO_CHECK,none,,no,,no
+K8S-455,helm/ceph-csi-cephfs.yaml,Deployment,pilot-ceph-csi-cephfs-provisioner,csi-snapshotter,IMG_NO_DIGEST,Images,TP-hardening,kubeaudit,NO_CHECK,none,,no,,no
+K8S-455,helm/ceph-csi-cephfs.yaml,Deployment,pilot-ceph-csi-cephfs-provisioner,csi-snapshotter,IMG_NO_DIGEST,Images,TP-hardening,Polaris,NO_CHECK,none,,no,,no
+K8S-455,helm/ceph-csi-cephfs.yaml,Deployment,pilot-ceph-csi-cephfs-provisioner,csi-snapshotter,IMG_NO_DIGEST,Images,TP-hardening,Checkov,DETECTED,object,CKV_K8S_43,yes,exact,no
