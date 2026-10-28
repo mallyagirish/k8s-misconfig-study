@@ -16,3 +16,8 @@ results/tools/*.err
 
 # Raw cloned sources (third-party; rebuilt by collectors)
 corpus_src/
+
+# Second-rater sealed key + handoff zip: local until the rater returns the
+# sheet, then the key is committed with the replication package
+results/second_rater/KEY_sealed.csv
+results/second_rater/*.zip
