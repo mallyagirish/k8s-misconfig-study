@@ -80,15 +80,21 @@ bash    scripts/run_tools.sh         # RQ3: kube-linter / kubeaudit / Polaris / 
 Prevalence numbers are only as good as the rules' precision. `results/labeling_sample_v2.csv`
 is a 457-finding stratified sample (all high-severity findings included, ~10% hidden duplicates
 for agreement scoring) governed by the labeling protocol in `results/labeling_protocol_v3.md`
-(a blinded 30-row subset for inter-rater reliability lives in `results/kappa_subset/`).
-Per-rule precision from that pass will be published with the paper.
+(+ its 2026-10-27 addendum), with a blinded 30-row subset for inter-rater reliability in
+`results/kappa_subset/`. **Validation is complete**: the author labeled the blinded subset
+blind (agreement 80%, Cohen's κ = 0.526 against the earlier-standard pre-labels, with the
+disagreement decomposition documented in the protocol addendum), adjudicated the
+disagreements into rule-level protocol amendments, and verified the full sample.
+Per-rule precision (overall 0.633 [0.587, 0.676] on the engine-v3-reconciled frame) is in
+`results/precision_provisional.md`.
 
 ## Status
 
 Independent research project, October 2026. Public data only; personal resources only;
-no employer code, data, or affiliation. Analysis phases complete; manual validation in
-progress. A paper is in preparation — primary venue: *Empirical Software Engineering*
-(Springer), journal route, no conference presentation.
+no employer code, data, or affiliation. Analysis and validation complete; a first full
+manuscript draft is in `paper/manuscript_draft.md`, targeting a January 2027 submission —
+primary venue: *Empirical Software Engineering* (Springer), journal route, no conference
+presentation.
 
 ## License
 
