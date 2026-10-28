@@ -36,7 +36,9 @@ by 1.3–1.7×, not the 2–3× a top-charts sample suggests. Finally, we audit 
 auditors: on identical input, the four most widely used manifest scanners
 (kube-linter, kubeaudit, Polaris, Checkov) cover at most ~16 of the 25 practices,
 agree closely only on explicit dangers, and diverge by up to 1.4× on the same
-practice purely through counting semantics; no tool inspects the *contents* of
+practice purely through counting semantics; scored against our verified labels,
+the tools detect 52–75% of genuine misconfigurations overall and also flag
+86–95% of the findings verification judged benign. No tool inspects the *contents* of
 committed Secret objects, where the credential-bearing minority hides. We release
 the corpus manifest, the rule engine, the labeling protocol, and the full
 validation data as a replication package.
@@ -93,7 +95,9 @@ This paper makes four contributions:
    coverage tops out at ~16 of 25 practices, that agreement is high only where
    misconfiguration is explicit, and that headline count divergences (up to
    ~1.4× on the same practice) are explained by counting semantics — pod- vs
-   container-level units and merged checks — rather than by detection quality
+   container-level units and merged checks; and that, scored against
+   verified ground truth, the tools' real deficits are coverage and
+   context-sensitivity, not detection on the practices they do check
    (Section 4.4).
 
 The headline result is that the ecosystem's risk is concentrated in *defaults*,
@@ -188,7 +192,13 @@ each tool's checks to our 25 rules by hand from the tools' output on this input,
 recording partial coverage (a check that covers a rule with narrower semantics)
 as one half in coverage totals. Counts were reconciled rule by rule; where a
 tool merges two of our rules into one check (e.g., untagged and `:latest`), we
-report the merged figure rather than forcing an attribution.
+report the merged figure rather than forcing an attribution. Separately, we
+score each tool against ground truth: the 126 Helm-arm rows of the validation
+sample (Section 3.4) carry author-verified labels, so for every sampled finding
+we can ask whether the tool reported the corresponding practice on that object —
+yielding detection rates on verified true positives and flagging rates on
+verified false positives, per tool (full method and per-row data in
+`results/tool_accuracy.md`).
 
 ### 3.4 Validation: labeling protocol, reliability, adjudication
 
@@ -405,6 +415,34 @@ requests (416); Checkov counts a narrower property (343). A consumer comparing
 tools — or tracking one tool over time — sees a ~1.4× swing that has nothing to
 do with the underlying manifests.
 
+**Accuracy against verified ground truth.** Coverage and counts say what a
+tool *can* check and how much it *reports*; the verified sample lets us ask
+whether it is *right*. Where a tool has a check for a sampled practice, it
+detects verified true positives reliably — kubeaudit 0.98, Polaris 0.93,
+kube-linter 0.90 — with Checkov the outlier at 0.76 (its run-as-non-root check
+systematically misses containers that run as root *explicitly*: 8 of its 15
+misses). Counting practices with no check as missed, effective detection of
+genuine misconfigurations is 0.52–0.75, and the ranking inverts the raw-count
+intuition: Polaris leads (0.75) on the strength of coverage, not per-check
+detection. The symmetric result is the more damning one: the same checks flag
+**86–95% of the findings verification judged false positives**. The taxonomy's
+context classes — infrastructure agents, standard operator patterns,
+least-privilege capability sets — fool the production tools at about the same
+rate they fooled our unvalidated rules. The tools' deficit on real manifests
+is not detection; it is coverage and context.
+
+| Tool | TP detection (check exists) | TP detection (effective) | FP-flagging (check exists) |
+|---|---:|---:|---:|
+| kube-linter | 0.90 [0.78, 0.96] | 0.52 | 0.92 |
+| kubeaudit | 0.98 [0.87, 1.00] | 0.55 | 0.95 |
+| Polaris | 0.93 [0.84, 0.97] | 0.75 | 0.87 |
+| Checkov | 0.76 [0.64, 0.85] | 0.64 | 0.86 |
+
+*Ground truth: 73 verified-TP and 50 verified-FP Helm-arm sample rows; rates
+over rows where a mapped check exists, except the effective column, which
+counts no-check practices as missed. Method, joins, and caveats:
+`results/tool_accuracy.md`.*
+
 **Defaults decide what gets found.** kube-linter's probe checks validate probe
 *port correctness*, not probe existence; its SA-token and wildcard checks are
 absent or opt-in; kubeaudit's SA check covers only the default service account.
@@ -581,7 +619,7 @@ state (node-infrastructure agents being the largest).
 | Corpus | 2,039 manifests, 92 repos | Artifact Hub charts (all) | 4,109 constructed files | 16,243 docs, 2 arms (60 repos + 151 charts) |
 | Practices | 11 security categories | tools' default policies | 281 misconfigurations (union of 10 tools) | 25 rules, 6 families |
 | Ground truth | practitioner fix-agreement (10 reports) | manual FP check on a subset | constructed by design | 457-finding stratified sample, blinded subset, protocol + adjudication, author-verified |
-| Tool treatment | builds one tool | 7 tools, common/unique counts + LLM repair | 10 tools, recall on benchmark | 4 tools on identical natural input: coverage, count semantics, (accuracy vs verified labels) |
+| Tool treatment | builds one tool | 7 tools, common/unique counts + LLM repair | 10 tools, recall on benchmark | 4 tools on identical natural input: coverage, count semantics, accuracy vs verified labels |
 | Production vs fixture | not separated | n/a (charts) | n/a (constructed) | separated; content-over-tag rule |
 | Prevalence | manifest-level counts | chart-level counts | none (benchmark) | workload-level, cluster-level, precision-adjusted |
 
