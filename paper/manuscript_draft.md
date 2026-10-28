@@ -491,35 +491,107 @@ rebuildable from the released collectors and logs.
 
 ## 7. Related work
 
-*[Draft note: this section's structure is final; individual citations are to be
-verified against the literature in the pre-submission pass.]*
+### 7.1 Empirical studies of Kubernetes misconfiguration
 
-**Empirical studies of configuration.** Misconfiguration has been studied as a
-failure cause in production systems (e.g., Yin et al. on configuration errors in
-commercial and open-source systems; Yuan et al. on the characteristics of
-production incidents), and configuration *practices* have been mined for
-specific ecosystems — Dockerfiles, CI configuration, and infrastructure-as-code
-scripts (Puppet, Terraform) — generally finding high rates of smells and
-insecure defaults. Kubernetes-specific measurement is thinner: prior work has
-examined Helm chart quality and smells, and security analyses of public
-manifests exist largely as industry reports without validation methodology.
-This study differs in pairing prevalence with per-rule precision from a
-verified sample, and in treating source context (production vs fixture) as a
-first-class variable.
+The closest predecessor is Rahman et al.'s empirical study of security
+misconfigurations in open-source Kubernetes manifests [Rahman2023]. Mining
+2,039 manifests from 92 repositories, they characterize 11 categories of
+security misconfiguration, build a detection tool (SLI-KUBE) to quantify their
+frequency (1,051 misconfigurations), and validate by reporting ten
+misconfigurations to practitioners, who agreed to fix 60%. We build on their
+characterization in four ways: an order-of-magnitude larger corpus with a
+second, curated arm (rendered Helm charts) that supports a curation comparison;
+a broader practice set (25 rules across security, resources, reliability,
+images, RBAC, and secrets, rather than security alone); separation of
+production manifests from examples and fixtures, which their manifest-level
+counting does not attempt; and a validation design that estimates *per-rule
+precision* over a stratified sample with a documented protocol and a blinded
+reliability check, rather than fix-agreement on a small set of reports. Their
+headline conclusion — insecure configurations are widespread — is corroborated
+by our data at larger scale; our contribution is establishing *which* of the
+counts can be believed, and by how much.
 
-**Benchmarks and hardening guidance.** The CIS Kubernetes Benchmark and the
-NSA/CISA Kubernetes Hardening Guide define the practice standard our rules
-operationalize; the Pod Security Standards define the platform's own posture
-tiers. Our taxonomy v2's tiers can be read as an empirical annotation of those
-documents: which of their recommendations correspond to states that are wrong
-in context, and which to hardening opportunities.
+Minna et al. mine Helm charts from Artifact Hub and compare seven analyzer
+tools by their default policies, then evaluate whether LLMs can mitigate the
+reported misconfigurations [Minna2025] — in this journal. Their tool comparison
+aggregates common and unique findings per tool and includes a manual
+false-positive check on a subset. Our study asks the prior question their
+pipeline assumes away: whether the tools' reports on natural input are
+*correct*, rule by rule, against verified ground truth — and finds that for
+context-sensitive rules they frequently are not (Section 4.3), a result that
+also bears on their mitigation loop, since an LLM asked to fix a false positive
+can only damage a working configuration. The studies are complementary: they
+evaluate repair; we evaluate the measurement the repair depends on. We also add
+the raw-manifest arm and the production/fixture separation their chart-only
+corpus does not require.
 
-**Scanner evaluations.** Prior tool comparisons in adjacent domains (static
-analysis for code, IaC scanners) typically benchmark detection counts or
-coverage on seeded defects. Seeded-defect designs cannot observe the failure
-mode that dominates here — context-dependent false positives on real code —
-which is why we audit on identical *natural* input and validate findings
-instead of assuming them.
+Beyond Kubernetes, configuration errors have been studied empirically in
+general-purpose systems and in infrastructure-as-code ecosystems (Dockerfiles,
+Puppet, Terraform, CI configuration), generally finding insecure defaults and
+smell-like patterns to be widespread. Those results motivate ours; the
+Kubernetes setting differs in that the configuration surface is a single,
+structured API with platform-supplied defaults for nearly every field, which
+is what makes a uniform 25-rule measurement across two distribution channels
+possible.
+
+### 7.2 Scanner evaluation and benchmarks
+
+Eom et al. present the first systematic benchmark of Kubernetes
+misconfiguration scanners [Eom2026]: ten tools, whose documented coverage they
+found too ambiguous to take at face value, so they reverse-engineered precise
+detection targets from implementations and dynamic testing, then measured
+recall on a constructed benchmark of 4,109 misconfiguration files (281 unique
+misconfigurations), finding best recall of 43.8% (static) and 62.3% (dynamic).
+Their ground truth is *constructed* — each benchmark file is a known
+misconfiguration — which is the right design for measuring recall, and the
+wrong one for measuring what happens on real manifests, where the open
+question is not "does the tool fire on a seeded defect" but "is this firing,
+on this real object, a genuine misconfiguration." That is the quantity we
+measure: per-rule precision of findings on natural corpora, against
+author-verified labels, plus prevalence — neither of which a seeded benchmark
+can report. The two results also converge from opposite directions: their
+finding that scanners adopt different criteria for the same documented
+misconfiguration is the implementation-level explanation of our
+measurement-level finding that identical input yields ~1.4× count spreads
+through counting semantics (Section 4.4). Where they audit ten scanners
+against a specification, we audit four against the wild.
+
+Industry comparisons of hardening guidelines and scanner scoring (e.g., the
+Dynatrace Research comparison of eight guidelines and ten scanners) likewise
+report substantial coverage and scoring disparities; they share our conclusion
+that scanner outputs are not mutually comparable, reached there by guideline
+mapping rather than by validated findings.
+
+### 7.3 Benchmarks and hardening guidance
+
+The CIS Kubernetes Benchmark and the NSA/CISA Kubernetes Hardening Guide
+define the practice standard our rules operationalize, and the Pod Security
+Standards define the platform's own posture tiers. Taxonomy v2 (Section 4.3)
+can be read as an empirical annotation of those documents: which of their
+recommendations correspond to states that are wrong in essentially every
+context (Tier 1), which to hardening opportunities (Tier 2), and which to
+hygiene (Tier 3) — and, through the five false-positive context classes, where
+the guidance needs contextual exceptions that the documents themselves do not
+state (node-infrastructure agents being the largest).
+
+### 7.4 Positioning
+
+| Dimension | Rahman et al. 2023 | Minna et al. 2025 | Eom et al. 2026 | This study |
+|---|---|---|---|---|
+| Corpus | 2,039 manifests, 92 repos | Artifact Hub charts (all) | 4,109 constructed files | 16,243 docs, 2 arms (60 repos + 151 charts) |
+| Practices | 11 security categories | tools' default policies | 281 misconfigurations (union of 10 tools) | 25 rules, 6 families |
+| Ground truth | practitioner fix-agreement (10 reports) | manual FP check on a subset | constructed by design | 457-finding stratified sample, blinded subset, protocol + adjudication, author-verified |
+| Tool treatment | builds one tool | 7 tools, common/unique counts + LLM repair | 10 tools, recall on benchmark | 4 tools on identical natural input: coverage, count semantics, (accuracy vs verified labels) |
+| Production vs fixture | not separated | n/a (charts) | n/a (constructed) | separated; content-over-tag rule |
+| Prevalence | manifest-level counts | chart-level counts | none (benchmark) | workload-level, cluster-level, precision-adjusted |
+
+In one sentence: prior work establishes that Kubernetes misconfiguration
+exists (Rahman et al.), that tools report it inconsistently and LLMs repair it
+imperfectly (Minna et al.), and that scanners miss much of what they claim to
+cover on seeded cases (Eom et al.). This study establishes how much of it
+there is in production-shaped code, how much of what any rule reports is real,
+and why the tools' numbers cannot be compared naively — the measurement
+foundation the other three directions implicitly rely on.
 
 ## 8. Conclusion
 
@@ -544,10 +616,20 @@ An archival DOI (Zenodo) will be minted at submission. The corpus manifests
 themselves remain under their original licenses and are rebuilt, not
 redistributed.
 
-## References (to be completed in the pre-submission pass)
+## References (verified entries; remaining general citations to be completed in the pre-submission pass)
 
+- [Rahman2023] A. Rahman, S. I. Shamim, D. B. Bose, and R. Pandita, "Security
+  Misconfigurations in Open Source Kubernetes Manifests: An Empirical Study,"
+  *ACM Transactions on Software Engineering and Methodology* 32(4), 1–36, 2023.
+  DOI: 10.1145/3579639.
+- [Minna2025] F. Minna, F. Massacci, and K. Tuma, "Analyzing and Mitigating
+  (with LLMs) the Security Misconfigurations of Helm Charts from Artifact Hub,"
+  *Empirical Software Engineering* 30:132, 2025. DOI: 10.1007/s10664-025-10688-0.
+- [Eom2026] H. Eom, B. Suk, and S. Hwang, "An Empirical Study and Benchmark of
+  Kubernetes Misconfiguration Scanners," *Proc. ISSTA 2026*. DOI: 10.1145/3832297.
 - CIS Kubernetes Benchmark, Center for Internet Security.
 - NSA & CISA, *Kubernetes Hardening Guide*.
 - Kubernetes documentation: Pod Security Standards; Security Context.
 - Tool documentation and check catalogues: kube-linter, kubeaudit, Polaris, Checkov.
-- Empirical configuration-error and IaC studies cited in Section 7 (verification pending).
+- General configuration-error and IaC studies cited in Section 7.1 (final selection
+  and verification pending).
