@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this study's data, engine, or findings, please cite it as below."
+type: software
+title: "Misconfigured by Default: Kubernetes Configuration Practices in the Wild, and an Audit of the Tools That Check Them"
+authors:
+  - family-names: Mallya
+    given-names: Girish
+repository-code: "https://github.com/mallyagirish/k8s-misconfig-study"
+license: Apache-2.0
+abstract: >-
+  Replication package and checker for an empirical study of Kubernetes
+  configuration practices across 16,243 YAML documents (151 rendered Helm
+  charts and 60 GitHub repositories): a 25-rule analysis engine, per-rule
+  precision validated on a 457-finding author-verified sample, and a
+  comparative audit of kube-linter, kubeaudit, Polaris, and Checkov on
+  identical input.

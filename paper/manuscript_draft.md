@@ -100,9 +100,9 @@ This paper makes four contributions:
    context-sensitivity, not detection on the practices they do check
    (Section 4.4).
 
-The headline result is that the ecosystem's risk is concentrated in *defaults*,
+The headline result is that in this corpus the risk is concentrated in *defaults*,
 not in explicit misbehavior. Privileged containers appear in 1.4% of production
-workloads; automounted service-account tokens appear in 88.6%. Security effort —
+workloads; automounted service-account tokens appear in 88.6%. The pattern suggests security effort —
 human and tooling alike — is calibrated to the rare, explicit cases and largely
 blind to the common, default ones.
 
@@ -252,7 +252,19 @@ population is engine v3, we reconciled every sampled row against v3 findings on
 (arm, source, kind, name, container, rule): 451 of 457 rows still exist in v3;
 the headline figures are computed on that matched frame, and a distinct-finding
 sensitivity check (one vote per unique key, collapsing the intentional
-duplicates) is reported alongside. Cluster-level prevalence (share of
+duplicates) is reported alongside. Two aggregates of the per-rule precisions
+answer different questions and are kept distinct throughout: the rate across
+sampled rows (0.633) describes the *sample*, in which rare rules are
+deliberately over-represented because all findings of the rarest rules were
+taken; the population-weighted aggregate — each rule's precision weighted by
+its v3 population, equivalently the adjusted finding count over all findings —
+is **0.699** (19,199 / 27,460) and is the figure that characterizes the corpus
+as a whole. Every adjusted prevalence figure in Section 4 is built per rule
+and is identical under either aggregate. As a standards sensitivity check,
+the same sample scored under the superseded v2 definitional standard (the
+pre-labels) gives ≈0.73; the gap to 0.633 is the v3 amendments — production
+scoping and the context classes of Section 4.3 — reclassifying findings that
+the purely definitional standard counted as genuine. Cluster-level prevalence (share of
 repositories/charts with ≥1 finding) addresses the non-independence of findings
 within a source: 52.9% of v3 GitHub findings repeat an already-seen
 (kind, name, container, rule) key, so document-level rates alone would overstate
@@ -317,7 +329,9 @@ Overall precision on the reconciled, author-verified sample is **0.633
 [0.587, 0.676]** (279 TP / 162 FP over decided rows), adjusting the 27,460 raw
 findings to an estimated **≈19,200 genuine misconfigurations**. A
 distinct-finding sensitivity analysis gives 0.626 — the intentional duplicate
-rows do not move the result. But the aggregate conceals the paper's most useful
+rows do not move the result. Population-weighted, overall precision is 0.699
+(Section 3.5); the per-rule adjustments that follow are the same under either
+aggregate. But the aggregate conceals the paper's most useful
 variation: precision is a property of the *rule*, and it splits the taxonomy
 into rules that can be read at face value and rules that cannot.
 
@@ -564,9 +578,10 @@ the raw-manifest arm and the production/fixture separation their chart-only
 corpus does not require.
 
 Beyond Kubernetes, configuration errors have been studied empirically in
-general-purpose systems and in infrastructure-as-code ecosystems (Dockerfiles,
-Puppet, Terraform, CI configuration), generally finding insecure defaults and
-smell-like patterns to be widespread. Those results motivate ours; the
+commercial and open-source systems [Yin2011], and the systems approaches to
+tackling them surveyed in [XuZhou2015]; studies of infrastructure-as-code
+ecosystems (Dockerfiles, Puppet, Terraform, CI configuration) generally find
+insecure defaults and smell-like patterns to be widespread. Those results motivate ours; the
 Kubernetes setting differs in that the configuration surface is a single,
 structured API with platform-supplied defaults for nearly every field, which
 is what makes a uniform 25-rule measurement across two distribution channels
@@ -641,7 +656,10 @@ measurement itself needs care — a third of naive findings are benign in
 context, and the scanners the ecosystem relies on cover at most two-thirds of
 observed practices, agree mainly where danger is explicit, and diverge by
 bookkeeping where it is not. Both conclusions point the same way: harden the
-defaults, and label the measurements.
+defaults, and label the measurements. These claims describe public,
+production-shaped manifests and rendered charts — the configuration the
+ecosystem publishes — not the private state of running clusters, which only
+their operators can observe.
 
 ## Data availability and replication package
 
@@ -654,7 +672,7 @@ An archival DOI (Zenodo) will be minted at submission. The corpus manifests
 themselves remain under their original licenses and are rebuilt, not
 redistributed.
 
-## References (verified entries; remaining general citations to be completed in the pre-submission pass)
+## References
 
 - [Rahman2023] A. Rahman, S. I. Shamim, D. B. Bose, and R. Pandita, "Security
   Misconfigurations in Open Source Kubernetes Manifests: An Empirical Study,"
@@ -669,5 +687,10 @@ redistributed.
 - NSA & CISA, *Kubernetes Hardening Guide*.
 - Kubernetes documentation: Pod Security Standards; Security Context.
 - Tool documentation and check catalogues: kube-linter, kubeaudit, Polaris, Checkov.
-- General configuration-error and IaC studies cited in Section 7.1 (final selection
-  and verification pending).
+- [Yin2011] Z. Yin, X. Ma, J. Zheng, Y. Zhou, L. N. Bairavasundaram, and
+  S. Pasupathy, "An Empirical Study on Configuration Errors in Commercial and
+  Open Source Systems," *Proc. 23rd ACM Symposium on Operating Systems
+  Principles (SOSP)*, 159–172, 2011.
+- [XuZhou2015] T. Xu and Y. Zhou, "Systems Approaches to Tackling Configuration
+  Errors: A Survey," *ACM Computing Surveys* 47(4), Article 70, 2015.
+  DOI: 10.1145/2791577.
