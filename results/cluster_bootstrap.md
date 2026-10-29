@@ -17,3 +17,18 @@ Row-level (independence-assuming) intervals are narrower — e.g. weighted
 precision [0.649, 0.750] by binomial variance propagation — and are
 superseded by these cluster-resampled intervals, since findings within a
 source are correlated (52.9% of v3 findings repeat a seen key).
+
+## Sensitivity to the no-decided-rows fallback (added 2026-10-28)
+
+In 42 of 50,000 rule-replicates (0.08%) a resample contains no decided rows
+for a rule — most often IMG_NO_DIGEST (23), whose decided rows sit in few
+clusters. Re-running the bootstrap under three handlings gives identical
+weighted-precision intervals to three decimals:
+
+| Fallback for a missing rule | Weighted precision 95% CI |
+|---|---:|
+| Full-sample precision (as reported) | [0.623, 0.840] |
+| Pooled sample precision (0.633) | [0.623, 0.840] |
+| Drop the rule's population, renormalize | [0.623, 0.840] |
+
+The fallback choice does not affect the reported intervals.

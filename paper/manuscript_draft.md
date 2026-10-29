@@ -87,7 +87,7 @@ This paper makes four contributions:
 2. **A validated rule engine.** Every prevalence number is paired with a per-rule
    precision estimate from a 457-finding stratified sample, judged under a
    written labeling protocol whose evolution (three versions), blinded
-   blinded author–AI agreement check, and adjudication amendments are documented and released.
+   author–AI agreement check, and adjudication amendments are documented and released.
    Precision, not raw counts, is the paper's unit of evidence (Section 4.3).
 3. **A revised taxonomy** of Kubernetes misconfiguration that distinguishes
    misconfigurations proper from hardening gaps and manifest rot, and classifies
@@ -280,7 +280,10 @@ charts, 2,000 replicates; `results/cluster_bootstrap.md`): the adjusted total's
 95% interval is [17,120, 23,071] and the weighted precision's is [0.623, 0.840].
 Row-level intervals that treat findings as independent are materially
 narrower and are not used, since findings within a source are correlated
-(52.9% of v3 findings repeat a seen key). Every adjusted prevalence figure in Section 4 is built per rule
+(52.9% of v3 findings repeat a seen key). The intervals are also insensitive
+to how a replicate treats a rule with no decided rows in the resample — an
+event in only 42 of 50,000 rule-replicates: full-sample, pooled-precision, and
+drop-and-renormalize fallbacks all yield [0.623, 0.840]. Every adjusted prevalence figure in Section 4 is built per rule
 and is identical under either aggregate. As a standards sensitivity check,
 the same sample scored under the superseded v2 definitional standard (the
 pre-labels) gives ≈0.73; the gap to 0.633 is the v3 amendments — production
@@ -687,7 +690,7 @@ state (node-infrastructure agents being the largest).
 |---|---|---|---|---|
 | Corpus | 2,039 manifests, 92 repos | Artifact Hub charts (all) | 4,109 constructed files | 16,243 docs, 2 arms (60 repos + 151 charts) |
 | Practices | 11 security categories | tools' default policies | 281 misconfigurations (union of 10 tools) | 25 rules, 6 families |
-| Ground truth | practitioner fix-agreement (10 reports) | manual FP check on a subset | constructed by design | 457-finding stratified sample, blinded subset, protocol + adjudication, author-verified |
+| Ground truth | practitioner fix-agreement (10 reports) | manual FP check on a subset | constructed by design | 457-finding stratified sample, blinded subset, protocol + adjudication, author-adjudicated |
 | Tool treatment | builds one tool | 7 tools, common/unique counts + LLM repair | 10 tools, recall on benchmark | 4 tools on identical natural input: coverage, count semantics, accuracy vs verified labels |
 | Production vs fixture | not separated | n/a (charts) | n/a (constructed) | separated; content-over-tag rule |
 | Prevalence | manifest-level counts | chart-level counts | none (benchmark) | workload-level, cluster-level, precision-adjusted |

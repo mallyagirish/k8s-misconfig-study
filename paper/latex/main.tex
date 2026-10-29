@@ -116,9 +116,9 @@ This paper makes four contributions:
   \textbf{A validated rule engine.} Every prevalence number is paired
   with a per-rule precision estimate from a 457-finding stratified
   sample, judged under a written labeling protocol whose evolution
-  (three versions), blinded blinded author--AI agreement check, and
-  adjudication amendments are documented and released. Precision, not
-  raw counts, is the paper's unit of evidence (Section 4.3).
+  (three versions), blinded author--AI agreement check, and adjudication
+  amendments are documented and released. Precision, not raw counts, is
+  the paper's unit of evidence (Section 4.3).
 \item
   \textbf{A revised taxonomy} of Kubernetes misconfiguration that
   distinguishes misconfigurations proper from hardening gaps and
@@ -359,14 +359,18 @@ interval is {[}17,120, 23,071{]} and the weighted precision's is
 {[}0.623, 0.840{]}. Row-level intervals that treat findings as
 independent are materially narrower and are not used, since findings
 within a source are correlated (52.9\% of v3 findings repeat a seen
-key). Every adjusted prevalence figure in Section 4 is built per rule
-and is identical under either aggregate. As a standards sensitivity
-check, the same sample scored under the superseded v2 definitional
-standard (the pre-labels) gives $\approx$0.73; the gap to 0.633 is the v3
-amendments --- production scoping and the context classes of Section 4.3
---- reclassifying findings that the purely definitional standard counted
-as genuine. Cluster-level prevalence (share of repositories/charts with
-$\geq$1 finding) addresses the non-independence of findings within a source:
+key). The intervals are also insensitive to how a replicate treats a
+rule with no decided rows in the resample --- an event in only 42 of
+50,000 rule-replicates: full-sample, pooled-precision, and
+drop-and-renormalize fallbacks all yield {[}0.623, 0.840{]}. Every
+adjusted prevalence figure in Section 4 is built per rule and is
+identical under either aggregate. As a standards sensitivity check, the
+same sample scored under the superseded v2 definitional standard (the
+pre-labels) gives $\approx$0.73; the gap to 0.633 is the v3 amendments ---
+production scoping and the context classes of Section 4.3 ---
+reclassifying findings that the purely definitional standard counted as
+genuine. Cluster-level prevalence (share of repositories/charts with $\geq$1
+finding) addresses the non-independence of findings within a source:
 52.9\% of v3 GitHub findings repeat an already-seen (kind, name,
 container, rule) key, so document-level rates alone would overstate how
 widespread each practice is --- and, as Section 4.1 shows, the practices
@@ -901,7 +905,7 @@ Practices & 11 security categories & tools' default policies & 281
 misconfigurations (union of 10 tools) & 25 rules, 6 families \\
 Ground truth & practitioner fix-agreement (10 reports) & manual FP check
 on a subset & constructed by design & 457-finding stratified sample,
-blinded subset, protocol + adjudication, author-verified \\
+blinded subset, protocol + adjudication, author-adjudicated \\
 Tool treatment & builds one tool & 7 tools, common/unique counts + LLM
 repair & 10 tools, recall on benchmark & 4 tools on identical natural
 input: coverage, count semantics, accuracy vs verified labels \\
