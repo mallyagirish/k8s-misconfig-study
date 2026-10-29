@@ -1,0 +1,65 @@
+% Misconfigured by Default — LaTeX conversion of paper/manuscript_draft.md
+% Conversion pass: article class for portability. For submission, swap in
+% Springer's sn-jnl class (sn-basic reference style) — structure is compatible.
+\documentclass[11pt]{article}
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{calc}
+\usepackage{etoolbox}
+\usepackage{xcolor}
+\usepackage[colorlinks=true,allcolors=blue!50!black]{hyperref}
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\AtBeginEnvironment{longtable}{\footnotesize\setlength{\tabcolsep}{4pt}}
+
+\title{Misconfigured by Default: The Prevalence, Validity, and Tool Coverage of Kubernetes Misconfigurations in the Wild}
+\author{Girish Mallya\\
+Independent Researcher, Bellevue, WA, USA\\
+\texttt{girishm60@gmail.com}}
+\date{}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+%%ABSTRACT%%
+\end{abstract}
+
+\noindent\textbf{Keywords:} %%KEYWORDS%%
+
+%%BODY%%
+
+\section*{Statements and Declarations}
+
+\subsection*{Funding}
+No funding was received for conducting this study.
+
+\subsection*{Competing interests}
+The author declares no competing interests.
+
+\subsection*{Ethics approval and consent to participate}
+Not applicable. The study analyzes publicly available open-source artifacts
+and involves no human subjects.
+
+\subsection*{Author contributions}
+The author is the sole contributor to this work.
+
+\subsection*{Use of artificial intelligence tools}
+AI tools were used in two ways, both disclosed in the methods. First, an AI
+assistant produced initial pre-labels for the validation sample under
+labeling protocol v2; every label was subsequently verified or adjudicated
+by the author under the governing protocol v3, and reliability was measured
+on a blinded subset labeled by the author before seeing the pre-labels
+(Section 3.4). Second, AI assistance was used for software development
+support and language editing during preparation of this manuscript. The
+author reviewed all output and takes full responsibility for the content.
+
+\nocite{CISBenchmark,NSA2022,K8sPSS,ToolDocs}
+\bibliographystyle{plain}
+\bibliography{references}
+
+\end{document}

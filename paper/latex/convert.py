@@ -31,7 +31,7 @@ keywords = ""
 abstract_body = []
 for l in abstract_lines:
     if l.startswith("**Keywords:**"):
-        keywords = l.replace("**Keywords:**", "").strip()
+        keywords = l.replace("**Keywords:**", "").strip().replace(";", ",")
     elif l.strip() != "---":
         abstract_body.append(l)
 body = "\n".join(lines[intro_start:ref_start])
@@ -52,12 +52,22 @@ def pandoc(md_text):
     return out.stdout
 
 
+
+def allow_breaks_in_tables(tex):
+    parts = re.split(r"(\\begin\{longtable\}.*?\\end\{longtable\})", tex, flags=re.S)
+    for i, p in enumerate(parts):
+        if p.startswith("\\begin{longtable}"):
+            parts[i] = p.replace("\\_", "\\_\\allowbreak{}")
+    return "".join(parts)
+
+
 def post(tex, abstract=False):
     for u, m in UNICODE_MATH.items():
         tex = tex.replace(u, m)
     for k in CITE_KEYS:
         tex = tex.replace(f"CITEKEY_{k}_END", rf"\cite{{{k}}}")
     if not abstract:
+        tex = allow_breaks_in_tables(tex)
         tex = re.sub(r"\\section\{(\d+)\.\s*", r"\\section{", tex)
         tex = re.sub(r"\\subsection\{(\d+)\.(\d+)\s*", r"\\subsection{", tex)
         tex = tex.replace(r"\section{Data availability and replication package}",

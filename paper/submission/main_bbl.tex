@@ -1,0 +1,1006 @@
+% Misconfigured by Default — Springer Nature (sn-jnl) skeleton for EMSE submission.
+% Reference style: sn-basic (author-year), per EMSE's name-year citation rule.
+\documentclass[pdflatex,sn-basic]{sn-jnl}
+
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{textcomp}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{calc}
+\usepackage{etoolbox}
+\providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\AtBeginEnvironment{longtable}{\footnotesize\setlength{\tabcolsep}{4pt}}
+
+\title[Misconfigured by Default]{Misconfigured by Default: The Prevalence, Validity, and Tool Coverage of Kubernetes Misconfigurations in the Wild}
+
+\author*[1]{\fnm{Girish} \sur{Mallya}}\email{girishm60@gmail.com}
+
+\affil*[1]{\orgname{Independent Researcher}, \orgaddress{\city{Bellevue}, \state{WA}, \country{USA}}}
+
+\abstract{Kubernetes manifests are the de facto interface to production
+infrastructure, with permissive defaults: a workload specifying nothing
+runs with an automounted token, no resource limits, and no sandboxing
+profile. We measure how 151 Helm charts and 60 public GitHub
+repositories (16,243 documents, 2,811 workloads) configure these knobs,
+using a 25-rule engine.
+
+We validated the engine on a 457-finding stratified sample: AI-generated
+pre-labels were author-checked --- the 92 protocol-sensitive rows
+individually adjudicated, a blinded 30-row subset labeled blind
+(author--AI agreement: $\kappa$ = 0.526 {[}0.17, 0.84{]}) --- and the rest
+retain pre-labels accepted in the verification pass. Population-weighted
+precision is 0.699 {[}0.62, 0.84{]} (cluster bootstrap by source):
+$\approx$19,200 {[}17,100, 23,100{]} of 27,460 raw findings are estimated
+genuine. Precision is rule-dependent: unambiguous absence checks
+(seccomp, privilege escalation, root prevention) are essentially exact,
+while context-sensitive rules (committed secrets, host namespaces,
+probes) are mostly benign-by-design cases.
+
+The defaults dominate: tokens automount in 88.6\% of production GitHub
+workloads, CPU limits --- a contested hardening practice --- are missing
+in 75.3\%; 1.4\% run a privileged container. Helm charts beat raw
+manifests on most practices, but by only 1.3--1.7$\times$ in workload-level
+prevalence.
+
+We also audit the auditors: on identical input, four widely used
+scanners cover at most 16 of the 25 practices, diverging up to 1.4$\times$ on
+the same practice largely through counting semantics. Scored against our
+verified labels (Helm arm, n = 126), they effectively detect 52--75\% of
+the engine's verified-genuine findings and flag 86--95\% of
+verified-benign findings where a check exists, under our contextual
+protocol.
+
+static analysis tools; measurement validity}
+
+\keywords{Kubernetes, configuration errors, empirical study, misconfiguration,}
+
+\begin{document}
+
+\maketitle
+
+\hypertarget{introduction}{%
+\subsection{1. Introduction}\label{introduction}}
+
+Almost every production system now runs on Kubernetes, and almost every
+Kubernetes workload is described by a YAML manifest that its author
+wrote once and rarely revisits. The platform's configuration surface is
+large, and its defaults were chosen for convenience rather than safety.
+A container that says nothing about security runs as whatever user its
+image specifies, with a service-account token mounted into its
+filesystem, no CPU or memory limits, no seccomp profile, and privilege
+escalation allowed. Each of these is a documented hardening gap; in
+aggregate, they define the actual security posture of the cloud-native
+ecosystem.
+
+Two questions follow. First, \emph{descriptive}: how are real manifests
+actually configured --- which hardening practices are routine, which are
+rare, and how much of the apparent risk is an artifact of counting test
+fixtures and examples as if they were production code? Second,
+\emph{instrumental}: the ecosystem's answer to this problem is a family
+of static auditing tools, but those tools are themselves rarely audited.
+If four widely used scanners are run on identical input, do they cover
+the same practices, and do their counts agree?
+
+Both questions are measurement questions, and both are easy to answer
+badly. Manifest corpora scraped from public sources mix production code
+with tutorials, test fixtures, and rendered templates; naive counting
+silently grades homework as if it were infrastructure. Scanner
+comparisons, meanwhile, tend to report raw finding counts without
+establishing whether any tool's findings are \emph{correct} --- and our
+own validation shows that for several common rules, the majority of
+flagged findings are benign in context.
+
+This paper makes four contributions:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{A two-arm prevalence measurement} of 25 misconfiguration
+  practices across 16,243 documents (2,811 workloads), with source
+  tagging that separates production manifests from examples and
+  fixtures, cluster-level prevalence that corrects for duplicated
+  content, and a Helm-vs-GitHub comparison that corrects a best-chart
+  bias in the obvious sampling strategy (Section 4.1, 4.2).
+\item
+  \textbf{A validated rule engine.} Every prevalence number is paired
+  with a per-rule precision estimate from a 457-finding stratified
+  sample, judged under a written labeling protocol whose evolution
+  (three versions), blinded author--AI agreement check, and adjudication
+  amendments are documented and released. Precision, not raw counts, is
+  the paper's unit of evidence (Section 4.3).
+\item
+  \textbf{A revised taxonomy} of Kubernetes misconfiguration that
+  distinguishes misconfigurations proper from hardening gaps and
+  manifest rot, and classifies false positives into reusable context
+  classes (infrastructure agents, credential-free placeholders, standard
+  operator patterns) (Section 4.3).
+\item
+  \textbf{An audit of four production scanners on identical input},
+  showing that coverage tops out at \textasciitilde16 of 25 practices,
+  that agreement is high only where misconfiguration is explicit, and
+  that headline count divergences (up to \textasciitilde1.4$\times$ on the same
+  practice) are explained by counting semantics --- pod- vs
+  container-level units and merged checks; and that, scored against
+  verified ground truth, the tools' real deficits are coverage and
+  context-sensitivity, not detection on the practices they do check
+  (Section 4.4).
+\end{enumerate}
+
+The headline result is that in this corpus the risk is concentrated in
+\emph{defaults}, not in explicit misbehavior. Privileged containers
+appear in 1.4\% of production workloads; automounted service-account
+tokens appear in 88.6\%. The pattern suggests security effort --- human
+and tooling alike --- is calibrated to the rare, explicit cases and
+largely blind to the common, default ones.
+
+\hypertarget{background-and-research-questions}{%
+\subsection{2. Background and research
+questions}\label{background-and-research-questions}}
+
+A Kubernetes workload manifest declares, among other things, a pod's
+security context (user, capabilities, seccomp and AppArmor profiles,
+privilege escalation), its containers' resource requests and limits,
+image references (tag and digest pinning), health probes,
+service-account binding, and --- in adjacent objects --- RBAC roles and
+Secrets. Nearly every field is optional, and the platform supplies a
+permissive default when a field is absent. Misconfiguration, for this
+study, is a manifest state that a documented hardening practice (the CIS
+Kubernetes Benchmark, the NSA/CISA hardening guide, and the scanners'
+own rule catalogues) identifies as a gap. Section 3.2 defines the 25
+rules operationally; Section 3.4 describes how we establish that the
+rules measure what they name.
+
+We ask four research questions:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{RQ1 (Prevalence).} How common is each class of
+  misconfiguration in real-world manifests, once production code is
+  separated from examples and fixtures and duplicated content is
+  accounted for?
+\item
+  \textbf{RQ2 (Validity and taxonomy).} With what precision does a
+  rule-based engine detect each practice --- i.e., which of the 25
+  measurements can be taken at face value and which require contextual
+  judgment --- and what taxonomy organizes the true and false positives?
+\item
+  \textbf{RQ3 (Tool coverage).} On identical input, how much of the
+  observed taxonomy do the four widely used scanners cover, and do their
+  counts agree? Where they diverge, is the divergence detection or
+  bookkeeping?
+\item
+  \textbf{RQ4 (Curation effect).} Do rendered Helm charts --- the
+  ecosystem's curated, templated distribution channel --- differ from
+  manifests committed directly to Git repositories, and by how much once
+  sampling bias is handled?
+\end{itemize}
+
+\hypertarget{method}{%
+\subsection{3. Method}\label{method}}
+
+\hypertarget{corpus-construction}{%
+\subsubsection{3.1 Corpus construction}\label{corpus-construction}}
+
+The corpus has two arms, collected in October 2026 from public sources
+only.
+
+\textbf{Helm arm.} We rendered the 151 most popular charts on Artifact
+Hub with default values (\texttt{helm\ template}), yielding 2,616
+documents and 402 workloads. Default values are what an operator gets
+when they install a chart without tuning it --- the correct object of
+study for a question about defaults --- but a top-charts sample
+over-represents well-maintained projects; Section 4.2 quantifies and
+corrects for this \emph{best-chart bias} rather than ignoring it.
+
+\textbf{GitHub arm.} We mined 60 public repositories (seed projects plus
+search-discovered manifest collections), yielding 13,627 documents and
+2,409 workloads. Snapshots are pinned by commit SHA
+(\texttt{results/github\_commit\_shas.json}). Every file was
+source-tagged as \emph{production}, \emph{example}, or \emph{fixture} by
+path and repository role, so prevalence can be reported for production
+manifests alone; an addendum to the labeling protocol (Section 3.4)
+resolves tag/content conflicts in favor of content (e.g., a
+\texttt{testdata/} tree inside a production-tagged repository counts as
+fixture).
+
+The corpus itself is not redistributed (third-party manifests carry
+mixed licenses); the collection scripts and per-source logs are the
+corpus manifest, and running the collectors rebuilds it.
+
+\hypertarget{the-rule-engine}{%
+\subsubsection{3.2 The rule engine}\label{the-rule-engine}}
+
+We implemented a 25-rule engine over parsed YAML (Deployments,
+StatefulSets, DaemonSets, Jobs, CronJobs, Pods, and the RBAC/Secret
+objects adjacent to them). Rules span six families: \textbf{images}
+(untagged, \texttt{:latest}, no digest pinning), \textbf{resources}
+(missing CPU/memory limits, missing requests), \textbf{reliability}
+(missing liveness/readiness probes), \textbf{security context}
+(privileged, root not prevented, explicit root, privilege escalation not
+disabled, dangerous or any added capabilities, missing seccomp),
+\textbf{host access} (host network/PID/IPC, automounted SA token),
+\textbf{RBAC and secrets} (wildcard verbs/resources, cluster-admin
+binding, committed Secret objects, literal secrets in environment
+variables), and \textbf{API currency} (deprecated APIs --- reported as
+manifest rot, not misconfiguration; see Section 4.3). Engine v3
+incorporates three correctness fixes over v2 that matter for the
+results: the SA-token rule joins the ServiceAccount object's own
+automount flag; init containers are excluded from probe rules (a third
+of v2's Helm probe findings were on init containers); and
+\texttt{seccompProfile.type=Unconfined} counts as no profile. Engine v3
+reports 27,460 findings over the full corpus. The full rule definitions
+ship with the replication package.
+
+\hypertarget{tool-audit-setup-rq3}{%
+\subsubsection{3.3 Tool audit setup (RQ3)}\label{tool-audit-setup-rq3}}
+
+We ran kube-linter, kubeaudit, Polaris, and Checkov --- the four most
+widely adopted open-source manifest auditors --- on the \emph{identical}
+Helm-arm input (402 workloads, rendered with default values), each with
+its default configuration. Default configuration is the treatment of
+interest: it is what a new adopter runs, and, as Section 4.4 shows,
+several relevant checks are not in it. We mapped each tool's checks to
+our 25 rules by hand from the tools' output on this input, recording
+partial coverage (a check that covers a rule with narrower semantics) as
+one half in coverage totals. Counts were reconciled rule by rule; where
+a tool merges two of our rules into one check (e.g., untagged and
+\texttt{:latest}), we report the merged figure rather than forcing an
+attribution. Separately, we score each tool against ground truth: the
+126 Helm-arm rows of the validation sample (Section 3.4) carry
+author-verified labels, so for every sampled finding we can ask whether
+the tool reported the corresponding practice on that object --- yielding
+detection rates on verified true positives and flagging rates on
+verified false positives, per tool (full method and per-row data in
+\texttt{results/tool\_accuracy.md}).
+
+\hypertarget{validation-labeling-protocol-reliability-adjudication}{%
+\subsubsection{3.4 Validation: labeling protocol, reliability,
+adjudication}\label{validation-labeling-protocol-reliability-adjudication}}
+
+Prevalence without precision is numerology, so we validated the engine
+on a 457-finding stratified sample: all findings of the two rarest
+high-severity rules, stratified draws from the rest, and
+\textasciitilde10\% hidden duplicate rows. A sample row is one finding
+with an \emph{evidence packet} (the flagged object, its security
+context, and its source context).
+
+Labels (TP / FP / unsure) were assigned under a written protocol. The
+protocol's history is part of the method and is reported, not hidden: an
+initial \emph{definitional} standard (v2: a finding is TP iff the
+manifest exhibits the property the rule names, in context) was
+harmonized with an earlier \emph{exploitability} draft (v1) into a
+governing protocol (v3) that keeps the definitional core and adds
+explicit contextual amendments --- production scoping for resource/probe
+rules, a two-tier treatment of digest pinning, an escalation-path test
+for root/privilege-escalation rules, and a credential-material test for
+committed secrets. AI pre-labels produced under v2 were treated as an
+\emph{initial annotation pass}, never as ground truth.
+
+\textbf{Blinded author--AI agreement.} The author labeled a blinded
+30-row subset (spanning all 25 rules) before seeing any pre-labels.
+Agreement was 24/30 (80\%), Cohen's $\kappa$ = 0.526 {[}bootstrap 95\% CI 0.17,
+0.84{]} against the v2-standard pre-labels. This is agreement between
+the author and AI-generated labels, not inter-rater reliability between
+two humans; and because the pre-labels follow v2 while the author's
+labels follow the emerging v3, $\kappa$ also absorbs the protocol-version
+difference. A two-human measurement --- an independent researcher
+labeling a 150-row subsample under the frozen v3 protocol, blind to all
+existing labels --- is in preparation; the packet ships in the
+replication package. We report this number as measured, with its
+decomposition, because the decomposition is the finding: four of six
+disagreements were resource/probe rows where the governing v3
+production-scoping amendment sides with the author against the v2
+definitional labels --- a standards difference, not rater noise --- and
+the remaining two were genuine judgment calls (a CNI agent's dangerous
+capabilities; an operator's wildcard RBAC confined to its own API
+groups), which were adjudicated into two further \emph{rule-level}
+amendments (an infrastructure-class test requiring a drop-ALL baseline
+plus function-required capabilities, and an own-API-group scoping test
+for wildcard RBAC), adopted before the verification pass and now part of
+the protocol (\texttt{results/labeling\_protocol\_v3\_addendum.md}).
+Intra-rater consistency, measured by the hidden duplicates, was 44/44
+groups.
+
+\textbf{Verification.} The author then ran a verification pass over the
+full sample: the 92 \emph{divergence rows} --- those whose labels can
+differ between the v1 and v2 standards --- were adjudicated first, and
+the author accepted the v3 recommendations on all 92 without override on
+2026-10-27; the remaining rows were reviewed in aggregate (blank =
+accept, per protocol). The provenance of the final labels is therefore
+mixed, and we state it exactly: of the 451 sample rows that persist in
+engine v3, \textbf{111 (25\%) carry labels the author produced or
+individually adjudicated} --- the 30 blind-labeled rows and 87
+adjudicated divergence rows, with 6 rows in both sets --- while
+\textbf{340 (75\%) retain the AI pre-labels} the author accepted during
+the pass. The validation dataset is thus AI-annotated and
+author-adjudicated, not independently human-labeled; what that does and
+does not establish is taken up in Section 6. Rows whose flagged property
+cannot be observed in the source (7, e.g.~images injected by kustomize
+overlays) are excluded from precision denominators with the count and
+reason disclosed.
+
+\hypertarget{analysis}{%
+\subsubsection{3.5 Analysis}\label{analysis}}
+
+For each rule we report precision = TP / (TP + FP) over decided rows
+with Wilson 95\% confidence intervals, \emph{adjusted prevalence} =
+precision $\times$ population findings, and workload-level prevalence (share of
+workloads with $\geq$1 finding) per corpus arm and source tag. Because the
+validation sample was drawn under engine v2 and the population is engine
+v3, we reconciled every sampled row against v3 findings on (arm, source,
+kind, name, container, rule): 451 of 457 rows still exist in v3; the
+headline figures are computed on that matched frame, and a
+distinct-finding sensitivity check (one vote per unique key, collapsing
+the intentional duplicates) is reported alongside. Two aggregates of the
+per-rule precisions answer different questions and are kept distinct
+throughout: the rate across sampled rows (0.633) describes the
+\emph{sample}, in which rare rules are deliberately over-represented
+because all findings of the rarest rules were taken; the
+population-weighted aggregate --- each rule's precision weighted by its
+v3 population, equivalently the adjusted finding count over all findings
+--- is \textbf{0.699} (19,199 / 27,460) and is the figure that
+characterizes the corpus as a whole. Propagating the per-rule binomial
+sampling variances, the adjusted intervals are cluster-bootstrapped by
+source (resampling repositories and charts, 2,000 replicates;
+\texttt{results/cluster\_bootstrap.md}): the adjusted total's 95\%
+interval is {[}17,120, 23,071{]} and the weighted precision's is
+{[}0.623, 0.840{]}. Row-level intervals that treat findings as
+independent are materially narrower and are not used, since findings
+within a source are correlated (52.9\% of v3 findings repeat a seen
+key). The intervals are also insensitive to how a replicate treats a
+rule with no decided rows in the resample --- an event in only 42 of
+50,000 rule-replicates: full-sample, pooled-precision, and
+drop-and-renormalize fallbacks all yield {[}0.623, 0.840{]}. Every
+adjusted prevalence figure in Section 4 is built per rule and is
+identical under either aggregate. As a standards sensitivity check, the
+same sample scored under the superseded v2 definitional standard (the
+pre-labels) gives $\approx$0.73; the gap to 0.633 is the v3 amendments ---
+production scoping and the context classes of Section 4.3 ---
+reclassifying findings that the purely definitional standard counted as
+genuine. Cluster-level prevalence (share of repositories/charts with $\geq$1
+finding) addresses the non-independence of findings within a source:
+52.9\% of v3 GitHub findings repeat an already-seen (kind, name,
+container, rule) key, so document-level rates alone would overstate how
+widespread each practice is --- and, as Section 4.1 shows, the practices
+are widespread anyway.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{results}{%
+\subsection{4. Results}\label{results}}
+
+\hypertarget{rq1-prevalence-the-defaults-are-the-finding}{%
+\subsubsection{4.1 RQ1 --- Prevalence: the defaults are the
+finding}\label{rq1-prevalence-the-defaults-are-the-finding}}
+
+Table 1 reports workload-level prevalence for the headline practices,
+per arm, with the GitHub arm restricted to production-tagged manifests.
+Three facts stand out.
+
+\textbf{Default-insecure settings are near-universal.} In production
+GitHub manifests, service-account tokens are automounted in
+\textbf{88.6\%} of workloads and CPU limits are missing in
+\textbf{75.3\%}; in rendered Helm charts the figures are 85.1\% and
+85.6\%, with \textbf{97.5\%} of Helm workloads running at least one
+image that is not digest-pinned (65.3\% for production GitHub).
+Restricting to production code barely moves the numbers (corpus-wide
+GitHub SA automount is 96.2\%): the risky defaults live in shipped
+manifests, not in test files.
+
+\textbf{Explicit dangers are rare.} Privileged containers appear in
+\textbf{1.4\%} of production GitHub workloads (5.5\% in Helm charts,
+where node-level agents are common), and cluster-level prevalence tells
+the same story from the other side: SA automount appears in
+\textbf{94\%} of repositories and \textbf{90\%} of charts, missing
+seccomp in 94\%/72\%, unpinned digests in 91\%/97\% --- but privileged
+containers in only 22\% of repositories and 8\% of charts. The ecosystem
+has largely learned not to do the obviously dangerous thing, and has
+largely not learned to turn off the defaults.
+
+\textbf{Table 1.} Workload-level prevalence, engine v3 (share of
+workloads with $\geq$1 finding).
+
+\begin{longtable}[]{@{}lrrr@{}}
+\toprule\noalign{}
+Practice & Helm charts & GitHub (production) & GitHub (all) \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Image not digest-pinned & 97.5\% & 65.3\% & --- \\
+SA token automounted & 85.1\% & 88.6\% & 96.2\% \\
+No CPU limit & 85.6\% & 75.3\% & 79.0\% \\
+Privileged container & 5.5\% & 1.4\% & --- \\
+\end{longtable}
+
+\emph{Full per-rule tables for all 25 rules, both arms and all source
+tags, are in the replication package
+(\texttt{results/stats\_tagged\_v3.json}).}
+
+\hypertarget{rq4-curation-helps-less-than-it-looks}{%
+\subsubsection{4.2 RQ4 --- Curation helps, less than it
+looks}\label{rq4-curation-helps-less-than-it-looks}}
+
+Rendered Helm charts are better hardened than raw GitHub manifests, but
+the gap is \textbf{1.3--1.7$\times$}, not the 2--3$\times$ suggested by comparing the
+most popular charts against unfiltered repository mining. The mechanism
+is sampling: a top-151-charts frame over-weights flagship projects with
+dedicated maintainers. Even taking the favorable frame at face value,
+the curated channel's advantage is concentrated in the explicit-danger
+rules; on default-insecure practices (automount, limits, digest pinning)
+charts are statistically indistinguishable from --- and on CPU limits
+and digest pinning worse than --- production GitHub code. Curation
+polishes the visible edge of the configuration surface; it does not
+change the defaults underneath.
+
+\hypertarget{rq2-precision-and-taxonomy-which-numbers-can-be-believed}{%
+\subsubsection{4.3 RQ2 --- Precision and taxonomy: which numbers can be
+believed}\label{rq2-precision-and-taxonomy-which-numbers-can-be-believed}}
+
+Overall precision on the reconciled, author-adjudicated sample is
+\textbf{0.633 {[}0.527, 0.714{]}} (279 TP / 162 FP over decided rows;
+cluster-bootstrap interval by source), adjusting the 27,460 raw findings
+to an estimated \textbf{$\approx$19,200 genuine misconfigurations} (95\% CI
+{[}17,100, 23,100{]} --- a model-based extrapolation of the per-rule
+estimates, not a count of individually verified findings). A
+distinct-finding sensitivity analysis gives 0.626 --- the intentional
+duplicate rows do not move the result. Population-weighted, overall
+precision is 0.699 (Section 3.5); the per-rule adjustments that follow
+are the same under either aggregate. But the aggregate conceals the
+paper's most useful variation: precision is a property of the
+\emph{rule}, and it splits the taxonomy into rules that can be read at
+face value and rules that cannot.
+
+\textbf{Face-value rules (precision $\approx$ 1.0).} Missing seccomp profile,
+privilege escalation not disabled, root not prevented, and
+\texttt{:latest} images are essentially never benign in context (all
+1.000 on their samples); SA-token automount (0.857) and dangerous
+capabilities (0.824, under the addendum's infrastructure test) are close
+behind. For these, scanner output \emph{is} prevalence, up to sampling
+error.
+
+\textbf{Context-dominated rules (precision $\leq$ 0.4).} Committed Secret
+objects are the extreme: \textbf{0.125}. Under the credential-material
+test, most committed Secrets are empty, operator-populated, or
+documented placeholders; the genuine exposure is a credential-bearing
+minority that no content-blind rule can separate from the noise. Host
+network (0.250) and host PID (0.214) findings are mostly node
+infrastructure --- CNI/CSI agents and node exporters whose function
+requires the access. Missing liveness probes (0.214) and the resource
+rules (0.375--0.47) are dominated by production scoping: examples,
+fixtures, and one-shot Jobs that a context-free count grades as
+production gaps. Added capabilities (0.235) are mostly least-privilege
+patterns (default-set additions, or \texttt{NET\_BIND\_SERVICE} over a
+drop-ALL baseline).
+
+\textbf{Table 2.} Per-rule precision (author-verified, reconciled to
+engine v3; Wilson 95\% CIs). Selected rules; full table in
+\texttt{results/precision\_provisional.md}.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2308}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.3077}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2308}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2308}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Rule
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+Precision
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+95\% CI
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Reading
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+SEC\_\allowbreak{}NO\_\allowbreak{}SECCOMP & 1.000 & {[}0.82, 1.00{]} & face value \\
+SEC\_\allowbreak{}APE\_\allowbreak{}NOT\_\allowbreak{}DISABLED & 1.000 & {[}0.80, 1.00{]} & face value \\
+SEC\_\allowbreak{}ROOT\_\allowbreak{}NOT\_\allowbreak{}PREVENTED & 1.000 & {[}0.78, 1.00{]} & face value \\
+IMG\_\allowbreak{}LATEST & 1.000 & {[}0.80, 1.00{]} & face value \\
+SA\_\allowbreak{}TOKEN\_\allowbreak{}AUTOMOUNTED & 0.857 & {[}0.60, 0.96{]} & face value \\
+SEC\_\allowbreak{}DANGEROUS\_\allowbreak{}CAPABILITY & 0.824 & {[}0.59, 0.94{]} & face value \\
+RBAC\_\allowbreak{}WILDCARD\_\allowbreak{}VERBS & 0.733 & {[}0.48, 0.89{]} & mostly \\
+RBAC\_\allowbreak{}WILDCARD\_\allowbreak{}RESOURCES & 0.647 & {[}0.41, 0.83{]} & mostly \\
+SEC\_\allowbreak{}PRIVILEGED & 0.608 & {[}0.50, 0.71{]} & mixed \\
+REL\_\allowbreak{}NO\_\allowbreak{}READINESS\_\allowbreak{}PROBE & 0.538 & {[}0.29, 0.77{]} & context-heavy \\
+RES\_\allowbreak{}NO\_\allowbreak{}REQUESTS & 0.471 & {[}0.26, 0.69{]} & context-heavy \\
+RES\_\allowbreak{}NO\_\allowbreak{}CPU\_\allowbreak{}LIMIT & 0.429 & {[}0.21, 0.67{]} & context-heavy \\
+SECRET\_\allowbreak{}LITERAL\_\allowbreak{}ENV & 0.400 & {[}0.20, 0.64{]} & context-heavy \\
+RES\_\allowbreak{}NO\_\allowbreak{}MEM\_\allowbreak{}LIMIT & 0.375 & {[}0.18, 0.61{]} & context-heavy \\
+HOST\_\allowbreak{}NETWORK & 0.250 & {[}0.10, 0.49{]} & context-dominated \\
+SEC\_\allowbreak{}CAPABILITY\_\allowbreak{}ADDED & 0.235 & {[}0.10, 0.47{]} & context-dominated \\
+HOST\_\allowbreak{}PID / REL\_\allowbreak{}NO\_\allowbreak{}LIVENESS\_\allowbreak{}PROBE & 0.214 & {[}0.08, 0.48{]} &
+context-dominated \\
+SECRET\_\allowbreak{}COMMITTED & 0.125 & {[}0.03, 0.36{]} & context-dominated \\
+\end{longtable}
+
+\textbf{Taxonomy v2.} The validation exercise reorganizes the 25 rules
+into a three-tier taxonomy, and the false positives into five reusable
+context classes:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Tier 1 --- Misconfigurations.} States that are wrong in
+  essentially all contexts (the face-value rules above, plus wildcard
+  RBAC and cluster-admin binding at 0.65--0.80 with the own-group
+  exception below).
+\item
+  \textbf{Tier 2 --- Hardening gaps.} States that are genuine but lesser
+  gaps, reported separately and never folded into misconfiguration
+  precision: digest-unpinned images \emph{with} an explicit version tag
+  (7 of 14 sampled no-digest rows), and the context-heavy resource/probe
+  rules when they occur in production code.
+\item
+  \textbf{Tier 3 --- Manifest rot.} Deprecated API versions: real,
+  mechanically certain, and not a security misconfiguration; reported as
+  their own line.
+\end{itemize}
+
+False positives concentrate in five context classes, each of which
+became an explicit protocol test: \textbf{infra-need} (node agents whose
+function requires the access, gated on a drop-ALL baseline for
+capabilities), \textbf{placeholder} (Secrets and env values without
+credential material), \textbf{fixture} (test/example content, decided by
+content over source tag), \textbf{standard operator pattern} (wildcard
+RBAC confined to the operator's own API groups; least-privilege
+capability additions), and \textbf{not-exploitable} (root/APE findings
+with no escalation path: non-root enforced and no added capabilities). A
+scanner --- or a study --- that implements these five distinctions
+recovers most of the precision the naive rules lose.
+
+\hypertarget{rq3-auditing-the-auditors}{%
+\subsubsection{4.4 RQ3 --- Auditing the
+auditors}\label{rq3-auditing-the-auditors}}
+
+On identical Helm-arm input with default configurations, approximate
+coverage of the 25 practices is: Checkov \textasciitilde16, Polaris
+\textasciitilde13, kube-linter \textasciitilde11, kubeaudit
+\textasciitilde11 (partial coverage counted as one half). Three results
+matter more than the ranking.
+
+\textbf{Nobody covers the long tail, and one gap is total.} Digest
+pinning --- the single most prevalent practice in the corpus --- is
+checked by exactly one tool (Checkov CKV\_K8S\_43). Wildcard RBAC has no
+\emph{default-enabled} check that catches it broadly: Checkov's
+CKV\_K8S\_49 flags 29 of the 155 wildcard findings on this input, and
+kube-linter ships wildcard checks that are off by default. And
+\textbf{no tool, in the configuration run, inspects committed Secret
+contents} (Checkov ships a separate secrets framework, outside the
+Kubernetes checks we ran): all four flag (or ignore) Secret objects
+without distinguishing credential material from placeholders, which
+Section 4.3 shows is a 7:1 noise-to-signal distinction. The most
+sensitive objects in the corpus are the ones the tooling understands
+least.
+
+\textbf{Agreement exists only where danger is explicit.} On privileged
+containers, the four tools report 26--27 findings against our 27 ---
+near-perfect consensus. On missing CPU limits, the same input yields
+\textbf{343 / 411 / 416 / 497} findings across the tools against 502
+container-level cases in our engine. The spread is bookkeeping, not
+detection: kubeaudit counts at pod level and merges ``no limits at all''
+(421) with ``limits without CPU'' (76); kube-linter merges limits with
+requests (416); Checkov counts a narrower property (343). A consumer
+comparing tools --- or tracking one tool over time --- sees a
+\textasciitilde1.4$\times$ swing that has nothing to do with the underlying
+manifests.
+
+\textbf{Accuracy against verified ground truth.} Coverage and counts say
+what a tool \emph{can} check and how much it \emph{reports}; the
+verified sample lets us ask whether it is \emph{right}. Where a tool has
+a check for a sampled practice, it detects verified true positives
+reliably --- kubeaudit 0.98, Polaris 0.93, kube-linter 0.90 --- with
+Checkov the outlier at 0.76 (its run-as-non-root check systematically
+misses containers that run as root \emph{explicitly}: 8 of its 15
+misses). Counting practices with no check as missed, effective detection
+of genuine misconfigurations is 0.52--0.75, and the ranking inverts the
+raw-count intuition: Polaris leads (0.75) on the strength of coverage,
+not per-check detection. The symmetric result is the more damning one:
+the same checks flag \textbf{86--95\% of the findings verification
+judged false positives}. The taxonomy's context classes ---
+infrastructure agents, standard operator patterns, least-privilege
+capability sets --- fool the production tools at about the same rate
+they fooled our unvalidated rules. The tools' deficit on real manifests
+is not detection; it is coverage and context. These are sample-based
+estimates from the 126 Helm-arm validation rows, drawn from the engine's
+own findings: the flagging figures are shares of sampled findings that
+verification judged benign, not false-positive rates over all negative
+configurations, which a findings-only sample cannot measure. The
+benchmark for ``benign'' is likewise ours: the tools implement the
+definitional reading of each practice and do not claim the v3 context
+classes, so the flagging rates measure the distance between definitional
+checking and context-aware judgment --- the quantity a user who trusts
+the output experiences --- rather than vendor error against the tools'
+own specifications.
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2000}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2667}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2667}}
+  >{\raggedleft\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2667}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Tool
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+TP detection (check exists)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+TP detection (effective)
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedleft
+FP-flagging (check exists)
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+kube-linter & 0.90 {[}0.78, 0.96{]} & 0.52 & 0.92 \\
+kubeaudit & 0.98 {[}0.87, 1.00{]} & 0.55 & 0.95 \\
+Polaris & 0.93 {[}0.84, 0.97{]} & 0.75 & 0.87 \\
+Checkov & 0.76 {[}0.64, 0.85{]} & 0.64 & 0.86 \\
+\end{longtable}
+
+\emph{Ground truth: 73 verified-TP and 50 verified-FP Helm-arm sample
+rows; rates over rows where a mapped check exists, except the effective
+column, which counts no-check practices as missed. Method, joins, and
+caveats: \texttt{results/tool\_accuracy.md}.}
+
+\textbf{Defaults decide what gets found.} kube-linter's probe checks
+validate probe \emph{port correctness}, not probe existence; its
+SA-token and wildcard checks are absent or opt-in; kubeaudit's SA check
+covers only the default service account. The pattern is consistent: each
+tool's default configuration is tuned to the explicit-danger tier of the
+taxonomy, and the default-insecure tier --- where Sections 4.1 and 4.3
+show most genuine misconfiguration lives --- is covered partially,
+optionally, or not at all.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{discussion}{%
+\subsection{5. Discussion}\label{discussion}}
+
+\textbf{The risk is the default, and the default is a design outcome.}
+The practices with the highest prevalence --- automounted tokens, absent
+limits, unpinned images, absent seccomp --- are precisely those where
+doing nothing produces the finding. Manifest authors are not choosing
+insecurity; they are accepting a platform posture. A scope note on what
+the findings are: most are \emph{exposures and hardening gaps}, not
+demonstrated vulnerabilities --- an automounted token's impact depends
+on the permissions bound to its service account and on cluster context,
+which a manifest alone does not determine. The taxonomy's tiers (Section
+4.3) keep that distinction in view; the prevalence claims are about
+configuration posture, not exploitability. Interventions aimed at author
+behavior (linters in editors, review checklists) fight the last war: the
+durable fix is at the platform and distribution layer --- admission-time
+defaults (Pod Security Standards, policy engines with the checks
+\emph{enabled}), chart templates that ship hardened security contexts,
+and image pipelines that pin digests at build time. Our curation result
+(Section 4.2) is the cautionary evidence: even the ecosystem's most
+maintained artifacts only partially overcome the defaults.
+
+\textbf{Scanner output needs a validity label.} Two scanners can
+disagree by 1.4$\times$ on the same manifests without either being ``wrong''
+--- they are counting different units and different properties under the
+same English name. We suggest the field adopt three reporting norms:
+state the counting unit (pod vs container), state whether merged checks
+are decomposed, and state per-check precision on a public validation
+corpus, as this study does for its own engine. A count without those
+three qualifiers is not comparable across tools or across time.
+
+\textbf{The five context classes are a checklist for tool authors.} Most
+of the precision our naive rules lost is recoverable with distinctions
+that are mechanical once named: join the ServiceAccount object before
+grading automount; require credential material before calling a Secret
+committed; treat a drop-ALL baseline plus function-required capabilities
+on a node agent as infrastructure, not exposure; scope wildcard RBAC by
+API-group ownership; and never grade fixtures as production. Several of
+these are one-join or one-test changes. The tools' roadmaps, not their
+detection cores, are the bottleneck.
+
+\textbf{For practitioners}, the actionable reading of Tables 1 and 2 is
+short: the face-value rules are a reliable triage list (fix seccomp,
+privilege escalation, root prevention, and \texttt{:latest} first ---
+the findings are real), SA tokens and resource limits are the largest
+genuine exposure by volume, and committed-Secret alerts should be routed
+to content inspection rather than counted.
+
+\hypertarget{threats-to-validity}{%
+\subsection{6. Threats to validity}\label{threats-to-validity}}
+
+\textbf{Construct validity} rests on the labeling protocol. We mitigate
+by \emph{disclosing} rather than concealing its evolution: three
+protocol versions, a blinded author--AI agreement subset ($\kappa$ = 0.526
+against the v2-standard labels, with the disagreement decomposition
+showing 4 of 6 tracing to the v2$\rightarrow$v3 standards change itself),
+adjudicated rule-level amendments, and author adjudication of the labels
+(Section 3.4 gives the row-level provenance). The ground truth is thus
+single-author and AI-assisted; an independent human labeling under the
+frozen protocol is in preparation and is the obvious strengthening step.
+Readers who prefer the purely definitional standard can recompute
+precision under it from the released sample (the v2 pre-labels are
+preserved); the prevalence \emph{rankings} are unchanged under either
+standard, though several per-rule precisions move, as Section 4.3
+reports. The $\kappa$ figure is below the conventional 0.7 benchmark and we do
+not claim otherwise; it measures agreement with labels produced under a
+superseded standard, and the verification pass --- not the $\kappa$ subset ---
+is the ground truth of record.
+
+\textbf{Internal validity.} Engine v3's three semantic fixes (SA-object
+join, init containers in probe rules, Unconfined seccomp) each moved
+findings materially; residual engine bugs would bias prevalence and are
+mitigated by the validation sample itself --- a systematically wrong
+rule shows up as low precision, and none of the face-value rules do. For
+RQ3, check-to-rule mapping was manual; we mitigated by reconciling
+counts rule by rule and reporting merged checks as merged rather than
+forcing attribution.
+
+\textbf{External validity.} The GitHub arm over-represents public,
+open-source practice and under-represents private enterprise manifests,
+which plausibly differ in both directions (more policy enforcement, more
+legacy). The Helm arm's best-chart bias is measured in Section 4.2 and
+cuts toward \emph{understating} ecosystem-wide prevalence. All data is
+from October 2026; defaults and tooling evolve, and the replication
+package is designed for re-collection.
+
+\textbf{Reliability.} Intra-rater consistency was 44/44 on hidden
+duplicates. The sample-to-population reconciliation (451/457 rows
+matched to engine v3) and the distinct-finding sensitivity analysis
+(0.626 vs 0.633) bound the effect of the v2$\rightarrow$v3 frame change. Corpus
+snapshots are pinned by commit SHA; the corpus is rebuildable from the
+released collectors and logs.
+
+\hypertarget{related-work}{%
+\subsection{7. Related work}\label{related-work}}
+
+\hypertarget{empirical-studies-of-kubernetes-misconfiguration}{%
+\subsubsection{7.1 Empirical studies of Kubernetes
+misconfiguration}\label{empirical-studies-of-kubernetes-misconfiguration}}
+
+The closest predecessor is Rahman et al.'s empirical study of security
+misconfigurations in open-source Kubernetes manifests
+CITEKEY\_Rahman2023\_END. Mining 2,039 manifests from 92 repositories,
+they characterize 11 categories of security misconfiguration, build a
+detection tool (SLI-KUBE) to quantify their frequency (1,051
+misconfigurations), and validate by reporting ten misconfigurations to
+practitioners, who agreed to fix 60\%. We build on their
+characterization in four ways: an order-of-magnitude larger corpus with
+a second, curated arm (rendered Helm charts) that supports a curation
+comparison; a broader practice set (25 rules across security, resources,
+reliability, images, RBAC, and secrets, rather than security alone);
+separation of production manifests from examples and fixtures, which
+their manifest-level counting does not attempt; and a validation design
+that estimates \emph{per-rule precision} over a stratified sample with a
+documented protocol and a blinded agreement check, rather than
+fix-agreement on a small set of reports. Their headline conclusion ---
+insecure configurations are widespread --- is corroborated by our data
+at larger scale; our contribution is establishing \emph{which} of the
+counts can be believed, and by how much.
+
+Minna et al.~mine Helm charts from Artifact Hub and compare seven
+analyzer tools by their default policies, then evaluate whether LLMs can
+mitigate the reported misconfigurations CITEKEY\_Minna2025\_END --- in
+this journal. Their tool comparison aggregates common and unique
+findings per tool and includes a manual false-positive check on a
+subset. Our study asks the prior question their pipeline assumes away:
+whether the tools' reports on natural input are \emph{correct}, rule by
+rule, against verified ground truth --- and finds that for
+context-sensitive rules they frequently are not (Section 4.3), a result
+that also bears on their mitigation loop, since an LLM asked to fix a
+false positive can only damage a working configuration. The studies are
+complementary: they evaluate repair; we evaluate the measurement the
+repair depends on. We also add the raw-manifest arm and the
+production/fixture separation their chart-only corpus does not require.
+
+A third recent line works from developer reports rather than manifests:
+Ghorab et al.~derive a taxonomy of Kubernetes security misconfigurations
+from 2,662 Stack Overflow issues, trace how the issues evolve with
+project maturity, and evaluate LLM repair, reaching 98.5\% correction
+accuracy with a schema-guided validation framework
+CITEKEY\_Ghorab2026\_END. Their unit of analysis --- what developers
+\emph{report struggling with} --- complements ours: what
+production-shaped code \emph{contains}, and whether automated findings
+about it are valid. Their repair results, like Minna et al.'s,
+presuppose that reported misconfigurations are genuine, which is the
+premise our validation tests.
+
+Beyond Kubernetes, configuration errors have been studied empirically in
+commercial and open-source systems CITEKEY\_Yin2011\_END, and the
+systems approaches to tackling them surveyed in
+CITEKEY\_XuZhou2015\_END; studies of infrastructure-as-code ecosystems
+(Dockerfiles, Puppet, Terraform, CI configuration) generally find
+insecure defaults and smell-like patterns to be widespread. Those
+results motivate ours; the Kubernetes setting differs in that the
+configuration surface is a single, structured API with platform-supplied
+defaults for nearly every field, which is what makes a uniform 25-rule
+measurement across two distribution channels possible.
+
+\hypertarget{scanner-evaluation-and-benchmarks}{%
+\subsubsection{7.2 Scanner evaluation and
+benchmarks}\label{scanner-evaluation-and-benchmarks}}
+
+Eom et al.~present the first systematic benchmark of Kubernetes
+misconfiguration scanners CITEKEY\_Eom2026\_END: ten tools, whose
+documented coverage they found too ambiguous to take at face value, so
+they reverse-engineered precise detection targets from implementations
+and dynamic testing, then measured recall on a constructed benchmark of
+4,109 misconfiguration files (281 unique misconfigurations), finding
+best recall of 43.8\% (static) and 62.3\% (dynamic). Their ground truth
+is \emph{constructed} --- each benchmark file is a known
+misconfiguration --- which is the right design for measuring recall, and
+the wrong one for measuring what happens on real manifests, where the
+open question is not ``does the tool fire on a seeded defect'' but ``is
+this firing, on this real object, a genuine misconfiguration.'' That is
+the quantity we measure: per-rule precision of findings on natural
+corpora, against author-verified labels, plus prevalence --- neither of
+which a seeded benchmark can report. The two results also converge from
+opposite directions: their finding that scanners adopt different
+criteria for the same documented misconfiguration is the
+implementation-level explanation of our measurement-level finding that
+identical input yields \textasciitilde1.4$\times$ count spreads through
+counting semantics (Section 4.4). Where they audit ten scanners against
+a specification, we audit four against the wild.
+
+Industry comparisons of hardening guidelines and scanner scoring (e.g.,
+the Dynatrace Research comparison of eight guidelines and ten scanners)
+likewise report substantial coverage and scoring disparities; they share
+our conclusion that scanner outputs are not mutually comparable, reached
+there by guideline mapping rather than by validated findings.
+
+\hypertarget{benchmarks-and-hardening-guidance}{%
+\subsubsection{7.3 Benchmarks and hardening
+guidance}\label{benchmarks-and-hardening-guidance}}
+
+The CIS Kubernetes Benchmark and the NSA/CISA Kubernetes Hardening Guide
+define the practice standard our rules operationalize, and the Pod
+Security Standards define the platform's own posture tiers. Taxonomy v2
+(Section 4.3) can be read as an empirical annotation of those documents:
+which of their recommendations correspond to states that are wrong in
+essentially every context (Tier 1), which to hardening opportunities
+(Tier 2), and which to hygiene (Tier 3) --- and, through the five
+false-positive context classes, where the guidance needs contextual
+exceptions that the documents themselves do not state
+(node-infrastructure agents being the largest).
+
+\hypertarget{positioning}{%
+\subsubsection{7.4 Positioning}\label{positioning}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 8\tabcolsep) * \real{0.2000}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Dimension
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Rahman et al.~2023
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Minna et al.~2025
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Eom et al.~2026
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+This study
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Corpus & 2,039 manifests, 92 repos & Artifact Hub charts (all) & 4,109
+constructed files & 16,243 docs, 2 arms (60 repos + 151 charts) \\
+Practices & 11 security categories & tools' default policies & 281
+misconfigurations (union of 10 tools) & 25 rules, 6 families \\
+Ground truth & practitioner fix-agreement (10 reports) & manual FP check
+on a subset & constructed by design & 457-finding stratified sample,
+blinded subset, protocol + adjudication, author-adjudicated \\
+Tool treatment & builds one tool & 7 tools, common/unique counts + LLM
+repair & 10 tools, recall on benchmark & 4 tools on identical natural
+input: coverage, count semantics, accuracy vs verified labels \\
+Production vs fixture & not separated & n/a (charts) & n/a (constructed)
+& separated; content-over-tag rule \\
+Prevalence & manifest-level counts & chart-level counts & none
+(benchmark) & workload-level, cluster-level, precision-adjusted \\
+\end{longtable}
+
+In one sentence: prior work establishes that Kubernetes misconfiguration
+exists (Rahman et al.), that tools report it inconsistently and LLMs
+repair it imperfectly (Minna et al.), and that scanners miss much of
+what they claim to cover on seeded cases (Eom et al.). This study
+establishes how much of it there is in production-shaped code, how much
+of what any rule reports is real, and why the tools' numbers cannot be
+compared naively --- the measurement foundation the other three
+directions implicitly rely on.
+
+\hypertarget{conclusion}{%
+\subsection{8. Conclusion}\label{conclusion}}
+
+Across 16,243 real-world documents, Kubernetes misconfiguration is not a
+story of reckless operators but of permissive defaults accepted at
+scale: tokens automounted in \textasciitilde9 of 10 production
+workloads, limits and digest pinning absent as the norm, and the
+explicitly dangerous settings comparatively rare. The measurement itself
+needs care --- a third of naive findings are benign in context, and the
+scanners the ecosystem relies on cover at most two-thirds of observed
+practices, agree mainly where danger is explicit, and diverge by
+bookkeeping where it is not. Both conclusions point the same way: harden
+the defaults, and label the measurements. These claims describe public,
+production-shaped manifests and rendered charts --- the configuration
+the ecosystem publishes --- not the private state of running clusters,
+which only their operators can observe.
+
+\hypertarget{data-availability-and-replication-package}{%
+\subsection{Data availability and replication
+package}\label{data-availability-and-replication-package}}
+
+All artifacts are public: corpus collectors and per-source logs, the
+25-rule engine, per-arm and per-tag statistics, the RQ3 coverage matrix,
+the complete labeling protocol (all versions and the 2026-10-27
+addendum), the 457-row validation sample with evidence packets and final
+labels, and the analysis scripts, at
+https://github.com/mallyagirish/k8s-misconfig-study (Apache-2.0). GitHub
+sources are pinned by commit SHA
+(\texttt{results/github\_commit\_shas.json}) and Helm charts by name and
+version (\texttt{results/helm\_render\_log.json}), so the corpus is
+reconstructible as collected. An archival DOI (Zenodo) will be minted at
+submission. The corpus manifests themselves remain under their original
+licenses and are rebuilt, not redistributed.
+
+\section*{Statements and Declarations}
+
+\subsection*{Funding}
+No funding was received for conducting this study.
+
+\subsection*{Competing interests}
+The author declares no competing interests.
+
+\subsection*{Ethics approval and consent to participate}
+Not applicable. The study analyzes publicly available open-source artifacts
+and involves no human subjects.
+
+\subsection*{Author contributions}
+The author is the sole contributor to this work.
+
+\subsection*{Use of artificial intelligence tools}
+AI tools were used in two ways, both disclosed in the methods. First, an AI
+assistant produced initial pre-labels for the validation sample under
+labeling protocol v2; every label was subsequently verified or adjudicated
+by the author under the governing protocol v3, and agreement was measured
+on a blinded subset labeled by the author before seeing the pre-labels
+(Section 3.4). Second, AI assistance was used for software development
+support and language editing during preparation of this manuscript. The
+author reviewed all output and takes full responsibility for the content.
+
+\begin{thebibliography}{4}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{{#1}}
+\providecommand{\urlprefix}{URL }
+\providecommand{\doi}[1]{\url{https://doi.org/#1}}
+\providecommand{\eprint}[2][]{\url{#2}}
+ \bibcommenthead
+
+\bibitem[{{Center for Internet Security}(2026)}]{CISBenchmark}
+{Center for Internet Security} (2026) {CIS Kubernetes Benchmark}. Version
+  current at time of study (accessed October 2026)
+
+\bibitem[{{kube-linter, kubeaudit, Polaris, and Checkov
+  projects}(2026)}]{ToolDocs}
+{kube-linter, kubeaudit, Polaris, and Checkov projects} (2026) Tool
+  documentation and check catalogues. Versions as recorded in the replication
+  package
+
+\bibitem[{{Kubernetes Project}(2026)}]{K8sPSS}
+{Kubernetes Project} (2026) {Pod Security Standards} and security context
+  documentation. Kubernetes.io/docs (accessed October 2026)
+
+\bibitem[{{National Security Agency} and {Cybersecurity and Infrastructure
+  Security Agency}(2022)}]{NSA2022}
+{National Security Agency}, {Cybersecurity and Infrastructure Security Agency}
+  (2022) {Kubernetes Hardening Guide}
+
+\end{thebibliography}
+
+\end{document}

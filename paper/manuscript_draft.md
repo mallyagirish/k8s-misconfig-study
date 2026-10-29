@@ -11,39 +11,35 @@ matrix). Bibliography verified for all works cited by name (2026-10-28). LaTeX v
 
 ## Abstract
 
-Kubernetes manifests are the de facto interface between developers and
-production infrastructure, and their defaults are permissive: a workload that
-specifies nothing runs with an automounted service-account token, no resource
-limits, and no sandboxing profile. We measure how 151 rendered Helm charts and
-60 public GitHub repositories (16,243 YAML documents, 2,811 workloads)
-configure these knobs, using a 25-rule detection engine.
+Kubernetes manifests are the de facto interface to production
+infrastructure, with permissive defaults: a workload specifying nothing runs
+with an automounted token, no resource limits, and no sandboxing profile. We
+measure how 151 Helm charts and 60 public GitHub repositories
+(16,243 documents, 2,811 workloads) configure these knobs, using a 25-rule
+engine.
 
 We validated the engine on a 457-finding stratified sample: AI-generated
-pre-labels were author-checked, with the 92 protocol-sensitive rows
-individually adjudicated and a blinded 30-row subset labeled independently
-(author–AI agreement 80%; Cohen's κ = 0.526 [0.17, 0.84]); the remaining rows
-retain the pre-labels accepted in the author's verification pass.
-Population-weighted precision is 0.699 [0.62, 0.84] (cluster bootstrap by
-source), adjusting 27,460 raw findings to an estimated ≈19,200 [17,100, 23,100]
-genuine misconfigurations. Precision is a property of the rule: unambiguous
+pre-labels were author-checked — the 92 protocol-sensitive rows individually
+adjudicated, a blinded 30-row subset labeled blind (author–AI
+agreement: κ = 0.526 [0.17, 0.84]) — and the rest retain pre-labels accepted
+in the verification pass. Population-weighted precision is 0.699 [0.62, 0.84]
+(cluster bootstrap by source): ≈19,200 [17,100, 23,100] of 27,460 raw
+findings are estimated genuine. Precision is rule-dependent: unambiguous
 absence checks (seccomp, privilege escalation, root prevention) are
 essentially exact, while context-sensitive rules (committed secrets, host
-namespaces, probes) are dominated by benign-by-design cases.
+namespaces, probes) are mostly benign-by-design cases.
 
-The defaults dominate: service-account tokens are automounted in 88.6% of
-production GitHub workloads, CPU limits — a contested hardening practice — are
-missing in 75.3%, and 1.4% of production GitHub workloads run a privileged
-container. Helm charts beat raw manifests on most practices, but workload-level
-prevalence ratios are only 1.3–1.7×.
+The defaults dominate: tokens automount in 88.6% of production
+GitHub workloads, CPU limits — a contested hardening practice — are missing in
+75.3%; 1.4% run a privileged container. Helm charts beat raw manifests on most
+practices, but by only 1.3–1.7× in workload-level prevalence.
 
-We also audit the auditors. On identical Helm input, four widely used scanners
-cover at most 16 of the 25 practices and diverge by up to 1.4× on the same
-practice, largely through counting semantics; scored against the verified
-labels (Helm arm, 126 sampled findings), they effectively detect 52–75% of the
-engine's verified-genuine findings and, where a check exists, flag 86–95% of
-findings judged benign under our contextual protocol. In the configuration
-run, no tool inspects committed Secret contents (~88% are empty or
-placeholder); Checkov's separate secrets framework was out of scope.
+We also audit the auditors: on identical input, four widely used scanners
+cover at most 16 of the 25 practices, diverging up to 1.4× on the same
+practice largely through counting semantics. Scored against our verified
+labels (Helm arm, n = 126), they effectively detect 52–75% of the engine's
+verified-genuine findings and flag 86–95% of verified-benign findings where a
+check exists, under our contextual protocol.
 
 **Keywords:** Kubernetes; configuration errors; empirical study; misconfiguration;
 static analysis tools; measurement validity

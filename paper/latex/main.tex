@@ -1,72 +1,63 @@
-% Misconfigured by Default — LaTeX conversion of paper/manuscript_draft.md
-% Conversion pass: article class for portability. For submission, swap in
-% Springer's sn-jnl class (sn-basic reference style) — structure is compatible.
-\documentclass[11pt]{article}
-\usepackage[a4paper,margin=2.5cm]{geometry}
-\usepackage[utf8]{inputenc}
-\usepackage[T1]{fontenc}
-\usepackage{lmodern}
+% Misconfigured by Default — Springer Nature (sn-jnl) skeleton for EMSE submission.
+% Reference style: sn-basic (author-year), per EMSE's name-year citation rule.
+\documentclass[pdflatex,sn-basic]{sn-jnl}
+
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{textcomp}
 \usepackage{booktabs}
 \usepackage{longtable}
 \usepackage{array}
 \usepackage{calc}
 \usepackage{etoolbox}
-\usepackage{xcolor}
-\usepackage[colorlinks=true,allcolors=blue!50!black]{hyperref}
 \providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \AtBeginEnvironment{longtable}{\footnotesize\setlength{\tabcolsep}{4pt}}
 
-\title{Misconfigured by Default: The Prevalence, Validity, and Tool Coverage of Kubernetes Misconfigurations in the Wild}
-\author{Girish Mallya\\
-Independent Researcher, Bellevue, WA, USA\\
-\texttt{girishm60@gmail.com}}
-\date{}
+\title[Misconfigured by Default]{Misconfigured by Default: The Prevalence, Validity, and Tool Coverage of Kubernetes Misconfigurations in the Wild}
 
-\begin{document}
-\maketitle
+\author*[1]{\fnm{Girish} \sur{Mallya}}\email{girishm60@gmail.com}
 
-\begin{abstract}
-Kubernetes manifests are the de facto interface between developers and
-production infrastructure, and their defaults are permissive: a workload
-that specifies nothing runs with an automounted service-account token,
-no resource limits, and no sandboxing profile. We measure how 151
-rendered Helm charts and 60 public GitHub repositories (16,243 YAML
-documents, 2,811 workloads) configure these knobs, using a 25-rule
-detection engine.
+\affil*[1]{\orgname{Independent Researcher}, \orgaddress{\city{Bellevue}, \state{WA}, \country{USA}}}
+
+\abstract{Kubernetes manifests are the de facto interface to production
+infrastructure, with permissive defaults: a workload specifying nothing
+runs with an automounted token, no resource limits, and no sandboxing
+profile. We measure how 151 Helm charts and 60 public GitHub
+repositories (16,243 documents, 2,811 workloads) configure these knobs,
+using a 25-rule engine.
 
 We validated the engine on a 457-finding stratified sample: AI-generated
-pre-labels were author-checked, with the 92 protocol-sensitive rows
-individually adjudicated and a blinded 30-row subset labeled
-independently (author--AI agreement 80\%; Cohen's $\kappa$ = 0.526 {[}0.17,
-0.84{]}); the remaining rows retain the pre-labels accepted in the
-author's verification pass. Population-weighted precision is 0.699
-{[}0.62, 0.84{]} (cluster bootstrap by source), adjusting 27,460 raw
-findings to an estimated $\approx$19,200 {[}17,100, 23,100{]} genuine
-misconfigurations. Precision is a property of the rule: unambiguous
-absence checks (seccomp, privilege escalation, root prevention) are
-essentially exact, while context-sensitive rules (committed secrets,
-host namespaces, probes) are dominated by benign-by-design cases.
+pre-labels were author-checked --- the 92 protocol-sensitive rows
+individually adjudicated, a blinded 30-row subset labeled blind
+(author--AI agreement: $\kappa$ = 0.526 {[}0.17, 0.84{]}) --- and the rest
+retain pre-labels accepted in the verification pass. Population-weighted
+precision is 0.699 {[}0.62, 0.84{]} (cluster bootstrap by source):
+$\approx$19,200 {[}17,100, 23,100{]} of 27,460 raw findings are estimated
+genuine. Precision is rule-dependent: unambiguous absence checks
+(seccomp, privilege escalation, root prevention) are essentially exact,
+while context-sensitive rules (committed secrets, host namespaces,
+probes) are mostly benign-by-design cases.
 
-The defaults dominate: service-account tokens are automounted in 88.6\%
-of production GitHub workloads, CPU limits --- a contested hardening
-practice --- are missing in 75.3\%, and 1.4\% of production GitHub
-workloads run a privileged container. Helm charts beat raw manifests on
-most practices, but workload-level prevalence ratios are only 1.3--1.7$\times$.
+The defaults dominate: tokens automount in 88.6\% of production GitHub
+workloads, CPU limits --- a contested hardening practice --- are missing
+in 75.3\%; 1.4\% run a privileged container. Helm charts beat raw
+manifests on most practices, but by only 1.3--1.7$\times$ in workload-level
+prevalence.
 
-We also audit the auditors. On identical Helm input, four widely used
-scanners cover at most 16 of the 25 practices and diverge by up to 1.4$\times$
-on the same practice, largely through counting semantics; scored against
-the verified labels (Helm arm, 126 sampled findings), they effectively
-detect 52--75\% of the engine's verified-genuine findings and, where a
-check exists, flag 86--95\% of findings judged benign under our
-contextual protocol. In the configuration run, no tool inspects
-committed Secret contents (\textasciitilde88\% are empty or
-placeholder); Checkov's separate secrets framework was out of scope.
+We also audit the auditors: on identical input, four widely used
+scanners cover at most 16 of the 25 practices, diverging up to 1.4$\times$ on
+the same practice largely through counting semantics. Scored against our
+verified labels (Helm arm, n = 126), they effectively detect 52--75\% of
+the engine's verified-genuine findings and flag 86--95\% of
+verified-benign findings where a check exists, under our contextual
+protocol.
 
-static analysis tools; measurement validity
-\end{abstract}
+static analysis tools; measurement validity}
 
-\noindent\textbf{Keywords:} Kubernetes; configuration errors; empirical study; misconfiguration;
+\keywords{Kubernetes, configuration errors, empirical study, misconfiguration,}
+
+\begin{document}
+
+\maketitle
 
 \hypertarget{introduction}{%
 \subsection{1. Introduction}\label{introduction}}
@@ -508,25 +499,25 @@ Reading
 \endhead
 \bottomrule\noalign{}
 \endlastfoot
-SEC\_NO\_SECCOMP & 1.000 & {[}0.82, 1.00{]} & face value \\
-SEC\_APE\_NOT\_DISABLED & 1.000 & {[}0.80, 1.00{]} & face value \\
-SEC\_ROOT\_NOT\_PREVENTED & 1.000 & {[}0.78, 1.00{]} & face value \\
-IMG\_LATEST & 1.000 & {[}0.80, 1.00{]} & face value \\
-SA\_TOKEN\_AUTOMOUNTED & 0.857 & {[}0.60, 0.96{]} & face value \\
-SEC\_DANGEROUS\_CAPABILITY & 0.824 & {[}0.59, 0.94{]} & face value \\
-RBAC\_WILDCARD\_VERBS & 0.733 & {[}0.48, 0.89{]} & mostly \\
-RBAC\_WILDCARD\_RESOURCES & 0.647 & {[}0.41, 0.83{]} & mostly \\
-SEC\_PRIVILEGED & 0.608 & {[}0.50, 0.71{]} & mixed \\
-REL\_NO\_READINESS\_PROBE & 0.538 & {[}0.29, 0.77{]} & context-heavy \\
-RES\_NO\_REQUESTS & 0.471 & {[}0.26, 0.69{]} & context-heavy \\
-RES\_NO\_CPU\_LIMIT & 0.429 & {[}0.21, 0.67{]} & context-heavy \\
-SECRET\_LITERAL\_ENV & 0.400 & {[}0.20, 0.64{]} & context-heavy \\
-RES\_NO\_MEM\_LIMIT & 0.375 & {[}0.18, 0.61{]} & context-heavy \\
-HOST\_NETWORK & 0.250 & {[}0.10, 0.49{]} & context-dominated \\
-SEC\_CAPABILITY\_ADDED & 0.235 & {[}0.10, 0.47{]} & context-dominated \\
-HOST\_PID / REL\_NO\_LIVENESS\_PROBE & 0.214 & {[}0.08, 0.48{]} &
+SEC\_\allowbreak{}NO\_\allowbreak{}SECCOMP & 1.000 & {[}0.82, 1.00{]} & face value \\
+SEC\_\allowbreak{}APE\_\allowbreak{}NOT\_\allowbreak{}DISABLED & 1.000 & {[}0.80, 1.00{]} & face value \\
+SEC\_\allowbreak{}ROOT\_\allowbreak{}NOT\_\allowbreak{}PREVENTED & 1.000 & {[}0.78, 1.00{]} & face value \\
+IMG\_\allowbreak{}LATEST & 1.000 & {[}0.80, 1.00{]} & face value \\
+SA\_\allowbreak{}TOKEN\_\allowbreak{}AUTOMOUNTED & 0.857 & {[}0.60, 0.96{]} & face value \\
+SEC\_\allowbreak{}DANGEROUS\_\allowbreak{}CAPABILITY & 0.824 & {[}0.59, 0.94{]} & face value \\
+RBAC\_\allowbreak{}WILDCARD\_\allowbreak{}VERBS & 0.733 & {[}0.48, 0.89{]} & mostly \\
+RBAC\_\allowbreak{}WILDCARD\_\allowbreak{}RESOURCES & 0.647 & {[}0.41, 0.83{]} & mostly \\
+SEC\_\allowbreak{}PRIVILEGED & 0.608 & {[}0.50, 0.71{]} & mixed \\
+REL\_\allowbreak{}NO\_\allowbreak{}READINESS\_\allowbreak{}PROBE & 0.538 & {[}0.29, 0.77{]} & context-heavy \\
+RES\_\allowbreak{}NO\_\allowbreak{}REQUESTS & 0.471 & {[}0.26, 0.69{]} & context-heavy \\
+RES\_\allowbreak{}NO\_\allowbreak{}CPU\_\allowbreak{}LIMIT & 0.429 & {[}0.21, 0.67{]} & context-heavy \\
+SECRET\_\allowbreak{}LITERAL\_\allowbreak{}ENV & 0.400 & {[}0.20, 0.64{]} & context-heavy \\
+RES\_\allowbreak{}NO\_\allowbreak{}MEM\_\allowbreak{}LIMIT & 0.375 & {[}0.18, 0.61{]} & context-heavy \\
+HOST\_\allowbreak{}NETWORK & 0.250 & {[}0.10, 0.49{]} & context-dominated \\
+SEC\_\allowbreak{}CAPABILITY\_\allowbreak{}ADDED & 0.235 & {[}0.10, 0.47{]} & context-dominated \\
+HOST\_\allowbreak{}PID / REL\_\allowbreak{}NO\_\allowbreak{}LIVENESS\_\allowbreak{}PROBE & 0.214 & {[}0.08, 0.48{]} &
 context-dominated \\
-SECRET\_COMMITTED & 0.125 & {[}0.03, 0.36{]} & context-dominated \\
+SECRET\_\allowbreak{}COMMITTED & 0.125 & {[}0.03, 0.36{]} & context-dominated \\
 \end{longtable}
 
 \textbf{Taxonomy v2.} The validation exercise reorganizes the 25 rules
@@ -958,13 +949,12 @@ reconstructible as collected. An archival DOI (Zenodo) will be minted at
 submission. The corpus manifests themselves remain under their original
 licenses and are rebuilt, not redistributed.
 
-\section*{Declarations}
+\section*{Statements and Declarations}
 
 \subsection*{Funding}
 No funding was received for conducting this study.
 
-\subsection*{Competing interests
-}
+\subsection*{Competing interests}
 The author declares no competing interests.
 
 \subsection*{Ethics approval and consent to participate}
@@ -978,14 +968,13 @@ The author is the sole contributor to this work.
 AI tools were used in two ways, both disclosed in the methods. First, an AI
 assistant produced initial pre-labels for the validation sample under
 labeling protocol v2; every label was subsequently verified or adjudicated
-by the author under the governing protocol v3, and reliability was measured
+by the author under the governing protocol v3, and agreement was measured
 on a blinded subset labeled by the author before seeing the pre-labels
 (Section 3.4). Second, AI assistance was used for software development
 support and language editing during preparation of this manuscript. The
 author reviewed all output and takes full responsibility for the content.
 
 \nocite{CISBenchmark,NSA2022,K8sPSS,ToolDocs}
-\bibliographystyle{plain}
 \bibliography{references}
 
 \end{document}
