@@ -66,3 +66,23 @@ Adjusted true-findings estimate: 19,199 of 27,460 raw engine-v3 findings (reconc
 - K8S-012 (flagged in addendum amendment 11) resolved on per-grant inspection: one
   wildcard grant sits in the core group (verbs * on secrets), so the own-groups test
   fails and the row stays TP. No label change.
+
+## Aggregate uncertainty (added 2026-10-28)
+
+Propagating the per-rule binomial sampling variances — Var = Σ Nᵢ²·pᵢ(1−pᵢ)/nᵢ
+over the 25 rules (Nᵢ = v3 population, pᵢ = per-rule precision, nᵢ = decided
+sample rows) — the adjusted total 19,199 has sd ≈ 708 and 95% interval
+**[17,810, 20,587]**; the population-weighted precision 0.699 has interval
+**[0.649, 0.750]**. The intervals treat sampled rows as independent; the ~10%
+intentional duplicate rows make them mildly optimistic, and the
+distinct-finding sensitivity (0.626 vs 0.633 sample-row) bounds that effect.
+These figures are reported in manuscript Sections 3.5 and 4.3.
+
+## Label provenance of the matched frame (added 2026-10-28)
+
+Of the 451 matched rows: 30 were labeled blind by the author (the agreement
+subset), 87 were individually adjudicated in the verification pass (the
+divergence rows; 6 rows are in both sets), and 340 retain the AI pre-labels
+accepted during the verification pass — i.e. 111 of 451 rows (25%) carry
+author-produced or individually adjudicated labels. Manuscript Section 3.4
+reports this breakdown.

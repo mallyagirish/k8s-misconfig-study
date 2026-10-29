@@ -5,7 +5,7 @@ that audit them agree.**
 
 An empirical measurement study of Kubernetes configuration practices across 16,243
 YAML documents (2,811 workloads) drawn from public sources, plus a comparative audit
-of the four most widely used manifest-auditing tools on identical input.
+of four widely used manifest-auditing tools on identical input.
 
 ## Research questions
 

@@ -17,7 +17,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 MD = HERE.parent / "manuscript_draft.md"
-CITE_KEYS = ["Rahman2023", "Minna2025", "Eom2026", "Yin2011", "XuZhou2015"]
+CITE_KEYS = ["Rahman2023", "Minna2025", "Eom2026", "Yin2011", "XuZhou2015", "Ghorab2026"]
 
 text = MD.read_text()
 lines = text.split("\n")

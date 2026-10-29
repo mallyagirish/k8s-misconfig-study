@@ -1,10 +1,10 @@
 # Misconfigured by Default: The Prevalence, Validity, and Tool Coverage of Kubernetes Misconfigurations in the Wild
 
 **Author:** Girish Mallya
-**Status:** First full draft, 2026-10-28. All quantitative claims are drawn from the
-verified results files in `results/` (engine v3 statistics, the author-verified
+**Status:** Working draft, 2026-10-28. All quantitative claims are drawn from the
+verified results files in `results/` (engine v3 statistics, the author-adjudicated
 validation sample as reconciled against engine v3, and the RQ3 tool coverage
-matrix). The bibliography requires a verification pass before submission.
+matrix). Bibliography verified for all works cited by name (2026-10-28). LaTeX version in `paper/latex/`.
 **Target venue:** *Empirical Software Engineering* (Springer), journal route.
 
 ---
@@ -20,20 +20,19 @@ from two arms — 151 rendered Helm charts and 60 public GitHub repositories —
 applied a 25-rule detection engine covering security context, resources, images,
 reliability, RBAC, and secrets. Because prevalence figures are only as good as the
 rules that produce them, we validated the engine against a 457-finding stratified
-sample under a documented labeling protocol, with a blinded inter-rater subset
+sample under a documented labeling protocol, with a blinded author–AI agreement subset
 (Cohen's κ = 0.526 against the initial labels, with disagreements decomposed into
-protocol-version effects and adjudicated judgment calls) and full author
-verification. Overall precision is 0.633 [0.587, 0.676], and it varies sharply by
+protocol-version effects and adjudicated judgment calls) and author verification and adjudication. Overall precision is 0.633 [0.587, 0.676], and it varies sharply by
 rule: explicit-danger rules (privilege escalation, seccomp, root prevention) are
 essentially exact, while context-sensitive rules (committed secrets, host
 namespaces, probes) are dominated by benign-by-design cases. Adjusting for
-precision, we estimate ≈19,200 of 27,460 raw findings are genuine
+precision, we estimate ≈19,200 (95% CI [17,800, 20,600]) of 27,460 raw findings are genuine
 misconfigurations. The defaults dominate: service-account tokens are automounted
 in 88.6% of production GitHub workloads and CPU limits are missing in 75.3%,
 while explicitly dangerous settings are rare (privileged containers, 1.4%).
 Curated Helm charts are better hardened than raw repository manifests, but only
 by 1.3–1.7×, not the 2–3× a top-charts sample suggests. Finally, we audit the
-auditors: on identical input, the four most widely used manifest scanners
+auditors: on identical input, four widely used manifest scanners
 (kube-linter, kubeaudit, Polaris, Checkov) cover at most ~16 of the 25 practices,
 agree closely only on explicit dangers, and diverge by up to 1.4× on the same
 practice purely through counting semantics; scored against our verified labels,
@@ -85,7 +84,7 @@ This paper makes four contributions:
 2. **A validated rule engine.** Every prevalence number is paired with a per-rule
    precision estimate from a 457-finding stratified sample, judged under a
    written labeling protocol whose evolution (three versions), blinded
-   inter-rater check, and adjudication amendments are documented and released.
+   blinded author–AI agreement check, and adjudication amendments are documented and released.
    Precision, not raw counts, is the paper's unit of evidence (Section 4.3).
 3. **A revised taxonomy** of Kubernetes misconfiguration that distinguishes
    misconfigurations proper from hardening gaps and manifest rot, and classifies
@@ -216,13 +215,19 @@ property the rule names, in context) was harmonized with an earlier
 definitional core and adds explicit contextual amendments — production scoping
 for resource/probe rules, a two-tier treatment of digest pinning, an
 escalation-path test for root/privilege-escalation rules, and a credential-material
-test for committed secrets. AI pre-labels produced under v2 were treated as a
-*first rater*, never as ground truth.
+test for committed secrets. AI pre-labels produced under v2 were treated as an
+*initial annotation pass*, never as ground truth.
 
-**Inter-rater reliability.** The author labeled a blinded 30-row subset
+**Blinded author–AI agreement.** The author labeled a blinded 30-row subset
 (spanning all 25 rules) before seeing any pre-labels. Agreement was 24/30 (80%),
-Cohen's κ = 0.526 against the v2-standard pre-labels. We report this number as
-measured, with its decomposition, because the decomposition is the finding:
+Cohen's κ = 0.526 against the v2-standard pre-labels. This is agreement
+between the author and AI-generated labels, not inter-rater reliability
+between two humans; and because the pre-labels follow v2 while the author's
+labels follow the emerging v3, κ also absorbs the protocol-version
+difference. A two-human measurement — an independent researcher labeling a
+150-row subsample under the frozen v3 protocol, blind to all existing
+labels — is in preparation; the packet ships in the replication package.
+We report this number as measured, with its decomposition, because the decomposition is the finding:
 four of six disagreements were resource/probe rows where the governing v3
 production-scoping amendment sides with the author against the v2 definitional
 labels — a standards difference, not rater noise — and the remaining two were
@@ -234,11 +239,18 @@ scoping test for wildcard RBAC), adopted before the verification pass and now
 part of the protocol (`results/labeling_protocol_v3_addendum.md`). Intra-rater
 consistency, measured by the hidden duplicates, was 44/44 groups.
 
-**Verification.** The author then verified the full sample (blank = accept,
-per protocol), reviewing the 92 *divergence rows* — those whose labels can differ
-between the v1 and v2 standards — first and accepting the v3 recommendations on
-all 92 without override on 2026-10-27. Final labels are therefore author-verified
-throughout. Rows whose flagged property cannot be observed in the source
+**Verification.** The author then ran a verification pass over the full sample:
+the 92 *divergence rows* — those whose labels can differ between the v1 and v2
+standards — were adjudicated first, and the author accepted the v3
+recommendations on all 92 without override on 2026-10-27; the remaining rows
+were reviewed in aggregate (blank = accept, per protocol). The provenance of
+the final labels is therefore mixed, and we state it exactly: of the 451 sample
+rows that persist in engine v3, **111 (25%) carry labels the author produced or
+individually adjudicated** — the 30 blind-labeled rows and 87 adjudicated
+divergence rows, with 6 rows in both sets — while **340 (75%) retain the AI
+pre-labels** the author accepted during the pass. The validation dataset is
+thus AI-annotated and author-adjudicated, not independently human-labeled;
+what that does and does not establish is taken up in Section 6. Rows whose flagged property cannot be observed in the source
 (7, e.g. images injected by kustomize overlays) are excluded from precision
 denominators with the count and reason disclosed.
 
@@ -259,7 +271,11 @@ deliberately over-represented because all findings of the rarest rules were
 taken; the population-weighted aggregate — each rule's precision weighted by
 its v3 population, equivalently the adjusted finding count over all findings —
 is **0.699** (19,199 / 27,460) and is the figure that characterizes the corpus
-as a whole. Every adjusted prevalence figure in Section 4 is built per rule
+as a whole. Propagating the per-rule binomial sampling variances, the adjusted
+total's 95% interval is [17,810, 20,587] and the weighted precision's is
+[0.649, 0.750]; these intervals treat sampled rows as independent, so the ~10%
+intentional duplicates make them mildly optimistic, an effect the
+distinct-finding sensitivity bounds. Every adjusted prevalence figure in Section 4 is built per rule
 and is identical under either aggregate. As a standards sensitivity check,
 the same sample scored under the superseded v2 definitional standard (the
 pre-labels) gives ≈0.73; the gap to 0.633 is the v3 amendments — production
@@ -325,9 +341,11 @@ underneath.
 
 ### 4.3 RQ2 — Precision and taxonomy: which numbers can be believed
 
-Overall precision on the reconciled, author-verified sample is **0.633
+Overall precision on the reconciled, author-adjudicated sample is **0.633
 [0.587, 0.676]** (279 TP / 162 FP over decided rows), adjusting the 27,460 raw
-findings to an estimated **≈19,200 genuine misconfigurations**. A
+findings to an estimated **≈19,200 genuine misconfigurations** (95% CI
+[17,800, 20,600] — a model-based extrapolation of the per-rule estimates, not
+a count of individually verified findings). A
 distinct-finding sensitivity analysis gives 0.626 — the intentional duplicate
 rows do not move the result. Population-weighted, overall precision is 0.699
 (Section 3.5); the per-rule adjustments that follow are the same under either
@@ -443,7 +461,11 @@ detection. The symmetric result is the more damning one: the same checks flag
 context classes — infrastructure agents, standard operator patterns,
 least-privilege capability sets — fool the production tools at about the same
 rate they fooled our unvalidated rules. The tools' deficit on real manifests
-is not detection; it is coverage and context.
+is not detection; it is coverage and context. These are sample-based
+estimates from the 126 Helm-arm validation rows, drawn from the engine's own
+findings: the flagging figures are shares of sampled findings that
+verification judged benign, not false-positive rates over all negative
+configurations, which a findings-only sample cannot measure.
 
 | Tool | TP detection (check exists) | TP detection (effective) | FP-flagging (check exists) |
 |---|---:|---:|---:|
@@ -473,7 +495,12 @@ partially, optionally, or not at all.
 with the highest prevalence — automounted tokens, absent limits, unpinned
 images, absent seccomp — are precisely those where doing nothing produces the
 finding. Manifest authors are not choosing insecurity; they are accepting a
-platform posture. Interventions aimed at author behavior (linters in editors,
+platform posture. A scope note on what the findings are: most are *exposures
+and hardening gaps*, not demonstrated vulnerabilities — an automounted token's
+impact depends on the permissions bound to its service account and on cluster
+context, which a manifest alone does not determine. The taxonomy's tiers
+(Section 4.3) keep that distinction in view; the prevalence claims are about
+configuration posture, not exploitability. Interventions aimed at author behavior (linters in editors,
 review checklists) fight the last war: the durable fix is at the platform and
 distribution layer — admission-time defaults (Pod Security Standards,
 policy engines with the checks *enabled*), chart templates that ship hardened
@@ -509,9 +536,12 @@ counted.
 
 **Construct validity** rests on the labeling protocol. We mitigate by
 *disclosing* rather than concealing its evolution: three protocol versions, a
-blinded inter-rater subset (κ = 0.526 against the v2-standard labels, with the
+blinded author–AI agreement subset (κ = 0.526 against the v2-standard labels, with the
 disagreement decomposition showing 4 of 6 tracing to the v2→v3 standards change
-itself), adjudicated rule-level amendments, and full author verification.
+itself), adjudicated rule-level amendments, and author adjudication of the
+labels (Section 3.4 gives the row-level provenance). The ground truth is thus
+single-author and AI-assisted; an independent human labeling under the frozen
+protocol is in preparation and is the obvious strengthening step.
 Readers who prefer the purely definitional standard can recompute precision
 under it from the released sample (the v2 pre-labels are preserved); the
 prevalence *rankings* are unchanged under either standard, though several
@@ -558,7 +588,7 @@ images, RBAC, and secrets, rather than security alone); separation of
 production manifests from examples and fixtures, which their manifest-level
 counting does not attempt; and a validation design that estimates *per-rule
 precision* over a stratified sample with a documented protocol and a blinded
-reliability check, rather than fix-agreement on a small set of reports. Their
+agreement check, rather than fix-agreement on a small set of reports. Their
 headline conclusion — insecure configurations are widespread — is corroborated
 by our data at larger scale; our contribution is establishing *which* of the
 counts can be believed, and by how much.
@@ -576,6 +606,17 @@ can only damage a working configuration. The studies are complementary: they
 evaluate repair; we evaluate the measurement the repair depends on. We also add
 the raw-manifest arm and the production/fixture separation their chart-only
 corpus does not require.
+
+A third recent line works from developer reports rather than manifests:
+Ghorab et al. derive a taxonomy of Kubernetes security misconfigurations from
+2,662 Stack Overflow issues, trace how the issues evolve with project
+maturity, and evaluate LLM repair, reaching 98.5% correction accuracy with a
+schema-guided validation framework [Ghorab2026]. Their unit of analysis —
+what developers *report struggling with* — complements ours: what
+production-shaped code *contains*, and whether automated findings about it
+are valid. Their repair results, like Minna et al.'s, presuppose that
+reported misconfigurations are genuine, which is the premise our validation
+tests.
 
 Beyond Kubernetes, configuration errors have been studied empirically in
 commercial and open-source systems [Yin2011], and the systems approaches to
@@ -681,6 +722,9 @@ redistributed.
 - [Minna2025] F. Minna, F. Massacci, and K. Tuma, "Analyzing and Mitigating
   (with LLMs) the Security Misconfigurations of Helm Charts from Artifact Hub,"
   *Empirical Software Engineering* 30:132, 2025. DOI: 10.1007/s10664-025-10688-0.
+- [Ghorab2026] M. A. Ghorab, A. Abdel Latif, and M. A. Saied, "Kubernetes
+  Misconfigurations in the Wild: Taxonomy, Evolution, and Automated Repair
+  with Large Language Models," arXiv:2609.27030, 2026.
 - [Eom2026] H. Eom, B. Suk, and S. Hwang, "An Empirical Study and Benchmark of
   Kubernetes Misconfiguration Scanners," *Proc. ISSTA 2026*. DOI: 10.1145/3832297.
 - CIS Kubernetes Benchmark, Center for Internet Security.
