@@ -28,41 +28,40 @@ Independent Researcher, Bellevue, WA, USA\\
 \begin{abstract}
 Kubernetes manifests are the de facto interface between developers and
 production infrastructure, and their defaults are permissive: a workload
-that specifies nothing about identity, resources, or isolation runs with
-an automounted service-account token, no resource limits, and no
-sandboxing profile. We measure how the ecosystem actually configures
-these knobs. We collected 16,243 YAML documents (2,811 workloads) from
-two arms --- 151 rendered Helm charts and 60 public GitHub repositories
---- and applied a 25-rule detection engine covering security context,
-resources, images, reliability, RBAC, and secrets. Because prevalence
-figures are only as good as the rules that produce them, we validated
-the engine against a 457-finding stratified sample under a documented
-labeling protocol, with a blinded author--AI agreement subset (Cohen's $\kappa$
-= 0.526 against the initial labels, with disagreements decomposed into
-protocol-version effects and adjudicated judgment calls) and author
-verification and adjudication. Overall precision is 0.633 {[}0.587,
-0.676{]}, and it varies sharply by rule: explicit-danger rules
-(privilege escalation, seccomp, root prevention) are essentially exact,
-while context-sensitive rules (committed secrets, host namespaces,
-probes) are dominated by benign-by-design cases. Adjusting for
-precision, we estimate $\approx$19,200 (95\% CI {[}17,800, 20,600{]}) of 27,460
-raw findings are genuine misconfigurations. The defaults dominate:
-service-account tokens are automounted in 88.6\% of production GitHub
-workloads and CPU limits are missing in 75.3\%, while explicitly
-dangerous settings are rare (privileged containers, 1.4\%). Curated Helm
-charts are better hardened than raw repository manifests, but only by
-1.3--1.7$\times$, not the 2--3$\times$ a top-charts sample suggests. Finally, we audit
-the auditors: on identical input, four widely used manifest scanners
-(kube-linter, kubeaudit, Polaris, Checkov) cover at most
-\textasciitilde16 of the 25 practices, agree closely only on explicit
-dangers, and diverge by up to 1.4$\times$ on the same practice purely through
-counting semantics; scored against our verified labels, the tools detect
-52--75\% of genuine misconfigurations overall and also flag 86--95\% of
-the findings verification judged benign. No tool inspects the
-\emph{contents} of committed Secret objects, where the
-credential-bearing minority hides. We release the corpus manifest, the
-rule engine, the labeling protocol, and the full validation data as a
-replication package.
+that specifies nothing runs with an automounted service-account token,
+no resource limits, and no sandboxing profile. We measure how 151
+rendered Helm charts and 60 public GitHub repositories (16,243 YAML
+documents, 2,811 workloads) configure these knobs, using a 25-rule
+detection engine.
+
+We validated the engine on a 457-finding stratified sample: AI-generated
+pre-labels were author-checked, with the 92 protocol-sensitive rows
+individually adjudicated and a blinded 30-row subset labeled
+independently (author--AI agreement 80\%; Cohen's $\kappa$ = 0.526 {[}0.17,
+0.84{]}); the remaining rows retain the pre-labels accepted in the
+author's verification pass. Population-weighted precision is 0.699
+{[}0.62, 0.84{]} (cluster bootstrap by source), adjusting 27,460 raw
+findings to an estimated $\approx$19,200 {[}17,100, 23,100{]} genuine
+misconfigurations. Precision is a property of the rule: unambiguous
+absence checks (seccomp, privilege escalation, root prevention) are
+essentially exact, while context-sensitive rules (committed secrets,
+host namespaces, probes) are dominated by benign-by-design cases.
+
+The defaults dominate: service-account tokens are automounted in 88.6\%
+of production GitHub workloads, CPU limits --- a contested hardening
+practice --- are missing in 75.3\%, and 1.4\% of production GitHub
+workloads run a privileged container. Helm charts beat raw manifests on
+most practices, but workload-level prevalence ratios are only 1.3--1.7$\times$.
+
+We also audit the auditors. On identical Helm input, four widely used
+scanners cover at most 16 of the 25 practices and diverge by up to 1.4$\times$
+on the same practice, largely through counting semantics; scored against
+the verified labels (Helm arm, 126 sampled findings), they effectively
+detect 52--75\% of the engine's verified-genuine findings and, where a
+check exists, flag 86--95\% of findings judged benign under our
+contextual protocol. In the configuration run, no tool inspects
+committed Secret contents (\textasciitilde88\% are empty or
+placeholder); Checkov's separate secrets framework was out of scope.
 
 static analysis tools; measurement validity
 \end{abstract}
@@ -291,21 +290,22 @@ committed secrets. AI pre-labels produced under v2 were treated as an
 
 \textbf{Blinded author--AI agreement.} The author labeled a blinded
 30-row subset (spanning all 25 rules) before seeing any pre-labels.
-Agreement was 24/30 (80\%), Cohen's $\kappa$ = 0.526 against the v2-standard
-pre-labels. This is agreement between the author and AI-generated
-labels, not inter-rater reliability between two humans; and because the
-pre-labels follow v2 while the author's labels follow the emerging v3, $\kappa$
-also absorbs the protocol-version difference. A two-human measurement
---- an independent researcher labeling a 150-row subsample under the
-frozen v3 protocol, blind to all existing labels --- is in preparation;
-the packet ships in the replication package. We report this number as
-measured, with its decomposition, because the decomposition is the
-finding: four of six disagreements were resource/probe rows where the
-governing v3 production-scoping amendment sides with the author against
-the v2 definitional labels --- a standards difference, not rater noise
---- and the remaining two were genuine judgment calls (a CNI agent's
-dangerous capabilities; an operator's wildcard RBAC confined to its own
-API groups), which were adjudicated into two further \emph{rule-level}
+Agreement was 24/30 (80\%), Cohen's $\kappa$ = 0.526 {[}bootstrap 95\% CI 0.17,
+0.84{]} against the v2-standard pre-labels. This is agreement between
+the author and AI-generated labels, not inter-rater reliability between
+two humans; and because the pre-labels follow v2 while the author's
+labels follow the emerging v3, $\kappa$ also absorbs the protocol-version
+difference. A two-human measurement --- an independent researcher
+labeling a 150-row subsample under the frozen v3 protocol, blind to all
+existing labels --- is in preparation; the packet ships in the
+replication package. We report this number as measured, with its
+decomposition, because the decomposition is the finding: four of six
+disagreements were resource/probe rows where the governing v3
+production-scoping amendment sides with the author against the v2
+definitional labels --- a standards difference, not rater noise --- and
+the remaining two were genuine judgment calls (a CNI agent's dangerous
+capabilities; an operator's wildcard RBAC confined to its own API
+groups), which were adjudicated into two further \emph{rule-level}
 amendments (an infrastructure-class test requiring a drop-ALL baseline
 plus function-required capabilities, and an own-API-group scoping test
 for wildcard RBAC), adopted before the verification pass and now part of
@@ -352,22 +352,25 @@ population-weighted aggregate --- each rule's precision weighted by its
 v3 population, equivalently the adjusted finding count over all findings
 --- is \textbf{0.699} (19,199 / 27,460) and is the figure that
 characterizes the corpus as a whole. Propagating the per-rule binomial
-sampling variances, the adjusted total's 95\% interval is {[}17,810,
-20,587{]} and the weighted precision's is {[}0.649, 0.750{]}; these
-intervals treat sampled rows as independent, so the \textasciitilde10\%
-intentional duplicates make them mildly optimistic, an effect the
-distinct-finding sensitivity bounds. Every adjusted prevalence figure in
-Section 4 is built per rule and is identical under either aggregate. As
-a standards sensitivity check, the same sample scored under the
-superseded v2 definitional standard (the pre-labels) gives $\approx$0.73; the
-gap to 0.633 is the v3 amendments --- production scoping and the context
-classes of Section 4.3 --- reclassifying findings that the purely
-definitional standard counted as genuine. Cluster-level prevalence
-(share of repositories/charts with $\geq$1 finding) addresses the
-non-independence of findings within a source: 52.9\% of v3 GitHub
-findings repeat an already-seen (kind, name, container, rule) key, so
-document-level rates alone would overstate how widespread each practice
-is --- and, as Section 4.1 shows, the practices are widespread anyway.
+sampling variances, the adjusted intervals are cluster-bootstrapped by
+source (resampling repositories and charts, 2,000 replicates;
+\texttt{results/cluster\_bootstrap.md}): the adjusted total's 95\%
+interval is {[}17,120, 23,071{]} and the weighted precision's is
+{[}0.623, 0.840{]}. Row-level intervals that treat findings as
+independent are materially narrower and are not used, since findings
+within a source are correlated (52.9\% of v3 findings repeat a seen
+key). Every adjusted prevalence figure in Section 4 is built per rule
+and is identical under either aggregate. As a standards sensitivity
+check, the same sample scored under the superseded v2 definitional
+standard (the pre-labels) gives $\approx$0.73; the gap to 0.633 is the v3
+amendments --- production scoping and the context classes of Section 4.3
+--- reclassifying findings that the purely definitional standard counted
+as genuine. Cluster-level prevalence (share of repositories/charts with
+$\geq$1 finding) addresses the non-independence of findings within a source:
+52.9\% of v3 GitHub findings repeat an already-seen (kind, name,
+container, rule) key, so document-level rates alone would overstate how
+widespread each practice is --- and, as Section 4.1 shows, the practices
+are widespread anyway.
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
@@ -443,17 +446,18 @@ change the defaults underneath.
 believed}\label{rq2-precision-and-taxonomy-which-numbers-can-be-believed}}
 
 Overall precision on the reconciled, author-adjudicated sample is
-\textbf{0.633 {[}0.587, 0.676{]}} (279 TP / 162 FP over decided rows),
-adjusting the 27,460 raw findings to an estimated \textbf{$\approx$19,200
-genuine misconfigurations} (95\% CI {[}17,800, 20,600{]} --- a
-model-based extrapolation of the per-rule estimates, not a count of
-individually verified findings). A distinct-finding sensitivity analysis
-gives 0.626 --- the intentional duplicate rows do not move the result.
-Population-weighted, overall precision is 0.699 (Section 3.5); the
-per-rule adjustments that follow are the same under either aggregate.
-But the aggregate conceals the paper's most useful variation: precision
-is a property of the \emph{rule}, and it splits the taxonomy into rules
-that can be read at face value and rules that cannot.
+\textbf{0.633 {[}0.527, 0.714{]}} (279 TP / 162 FP over decided rows;
+cluster-bootstrap interval by source), adjusting the 27,460 raw findings
+to an estimated \textbf{$\approx$19,200 genuine misconfigurations} (95\% CI
+{[}17,100, 23,100{]} --- a model-based extrapolation of the per-rule
+estimates, not a count of individually verified findings). A
+distinct-finding sensitivity analysis gives 0.626 --- the intentional
+duplicate rows do not move the result. Population-weighted, overall
+precision is 0.699 (Section 3.5); the per-rule adjustments that follow
+are the same under either aggregate. But the aggregate conceals the
+paper's most useful variation: precision is a property of the
+\emph{rule}, and it splits the taxonomy into rules that can be read at
+face value and rules that cannot.
 
 \textbf{Face-value rules (precision $\approx$ 1.0).} Missing seccomp profile,
 privilege escalation not disabled, root not prevented, and
@@ -572,11 +576,13 @@ checked by exactly one tool (Checkov CKV\_K8S\_43). Wildcard RBAC has no
 \emph{default-enabled} check that catches it broadly: Checkov's
 CKV\_K8S\_49 flags 29 of the 155 wildcard findings on this input, and
 kube-linter ships wildcard checks that are off by default. And
-\textbf{no tool inspects committed Secret contents}: all four flag (or
-ignore) Secret objects without distinguishing credential material from
-placeholders, which Section 4.3 shows is a 7:1 noise-to-signal
-distinction. The most sensitive objects in the corpus are the ones the
-tooling understands least.
+\textbf{no tool, in the configuration run, inspects committed Secret
+contents} (Checkov ships a separate secrets framework, outside the
+Kubernetes checks we ran): all four flag (or ignore) Secret objects
+without distinguishing credential material from placeholders, which
+Section 4.3 shows is a 7:1 noise-to-signal distinction. The most
+sensitive objects in the corpus are the ones the tooling understands
+least.
 
 \textbf{Agreement exists only where danger is explicit.} On privileged
 containers, the four tools report 26--27 findings against our 27 ---
@@ -610,7 +616,13 @@ is not detection; it is coverage and context. These are sample-based
 estimates from the 126 Helm-arm validation rows, drawn from the engine's
 own findings: the flagging figures are shares of sampled findings that
 verification judged benign, not false-positive rates over all negative
-configurations, which a findings-only sample cannot measure.
+configurations, which a findings-only sample cannot measure. The
+benchmark for ``benign'' is likewise ours: the tools implement the
+definitional reading of each practice and do not claim the v3 context
+classes, so the flagging rates measure the distance between definitional
+checking and context-aware judgment --- the quantity a user who trusts
+the output experiences --- rather than vendor error against the tools'
+own specifications.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2000}}
@@ -934,10 +946,13 @@ All artifacts are public: corpus collectors and per-source logs, the
 the complete labeling protocol (all versions and the 2026-10-27
 addendum), the 457-row validation sample with evidence packets and final
 labels, and the analysis scripts, at
-https://github.com/mallyagirish/k8s-misconfig-study (Apache-2.0). An
-archival DOI (Zenodo) will be minted at submission. The corpus manifests
-themselves remain under their original licenses and are rebuilt, not
-redistributed.
+https://github.com/mallyagirish/k8s-misconfig-study (Apache-2.0). GitHub
+sources are pinned by commit SHA
+(\texttt{results/github\_commit\_shas.json}) and Helm charts by name and
+version (\texttt{results/helm\_render\_log.json}), so the corpus is
+reconstructible as collected. An archival DOI (Zenodo) will be minted at
+submission. The corpus manifests themselves remain under their original
+licenses and are rebuilt, not redistributed.
 
 \section*{Declarations}
 

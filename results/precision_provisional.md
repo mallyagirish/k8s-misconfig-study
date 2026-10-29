@@ -86,3 +86,10 @@ divergence rows; 6 rows are in both sets), and 340 retain the AI pre-labels
 accepted during the verification pass — i.e. 111 of 451 rows (25%) carry
 author-produced or individually adjudicated labels. Manuscript Section 3.4
 reports this breakdown.
+
+> **Superseded (2026-10-28, later):** the binomial-propagation intervals in the
+> "Aggregate uncertainty" section above assume row independence. The paper now
+> reports cluster-bootstrap intervals by source instead
+> (`results/cluster_bootstrap.md`): weighted precision 0.699 [0.623, 0.840];
+> adjusted total 19,199 [17,120, 23,071]; pooled 0.633 [0.527, 0.714];
+> kappa 0.526 [0.167, 0.841].
