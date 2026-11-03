@@ -36,9 +36,9 @@ practices, but by only 1.3–1.7× in workload-level prevalence.
 
 We also audit the auditors: on identical input, four widely used scanners
 cover at most 16 of the 25 practices, diverging up to 1.4× on the same
-practice largely through counting semantics. Scored against our verified
+practice largely through counting semantics. Scored against our reference
 labels (Helm arm, n = 126), they effectively detect 52–75% of the engine's
-verified-genuine findings and flag 86–95% of verified-benign findings where a
+reference-positive findings and flag 86–95% of reference-benign findings where a
 check exists, under our contextual protocol.
 
 **Keywords:** Kubernetes; configuration errors; empirical study; misconfiguration;
@@ -48,9 +48,9 @@ static analysis tools; measurement validity
 
 ## 1. Introduction
 
-Almost every production system now runs on Kubernetes, and almost every Kubernetes
-workload is described by a YAML manifest that its author wrote once and rarely
-revisits. The platform's configuration surface is large, and its defaults were
+Kubernetes is now the default platform for production containerized
+workloads, and a Kubernetes workload is typically described by a YAML
+manifest that its author wrote once and rarely revisits. The platform's configuration surface is large, and its defaults were
 chosen for convenience rather than safety. A container that says nothing about
 security runs as whatever user its image specifies, with a service-account token
 mounted into its filesystem, no CPU or memory limits, no seccomp profile, and
@@ -94,7 +94,8 @@ This paper makes four contributions:
    misconfiguration is explicit, and that headline count divergences (up to
    ~1.4× on the same practice) are explained by counting semantics — pod- vs
    container-level units and merged checks; and that, scored against
-   verified ground truth, the tools' real deficits are coverage and
+   the reference labels, the tools' real deficits — for the versions and
+   default configurations evaluated here — are coverage and
    context-sensitivity, not detection on the practices they do check
    (Section 4.4).
 
@@ -139,16 +140,21 @@ We ask four research questions:
 
 The corpus has two arms, collected in October 2026 from public sources only.
 
-**Helm arm.** We rendered the 151 most popular charts on Artifact Hub with
+**Helm arm.** We rendered the 151 most-starred charts on Artifact Hub — the
+registry's package search (kind = Helm), collected 2026-10-21, with every
+chart's name and version pinned in `results/helm_render_log.json` — with
 default values (`helm template`), yielding 2,616 documents and 402 workloads.
 Default values are what an operator gets when they install a chart without
 tuning it — the correct object of study for a question about defaults — but a
 top-charts sample over-represents well-maintained projects; Section 4.2 quantifies
 and corrects for this *best-chart bias* rather than ignoring it.
 
-**GitHub arm.** We mined 60 public repositories (seed projects plus
-search-discovered manifest collections), yielding 13,627 documents and 2,409
-workloads. Snapshots are pinned by commit SHA (`results/github_commit_shas.json`).
+**GitHub arm.** We mined 60 public repositories — a seed set of named
+projects (9 initial seeds, 12 more added at scale-up) plus repositories
+discovered through the GitHub repository search API (four manifest-oriented
+queries, results sorted by stars, repository size restricted to
+200 KB–400 MB, discovery capped at 40 repositories) — yielding 13,627
+documents and 2,409 workloads. Snapshots are pinned by commit SHA (`results/github_commit_shas.json`).
 Every file was source-tagged as *production*, *example*, or *fixture* by path and
 repository role, so prevalence can be reported for production manifests alone;
 an addendum to the labeling protocol (Section 3.4) resolves tag/content conflicts
@@ -181,8 +187,8 @@ replication package.
 
 ### 3.3 Tool audit setup (RQ3)
 
-We ran kube-linter, kubeaudit, Polaris, and Checkov — the four most widely
-adopted open-source manifest auditors — on the *identical* Helm-arm input (402
+We ran kube-linter, kubeaudit, Polaris, and Checkov — four widely used
+open-source manifest auditors — on the *identical* Helm-arm input (402
 workloads, rendered with default values), each with its default configuration.
 Default configuration is the treatment of interest: it is what a new adopter
 runs, and, as Section 4.4 shows, several relevant checks are not in it. We mapped
@@ -191,11 +197,12 @@ recording partial coverage (a check that covers a rule with narrower semantics)
 as one half in coverage totals. Counts were reconciled rule by rule; where a
 tool merges two of our rules into one check (e.g., untagged and `:latest`), we
 report the merged figure rather than forcing an attribution. Separately, we
-score each tool against ground truth: the 126 Helm-arm rows of the validation
-sample (Section 3.4) carry author-verified labels, so for every sampled finding
+score each tool against the reference labels: the 126 Helm-arm rows of the validation
+sample (Section 3.4) carry protocol-based reference labels (AI-annotated,
+author-adjudicated), so for every sampled finding
 we can ask whether the tool reported the corresponding practice on that object —
-yielding detection rates on verified true positives and flagging rates on
-verified false positives, per tool (full method and per-row data in
+yielding detection rates on reference-positive findings and flagging rates on
+reference-benign findings, per tool (full method and per-row data in
 `results/tool_accuracy.md`).
 
 ### 3.4 Validation: labeling protocol, reliability, adjudication
@@ -350,7 +357,7 @@ Overall precision on the reconciled, author-adjudicated sample is **0.633
 interval by source), adjusting the 27,460 raw
 findings to an estimated **≈19,200 genuine misconfigurations** (95% CI
 [17,100, 23,100] — a model-based extrapolation of the per-rule estimates, not
-a count of individually verified findings). A
+a count of individually labeled findings). A
 distinct-finding sensitivity analysis gives 0.626 — the intentional duplicate
 rows do not move the result. Population-weighted, overall precision is 0.699
 (Section 3.5); the per-rule adjustments that follow are the same under either
@@ -377,7 +384,7 @@ context-free count grades as production gaps. Added capabilities (0.235) are
 mostly least-privilege patterns (default-set additions, or `NET_BIND_SERVICE`
 over a drop-ALL baseline).
 
-**Table 2.** Per-rule precision (author-verified, reconciled to engine v3; Wilson 95% CIs).
+**Table 2.** Per-rule precision (reference labels, reconciled to engine v3; Wilson 95% CIs).
 Selected rules; full table in `results/precision_provisional.md`.
 
 | Rule | Precision | 95% CI | Reading |
@@ -454,10 +461,10 @@ requests (416); Checkov counts a narrower property (343). A consumer comparing
 tools — or tracking one tool over time — sees a ~1.4× swing that has nothing to
 do with the underlying manifests.
 
-**Accuracy against verified ground truth.** Coverage and counts say what a
-tool *can* check and how much it *reports*; the verified sample lets us ask
+**Accuracy against the reference labels.** Coverage and counts say what a
+tool *can* check and how much it *reports*; the labeled sample lets us ask
 whether it is *right*. Where a tool has a check for a sampled practice, it
-detects verified true positives reliably — kubeaudit 0.98, Polaris 0.93,
+detects reference-positive findings reliably — kubeaudit 0.98, Polaris 0.93,
 kube-linter 0.90 — with Checkov the outlier at 0.76 (its run-as-non-root check
 systematically misses containers that run as root *explicitly*: 8 of its 15
 misses). Counting practices with no check as missed, effective detection of
@@ -486,7 +493,7 @@ than vendor error against the tools' own specifications.
 | Polaris | 0.93 [0.84, 0.97] | 0.75 | 0.87 |
 | Checkov | 0.76 [0.64, 0.85] | 0.64 | 0.86 |
 
-*Ground truth: 73 verified-TP and 50 verified-FP Helm-arm sample rows; rates
+*Reference labels: 73 reference-positive and 50 reference-benign Helm-arm sample rows; rates
 over rows where a mapped check exists, except the effective column, which
 counts no-check practices as missed. Method, joins, and caveats:
 `results/tool_accuracy.md`.*
@@ -605,13 +612,34 @@ headline conclusion — insecure configurations are widespread — is corroborat
 by our data at larger scale; our contribution is establishing *which* of the
 counts can be believed, and by how much.
 
+Zhang et al. take a defect-centered view of the same ecosystem [Zhang2026].
+Mining 2,260 Kubernetes configuration scripts from 185 open-source
+repositories, they extract 719 configuration defects and organize them into
+15 categories, seven of which had not been reported in other software
+systems. Where our rules are seeded from hardening guidance, their
+categories are mined from defects that actually occurred, many of them
+functional defects outside any security taxonomy. Their tool analysis asks
+which of the 15 categories eight publicly available static analysis tools
+*can* detect (eight categories), reporting precision and recall against the
+mined defect set — highest for data-field defects; for the two categories
+no tool detects, they build a linter and find 26 previously unknown
+defects, confirmed by practitioners, 19 of them already fixed. The
+difference in ground truth is the difference in question: category-level
+tool support measured against historical defects cannot say whether a
+tool's findings on a given corpus are correct. For RQ3 we therefore score
+four tools' actual outputs on identical input against protocol reference
+labels — detection on reference-positive findings, flagging on
+reference-benign findings, and the counting semantics that make raw tool
+counts diverge — the evidence a practitioner choosing a scanner, or
+trusting one's output, actually consumes.
+
 Minna et al. mine Helm charts from Artifact Hub and compare seven analyzer
 tools by their default policies, then evaluate whether LLMs can mitigate the
 reported misconfigurations [Minna2025] — in this journal. Their tool comparison
 aggregates common and unique findings per tool and includes a manual
 false-positive check on a subset. Our study asks the prior question their
 pipeline assumes away: whether the tools' reports on natural input are
-*correct*, rule by rule, against verified ground truth — and finds that for
+*correct*, rule by rule, against the reference labels — and finds that for
 context-sensitive rules they frequently are not (Section 4.3), a result that
 also bears on their mitigation loop, since an LLM asked to fix a false positive
 can only damage a working configuration. The studies are complementary: they
@@ -629,6 +657,20 @@ production-shaped code *contains*, and whether automated findings about it
 are valid. Their repair results, like Minna et al.'s, presuppose that
 reported misconfigurations are genuine, which is the premise our validation
 tests.
+
+Bufalino et al. study a single misconfiguration family in depth
+[Bufalino2025]: network configurations that enable lateral movement inside
+a cluster. Evaluating 287 open-source applications from six organizations
+with their own analysis, they identify 634 network misconfigurations —
+beyond what state-of-the-art scanners report — and close a loop our study
+does not attempt: responsible disclosure to the organizations, severity
+assessed together with them, and fixes in more than thirty applications.
+Their study sits at the practitioner-impact end of the spectrum — one
+family, deployed applications, remediation — where ours sits at the
+measurement end: 25 practices across the published manifest ecosystem,
+with the validity of the counts established before anyone acts on them.
+The two are complementary, and their disclosure results show what
+validated prevalence findings can set in motion.
 
 Beyond Kubernetes, configuration errors have been studied empirically in
 commercial and open-source systems [Yin2011], and the systems approaches to
@@ -654,7 +696,7 @@ wrong one for measuring what happens on real manifests, where the open
 question is not "does the tool fire on a seeded defect" but "is this firing,
 on this real object, a genuine misconfiguration." That is the quantity we
 measure: per-rule precision of findings on natural corpora, against
-author-verified labels, plus prevalence — neither of which a seeded benchmark
+protocol-based reference labels, plus prevalence — neither of which a seeded benchmark
 can report. The two results also converge from opposite directions: their
 finding that scanners adopt different criteria for the same documented
 misconfiguration is the implementation-level explanation of our
@@ -682,22 +724,24 @@ state (node-infrastructure agents being the largest).
 
 ### 7.4 Positioning
 
-| Dimension | Rahman et al. 2023 | Minna et al. 2025 | Eom et al. 2026 | This study |
-|---|---|---|---|---|
-| Corpus | 2,039 manifests, 92 repos | Artifact Hub charts (all) | 4,109 constructed files | 16,243 docs, 2 arms (60 repos + 151 charts) |
-| Practices | 11 security categories | tools' default policies | 281 misconfigurations (union of 10 tools) | 25 rules, 6 families |
-| Ground truth | practitioner fix-agreement (10 reports) | manual FP check on a subset | constructed by design | 457-finding stratified sample, blinded subset, protocol + adjudication, author-adjudicated |
-| Tool treatment | builds one tool | 7 tools, common/unique counts + LLM repair | 10 tools, recall on benchmark | 4 tools on identical natural input: coverage, count semantics, accuracy vs verified labels |
-| Production vs fixture | not separated | n/a (charts) | n/a (constructed) | separated; content-over-tag rule |
-| Prevalence | manifest-level counts | chart-level counts | none (benchmark) | workload-level, cluster-level, precision-adjusted |
+| Dimension | Rahman et al. 2023 | Minna et al. 2025 | Eom et al. 2026 | Zhang et al. 2026 | Bufalino et al. 2025 | This study |
+|---|---|---|---|---|---|---|
+| Corpus | 2,039 manifests, 92 repos | Artifact Hub charts (all) | 4,109 constructed files | 2,260 scripts, 185 repos | 287 deployed applications, 6 organizations | 16,243 docs, 2 arms (60 repos + 151 charts) |
+| Practices | 11 security categories | tools' default policies | 281 misconfigurations (union of 10 tools) | 15 defect categories (all defect types) | network misconfigurations (lateral movement) | 25 rules, 6 families |
+| Ground truth | practitioner fix-agreement (10 reports) | manual FP check on a subset | constructed by design | 719 defects mined from project history | own analysis; severity assessed with the organizations on disclosure | 457-finding stratified sample, blinded subset, protocol + adjudication, author-adjudicated |
+| Tool treatment | builds one tool | 7 tools, common/unique counts + LLM repair | 10 tools, recall on benchmark | 8 tools: category-level detection support; precision/recall vs mined defects | own detector compared against state-of-the-art scanners | 4 tools on identical natural input: coverage, count semantics, accuracy vs reference labels |
+| Production vs fixture | not separated | n/a (charts) | n/a (constructed) | n/a (defect mining) | n/a (deployed applications) | separated; content-over-tag rule |
+| Prevalence | manifest-level counts | chart-level counts | none (benchmark) | defect counts by category | 634 misconfigurations across the 287 applications | workload-level, cluster-level, precision-adjusted |
 
 In one sentence: prior work establishes that Kubernetes misconfiguration
-exists (Rahman et al.), that tools report it inconsistently and LLMs repair it
-imperfectly (Minna et al.), and that scanners miss much of what they claim to
-cover on seeded cases (Eom et al.). This study establishes how much of it
+exists (Rahman et al.), recurs as defects in project histories (Zhang et
+al.), and is exploitable in deployed applications (Bufalino et al.); that
+tools report it inconsistently and LLMs repair it imperfectly (Minna et
+al.); and that scanners miss much of what they claim to cover on seeded
+cases (Eom et al.). This study establishes how much of it
 there is in production-shaped code, how much of what any rule reports is real,
 and why the tools' numbers cannot be compared naively — the measurement
-foundation the other three directions implicitly rely on.
+foundation these directions implicitly rely on.
 
 ## 8. Conclusion
 
@@ -742,6 +786,13 @@ redistributed.
   with Large Language Models," arXiv:2609.27030, 2026.
 - [Eom2026] H. Eom, B. Suk, and S. Hwang, "An Empirical Study and Benchmark of
   Kubernetes Misconfiguration Scanners," *Proc. ISSTA 2026*. DOI: 10.1145/3832297.
+- [Zhang2026] Y. Zhang, U. Paul, M. d'Amorim, and A. Rahman, "Configuration
+  Defects in Kubernetes," *IEEE Transactions on Software Engineering*, 2026.
+  DOI: 10.1109/TSE.2026.3659785.
+- [Bufalino2025] J. Bufalino, J. L. Martin-Navarro, M. Di Francesco, and
+  T. Aura, "Inside Job: Defending Kubernetes Clusters Against Network
+  Misconfigurations," *Proceedings of the ACM on Networking* 3 (CoNEXT),
+  2025. DOI: 10.1145/3749220.
 - CIS Kubernetes Benchmark, Center for Internet Security.
 - NSA & CISA, *Kubernetes Hardening Guide*.
 - Kubernetes documentation: Pod Security Standards; Security Context.

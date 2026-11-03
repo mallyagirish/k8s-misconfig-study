@@ -17,7 +17,7 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 MD = HERE.parent / "manuscript_draft.md"
-CITE_KEYS = ["Rahman2023", "Minna2025", "Eom2026", "Yin2011", "XuZhou2015", "Ghorab2026"]
+CITE_KEYS = ["Rahman2023", "Minna2025", "Eom2026", "Yin2011", "XuZhou2015", "Ghorab2026", "Zhang2026", "Bufalino2025"]
 
 text = MD.read_text()
 lines = text.split("\n")
@@ -66,6 +66,8 @@ def post(tex, abstract=False):
         tex = tex.replace(u, m)
     for k in CITE_KEYS:
         tex = tex.replace(f"CITEKEY_{k}_END", rf"\cite{{{k}}}")
+        # pandoc escapes the token's underscores; catch that form too
+        tex = tex.replace(f"CITEKEY\\_{k}\\_END", rf"\cite{{{k}}}")
     if not abstract:
         tex = allow_breaks_in_tables(tex)
         tex = re.sub(r"\\section\{(\d+)\.\s*", r"\\section{", tex)
