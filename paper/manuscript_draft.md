@@ -230,10 +230,9 @@ Cohen's κ = 0.526 [bootstrap 95% CI 0.17, 0.84] against the v2-standard pre-lab
 between the author and AI-generated labels, not inter-rater reliability
 between two humans; and because the pre-labels follow v2 while the author's
 labels follow the emerging v3, κ also absorbs the protocol-version
-difference. A two-human measurement — an independent researcher labeling a
-150-row subsample under the frozen v3 protocol, blind to all existing
-labels — is in preparation; the packet ships in the replication package.
-We report this number as measured, with its decomposition, because the decomposition is the finding:
+difference. The κ figure is the only agreement measurement in this study;
+no independent second labeling was performed. We report this number as
+measured, with its decomposition, because the decomposition is the finding:
 four of six disagreements were resource/probe rows where the governing v3
 production-scoping amendment sides with the author against the v2 definitional
 labels — a standards difference, not rater noise — and the remaining two were
@@ -559,8 +558,9 @@ blinded author–AI agreement subset (κ = 0.526 against the v2-standard labels,
 disagreement decomposition showing 4 of 6 tracing to the v2→v3 standards change
 itself), adjudicated rule-level amendments, and author adjudication of the
 labels (Section 3.4 gives the row-level provenance). The ground truth is thus
-single-author and AI-assisted; an independent human labeling under the frozen
-protocol is in preparation and is the obvious strengthening step.
+single-author and AI-assisted: every reference label rests on one author's
+adjudication, and no independent labeling pass checks it. We regard this as
+the validation's main limitation.
 Readers who prefer the purely definitional standard can recompute precision
 under it from the released sample (the v2 pre-labels are preserved); the
 prevalence *rankings* are unchanged under either standard, though several

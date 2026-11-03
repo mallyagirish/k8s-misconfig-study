@@ -88,17 +88,16 @@ not two-human inter-rater reliability; the disagreement decomposition is in the 
 addendum), individually adjudicated the 92 protocol-sensitive divergence rows, and accepted
 the remaining pre-labels in a verification pass. Of the 451 sample rows that persist in engine
 v3, 111 carry author-produced or individually adjudicated labels and 340 retain accepted
-pre-labels — the validation dataset is AI-annotated and author-adjudicated. An independent
-second-rater labeling of a blinded 150-row subsample under the frozen v3 protocol is in
-preparation (`results/second_rater/`). Per-rule precision (pooled 0.633 [0.527, 0.714];
+pre-labels — the validation dataset is AI-annotated and author-adjudicated, with no
+independent second labeling. Per-rule precision (pooled 0.633 [0.527, 0.714];
 population-weighted 0.699 [0.623, 0.840], cluster bootstrap by source) is in
 `results/precision_provisional.md` and `results/cluster_bootstrap.md`.
 
 ## Status
 
 Independent research project, October 2026. Public data only; personal resources only;
-no employer code, data, or affiliation. Analysis complete; validation as described above,
-with independent second-rater labeling in preparation; a first full
+no employer code, data, or affiliation. Analysis complete; validation as described above;
+a first full
 manuscript draft is in `paper/manuscript_draft.md`, targeting a January 2027 submission —
 primary venue: *Empirical Software Engineering* (Springer), journal route, no conference
 presentation.
