@@ -1,8 +1,8 @@
-# RQ3b — Scanner detection accuracy against verified ground truth (Helm arm)
+# RQ3b — Scanner detection accuracy against the reference labels (Helm arm)
 
 Companion to `tool_coverage_matrix.md`. The matrix compares what each tool
 *can* check and how its *counts* compare; this analysis scores each tool against
-the author-verified labels of the validation sample: for every sampled finding,
+the protocol-based reference labels of the validation sample: for every sampled finding,
 did the tool actually report the corresponding practice on that object?
 
 ## Method

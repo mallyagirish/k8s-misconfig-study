@@ -470,7 +470,7 @@ misses). Counting practices with no check as missed, effective detection of
 genuine misconfigurations is 0.52–0.75, and the ranking inverts the raw-count
 intuition: Polaris leads (0.75) on the strength of coverage, not per-check
 detection. The symmetric result is the more damning one: the same checks flag
-**86–95% of the findings verification judged false positives**. The taxonomy's
+**86–95% of the findings verification judged benign (reference-benign findings)**. The taxonomy's
 context classes — infrastructure agents, standard operator patterns,
 least-privilege capability sets — fool the production tools at about the same
 rate they fooled our unvalidated rules. The tools' deficit on real manifests
