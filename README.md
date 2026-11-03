@@ -98,7 +98,7 @@ population-weighted 0.699 [0.623, 0.840], cluster bootstrap by source) is in
 Independent research project, October 2026. Public data only; personal resources only;
 no employer code, data, or affiliation. Analysis complete; validation as described above;
 a first full
-manuscript draft is in `paper/manuscript_draft.md`, targeting a January 2027 submission —
+manuscript draft is in `paper/manuscript_draft.md`; submission is under way —
 primary venue: *Empirical Software Engineering* (Springer), journal route, no conference
 presentation.
 
