@@ -62,7 +62,7 @@ if not rows:
 pairs = []  # (audit_label, original_label, csv row, key row)
 for r in rows:
     k = key[r["audit_id"]]
-    pairs.append((r["audit_label"].strip().upper(), k["final_label"].strip().upper(), r, k))
+    pairs.append((r["audit_label"].strip().upper(), k["original_label"].strip().upper(), r, k))
 
 unsure = [p for p in pairs if p[0] == "UNSURE"]
 decided = [p for p in pairs if p[0] != "UNSURE"]

@@ -1,4 +1,4 @@
-audit_id,sample_id,final_label,ai_prelabel,rule,arm,source_group,rows_covered
+audit_id,sample_id,original_label,ai_prelabel,rule,arm,source_group,rows_covered
 SA-001,K8S-392,FP,FP,HOST_NETWORK,helm,helm,1
 SA-002,K8S-071,TP,TP,SECRET_LITERAL_ENV,github,github_example,1
 SA-003,K8S-302,TP,TP,SEC_NO_SECCOMP,helm,helm,1

@@ -312,3 +312,45 @@ in all variants, and the new DOI verified in the rendered PDF. The v1.0.0,
 v1.0.1, and v1.0.2 entries above stand as the historical record. Release:
 https://github.com/mallyagirish/k8s-misconfig-study/releases/tag/v1.0.3 —
 record: https://doi.org/10.5281/zenodo.23967708
+
+## 2026-11-04 — Close-out round: audit-key column rename, abstract terminology, precision language
+
+Final text corrections before freezing the submission package (all three
+manuscript sources, same wording):
+
+1. **Audit-key column renamed.** In results/self_audit/KEY_sealed.csv the
+   pre-audit label column was named `final_label`, although it holds the
+   label the finding carried before the audit — the audit/adjudication
+   outcome is the final one. Renamed to `original_label` in the key header,
+   in scripts/build_self_audit_packet.py (header writer), and in
+   scripts/score_self_audit.py (reader; its pair comment already called it
+   the original label). Unrelated `final_label` columns were deliberately
+   left: results/self_audit/adjudication.csv (the genuinely final,
+   post-adjudication label) and results/tool_accuracy.csv (the reference
+   label). Earlier entries in this notebook that list the key's columns
+   stand as the historical record of the name at the time.
+2. **Abstract seccomp terminology.** "no sandboxing profile" → "no
+   explicitly configured seccomp profile" — the engine measures explicit
+   seccomp configuration, not sandboxing mechanisms generally.
+3. **Perfect-precision language softened.** The abstract's "are essentially
+   exact" → "showed no false positives in the validation sample"; §4.3's
+   "are essentially never benign in context (all 1.000 on their samples)" →
+   "showed no benign cases in their samples (all 1.000)". Both claims are
+   now bounded by the validation sample that supports them.
+4. **Abstract word budget.** Items 2–3 lengthened the text, so filler was
+   trimmed to compensate (sentence 2 recast from "measure how … configure
+   these knobs, using" to "measure configuration in … with"; "individually"
+   and the redundant "labeled blind" dropped from the validation sentence;
+   "later" dropped before "corrected by a blinded re-labeling audit";
+   "unambiguous" dropped before "absence checks"; trailing "cases" dropped
+   after "benign-by-design"; "our" dropped before "reference labels"). No
+   number or claim changed. Abstract recount: 247 words (EMSE limit 250).
+
+Package rebuilt after the edits: all three variants (submission main,
+submission main_bbl, latex main) compile to 18 pages with 0 undefined
+citations and 0 overfull boxes; the submission main.pdf was refreshed, and
+the new abstract wording verified in the rendered PDF. Clean-checkout check: `git
+archive` of this commit into a fresh directory and `python3
+scripts/score_self_audit.py` there reproduces audit_results.md exactly —
+16.4% [10.1, 23.1], 16/94 sample description, 288/301 coverage — the
+rename changed no numbers.

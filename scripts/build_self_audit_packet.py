@@ -238,7 +238,7 @@ def key_of(sid):
 
 with open(OUT / "KEY_sealed.csv", "w", newline="") as fh:
     w = csv.writer(fh)
-    w.writerow(["audit_id", "sample_id", "final_label", "ai_prelabel", "rule", "arm",
+    w.writerow(["audit_id", "sample_id", "original_label", "ai_prelabel", "rule", "arm",
                 "source_group", "rows_covered"])
     for sid in order:
         r = deduped[sid]

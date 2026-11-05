@@ -13,21 +13,20 @@ matrix). Bibliography verified for all works cited by name (2026-10-28). LaTeX v
 
 Kubernetes manifests are the de facto interface to production
 infrastructure, with permissive defaults: a workload specifying nothing runs
-with an automounted token, no resource limits, and no sandboxing profile. We
-measure how 151 Helm charts and 60 public GitHub repositories
-(16,243 documents, 2,811 workloads) configure these knobs, using a 25-rule
-engine.
+with an automounted token, no resource limits, and no explicitly configured
+seccomp profile. We measure configuration in 151 Helm charts and 60 public
+GitHub repositories (16,243 documents, 2,811 workloads) with a 25-rule engine.
 
 We validated the engine on a 457-finding stratified sample: AI-generated
-pre-labels were author-checked — the 92 protocol-sensitive rows individually
-adjudicated, a blinded 30-row subset labeled blind (author–AI
+pre-labels were author-checked — the 92 protocol-sensitive rows adjudicated,
+a blinded 30-row subset (author–AI
 agreement: κ = 0.526 [0.17, 0.84]) — the rest retain accepted pre-labels,
-16 later corrected by a blinded re-labeling audit. Population-weighted precision is 0.676 [0.60, 0.81]
+16 corrected by a blinded re-labeling audit. Population-weighted precision is 0.676 [0.60, 0.81]
 (cluster bootstrap by source): ≈18,600 [16,500, 22,100] of 27,460 raw
-findings are estimated genuine. Precision is rule-dependent: unambiguous
-absence checks (seccomp, privilege escalation, root prevention) are
-essentially exact, while context-sensitive rules (committed secrets, host
-namespaces, probes) are mostly benign-by-design cases.
+findings are estimated genuine. Precision is rule-dependent:
+absence checks (seccomp, privilege escalation, root prevention) showed no
+false positives in the validation sample, while context-sensitive rules
+(committed secrets, host namespaces, probes) are mostly benign-by-design.
 
 The defaults dominate: tokens automount in 88.6% of production
 GitHub workloads, CPU limits — a contested hardening practice — are missing in
@@ -36,7 +35,7 @@ practices, but by only 1.3–1.7× in workload-level prevalence.
 
 We also audit the auditors: on identical input, four scanners
 cover at most 16 of the 25 practices, diverging up to 1.4× on the same
-practice through counting semantics. Scored against our reference
+practice through counting semantics. Scored against reference
 labels (Helm arm, n = 126), they effectively detect 51–72% of the engine's
 reference-positive findings and flag 84–95% of reference-benign findings where a
 check exists, under our contextual protocol.
@@ -398,8 +397,8 @@ variation: precision is a property of the *rule*, and it splits the taxonomy
 into rules that can be read at face value and rules that cannot.
 
 **Face-value rules (precision ≈ 1.0).** Missing seccomp profile, privilege
-escalation not disabled, root not prevented, and `:latest` images are
-essentially never benign in context (all 1.000 on their samples); dangerous
+escalation not disabled, root not prevented, and `:latest` images showed
+no benign cases in their samples (all 1.000); dangerous
 capabilities (0.824, under the addendum's infrastructure test), wildcard RBAC
 (0.71–0.80, under the own-group test), and SA-token automount (0.643) follow.
 For these, scanner output *is*
