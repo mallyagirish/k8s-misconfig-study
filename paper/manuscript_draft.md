@@ -1,7 +1,7 @@
 # Misconfigured by Default: The Prevalence, Validity, and Tool Coverage of Kubernetes Misconfigurations in the Wild
 
 **Author:** Girish Mallya
-**Status:** Working draft, 2026-10-28. All quantitative claims are drawn from the
+**Status:** Working draft, 2026-11-04. All quantitative claims are drawn from the
 verified results files in `results/` (engine v3 statistics, the author-adjudicated
 validation sample as reconciled against engine v3, and the RQ3 tool coverage
 matrix). Bibliography verified for all works cited by name (2026-10-28). LaTeX version in `paper/latex/`.
@@ -270,10 +270,15 @@ from FP to TP, each standing for exactly one sample row. Because allocation
 was stratified by rule with the largest rule capped, the change rate over
 the retained population is estimated by reweighting each rule's decided
 findings to that rule's share of the 301 distinct retained findings: 16.4%
-[stratified bootstrap 95% CI 10.1, 23.2], covering 288 of the 301 findings
+[stratified bootstrap 95% CI 10.1, 23.1]. That is the design-weighted rate
+among the covered strata, and the interval is conditional on them; the
+strata cover 288 of the 301 findings
 — the remaining 13 are DEPRECATED_API findings, all five of whose draws
 were unsure (counting all six unsure findings as changed or as unchanged
-bounds the estimate at 15.6–20.8%). The disagreements concentrate in the
+bounds the estimate at 15.6–20.8%). The interval is an approximate
+rule-stratified bootstrap interval, not an exact design-based one: it
+resamples within rules, so the finer rule × source-group allocation and
+the without-replacement draw are not reproduced. The disagreements concentrate in the
 context-sensitive rules (service-account automount, run-as-root, literal
 secrets, wildcard RBAC), while the absence checks were unchanged. The author adopted the audit labels
 as finals for all 16 rows (adjudication by rule, 2026-11-04), so 324 of the

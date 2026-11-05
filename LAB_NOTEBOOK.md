@@ -229,7 +229,7 @@ bootstrap, resampling decided findings within each rule, 2,000 replicates,
 seed 20261104, percentile interval.
 
 Results (results/self_audit/audit_results.md): population-weighted change
-rate 16.4% [stratified bootstrap 95% CI 10.1, 23.2], covering 288 of the 301
+rate 16.4% [stratified bootstrap 95% CI 10.1, 23.1], covering 288 of the 301
 distinct retained findings. DEPRECATED_API contributes no decided rows — all
 5 of its draws were labeled unsure — so its 13 findings sit outside the
 coverage. Unsure sensitivity: counting all 6 unsure findings as unchanged vs
@@ -259,3 +259,37 @@ citations, 0 overfull boxes. The v1.0.0 and v1.0.1 entries above stand as the
 historical record. Release:
 https://github.com/mallyagirish/k8s-misconfig-study/releases/tag/v1.0.2 —
 record: https://doi.org/10.5281/zenodo.23967366
+
+## 2026-11-04 — Consistency bundle: CI bound conformed, §3.4 interpretation clarified, self-audit key published
+
+Four small fixes from an external review of the weighting-fix commit
+(79f3182), verified against the live repo before applying:
+
+1. **CI bound conformed.** The scorer's deterministic output (seed 20261104)
+   gives the audit's stratified bootstrap 95% CI as [10.1, 23.1], but the
+   manuscript and the weighting-fix entry above said 23.2. Every 23.2
+   referring to this interval — manuscript draft, both LaTeX trees (and the
+   regenerated main_bbl.tex), and that entry — now reads 23.1, matching the
+   scorer and results/self_audit/audit_results.md.
+2. **§3.4 interpretation made explicit** (same clauses in all three
+   manuscript sources): the 16.4% figure is the design-weighted change rate
+   among the covered strata and its interval is conditional on those strata
+   (288 of the 301 distinct retained findings); the interval is an
+   approximate rule-stratified bootstrap interval, not an exact
+   design-based one — resampling is within rules, so the finer
+   rule × source-group allocation and the without-replacement draw are not
+   reproduced.
+3. **Self-audit key published.** results/self_audit/KEY_sealed.csv (columns:
+   audit_id, sample_id, final_label, ai_prelabel, rule, arm, source_group,
+   rows_covered — IDs and labels only) is now tracked; the .gitignore entry
+   was removed and the sample manifest's key note updated to past tense.
+   The second-rater key stays gitignored and unpublished. Rationale per the
+   manifest's original plan: the key stays out of git only while the audit
+   is blind; the audit is scored and adjudicated, so the scorer can now be
+   rerun from a clean checkout.
+4. **Draft date** in the manuscript header updated to 2026-11-04 (the
+   2026-10-28 bibliography-verification parenthetical stands — that is when
+   verification happened).
+
+Package rebuilt after the edits; verification results recorded with the
+commit.

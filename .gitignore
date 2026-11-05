@@ -22,9 +22,9 @@ corpus_src/
 results/second_rater/KEY_sealed.csv
 results/second_rater/*.zip
 
-# Self-audit sealed key: local until the audit is scored, then the key is
-# committed with the replication package (same pattern as the second-rater key)
-results/self_audit/KEY_sealed.csv
+# Self-audit sealed key: committed with the replication package now that the
+# audit is scored and adjudicated (2026-11-04); it was local-only while the
+# audit was blind
 
 # LaTeX build artifacts (sources in paper/latex/ are the record)
 paper/latex/*.aux

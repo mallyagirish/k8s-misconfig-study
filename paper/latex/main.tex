@@ -334,10 +334,15 @@ sample row. Because allocation was stratified by rule with the largest
 rule capped, the change rate over the retained population is estimated by
 reweighting each rule's decided findings to that rule's share of the 301
 distinct retained findings: 16.4\% [stratified bootstrap 95\% CI 10.1,
-23.2], covering 288 of the 301 findings --- the remaining 13 are
+23.1]. That is the design-weighted rate among the covered strata, and
+the interval is conditional on them; the strata cover 288 of the 301
+findings --- the remaining 13 are
 DEPRECATED\_API findings, all five of whose draws were unsure (counting all
 six unsure findings as changed or as unchanged bounds the estimate at
-15.6--20.8\%). The disagreements concentrate in the context-sensitive
+15.6--20.8\%). The interval is an approximate rule-stratified bootstrap
+interval, not an exact design-based one: it resamples within rules, so
+the finer rule $\times$ source-group allocation and the
+without-replacement draw are not reproduced. The disagreements concentrate in the context-sensitive
 rules (service-account automount, run-as-root, literal secrets, wildcard
 RBAC), while the absence checks were unchanged.
 The author adopted the audit labels as finals for all 16 rows

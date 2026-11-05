@@ -31,5 +31,6 @@
 | SEC_RUN_AS_ROOT_EXPLICIT | 12 | 4 |
 
 Scoring once labels are filled: `python3 scripts/score_self_audit.py`.
-The key (KEY_sealed.csv) stays out of git until the audit is scored;
-it is published with the replication package afterwards.
+The key (KEY_sealed.csv) was kept out of git while the audit was blind;
+now that the audit is scored and adjudicated, it is published here with
+the replication package so the scorer can be rerun from a clean checkout.
