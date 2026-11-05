@@ -22,6 +22,19 @@ Shamim, S. I., Hu, H., and Rahman, A. (ICSE 2025). “On Prescription or Off Pre
 
 This work examines CIS-recommended configurations, 544 files, practitioner awareness, and static analyzer performance. It is relevant background for rule selection and scanner evaluation.
 
+
+### LLM-assisted container and Kubernetes repair
+
+**LLMSecConfig: An LLM-Based Approach for Fixing Software Container Misconfigurations** (MSR 2025). DOI: https://doi.org/10.1109/MSR66628.2025.00099
+
+This work combines static analysis with LLM/RAG-based repair and reports an evaluation over 1,000 real-world Kubernetes configurations. It is a direct predecessor for general container/Kubernetes misconfiguration repair. Our study must not claim novelty for using LLMs to fix Kubernetes configuration or for preserving generic operational functionality.
+
+### Security regressions during iterative IaC repair
+
+Agyekum and Santos (ESEM 2026), **Does Fixing Break Security? An Empirical Study of Security Degradation in Iterative LLM-Driven Infrastructure-as-Code Repair**. Replication package: https://zenodo.org/records/21914827
+
+The replication package describes 5,968 IaC-Eval scenario timelines across 15 LLM configurations and measures security regressions during iterative repair. This makes security-regression measurement an established research direction. Our proposed distinction must be the serving-specific operational oracle: authentication across sibling API routes, mock OpenAI-compatible API behavior, model-load/readiness invariants, and Helm chart semantics.
+
 ## Revised research question
 
 Can AI-assisted systems remediate security weaknesses in Kubernetes-based LLM inference stacks while preserving endpoint authentication semantics, serving API behavior, readiness/model-loading behavior, Helm chart semantics, and GPU/model-cache constraints?
