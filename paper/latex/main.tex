@@ -59,7 +59,7 @@ static analysis tools; measurement validity}
 \maketitle
 
 \hypertarget{introduction}{%
-\subsection{1. Introduction}\label{introduction}}
+\section{Introduction}\label{introduction}}
 
 Kubernetes is now the default platform for production containerized
 workloads, and a Kubernetes workload is typically described by a YAML
@@ -136,7 +136,7 @@ and tooling alike --- is calibrated to the rare, explicit cases and
 largely blind to the common, default ones.
 
 \hypertarget{background-and-research-questions}{%
-\subsection{2. Background and research
+\section{Background and research
 questions}\label{background-and-research-questions}}
 
 A Kubernetes workload manifest declares, among other things, a pod's
@@ -179,10 +179,10 @@ We ask four research questions:
 \end{itemize}
 
 \hypertarget{method}{%
-\subsection{3. Method}\label{method}}
+\section{Method}\label{method}}
 
 \hypertarget{corpus-construction}{%
-\subsubsection{3.1 Corpus construction}\label{corpus-construction}}
+\subsection{Corpus construction}\label{corpus-construction}}
 
 The corpus has two arms, collected in October 2026 from public sources
 only.
@@ -216,7 +216,7 @@ mixed licenses); the collection scripts and per-source logs are the
 corpus manifest, and running the collectors rebuilds it.
 
 \hypertarget{the-rule-engine}{%
-\subsubsection{3.2 The rule engine}\label{the-rule-engine}}
+\subsection{The rule engine}\label{the-rule-engine}}
 
 We implemented a 25-rule engine over parsed YAML (Deployments,
 StatefulSets, DaemonSets, Jobs, CronJobs, Pods, and the RBAC/Secret
@@ -240,7 +240,7 @@ reports 27,460 findings over the full corpus. The full rule definitions
 ship with the replication package.
 
 \hypertarget{tool-audit-setup-rq3}{%
-\subsubsection{3.3 Tool audit setup (RQ3)}\label{tool-audit-setup-rq3}}
+\subsection{Tool audit setup (RQ3)}\label{tool-audit-setup-rq3}}
 
 We ran kube-linter, kubeaudit, Polaris, and Checkov --- four widely used
 open-source manifest auditors --- on the \emph{identical}
@@ -263,7 +263,7 @@ reference-benign findings, per tool (full method and per-row data in
 \texttt{results/tool\_accuracy.md}).
 
 \hypertarget{validation-labeling-protocol-reliability-adjudication}{%
-\subsubsection{3.4 Validation: labeling protocol, reliability,
+\subsection{Validation: labeling protocol, reliability,
 adjudication}\label{validation-labeling-protocol-reliability-adjudication}}
 
 Prevalence without precision is numerology, so we validated the engine
@@ -360,7 +360,7 @@ overlays) are excluded from precision denominators with the count and
 reason disclosed.
 
 \hypertarget{analysis}{%
-\subsubsection{3.5 Analysis}\label{analysis}}
+\subsection{Analysis}\label{analysis}}
 
 For each rule we report precision = TP / (TP + FP) over decided rows
 with Wilson 95\% confidence intervals, \emph{adjusted prevalence} =
@@ -406,10 +406,10 @@ are widespread anyway.
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \hypertarget{results}{%
-\subsection{4. Results}\label{results}}
+\section{Results}\label{results}}
 
 \hypertarget{rq1-prevalence-the-defaults-are-the-finding}{%
-\subsubsection{4.1 RQ1 --- Prevalence: the defaults are the
+\subsection{RQ1 --- Prevalence: the defaults are the
 finding}\label{rq1-prevalence-the-defaults-are-the-finding}}
 
 Table 1 reports workload-level prevalence for the headline practices,
@@ -457,7 +457,7 @@ tags, are in the replication package
 (\texttt{results/stats\_tagged\_v3.json}).}
 
 \hypertarget{rq4-curation-helps-less-than-it-looks}{%
-\subsubsection{4.2 RQ4 --- Curation helps, less than it
+\subsection{RQ4 --- Curation helps, less than it
 looks}\label{rq4-curation-helps-less-than-it-looks}}
 
 Rendered Helm charts are better hardened than raw GitHub manifests, but
@@ -473,7 +473,7 @@ polishes the visible edge of the configuration surface; it does not
 change the defaults underneath.
 
 \hypertarget{rq2-precision-and-taxonomy-which-numbers-can-be-believed}{%
-\subsubsection{4.3 RQ2 --- Precision and taxonomy: which numbers can be
+\subsection{RQ2 --- Precision and taxonomy: which numbers can be
 believed}\label{rq2-precision-and-taxonomy-which-numbers-can-be-believed}}
 
 Overall precision on the reconciled, author-adjudicated sample is
@@ -586,7 +586,7 @@ scanner --- or a study --- that implements these five distinctions
 recovers most of the precision the naive rules lose.
 
 \hypertarget{rq3-auditing-the-auditors}{%
-\subsubsection{4.4 RQ3 --- Auditing the
+\subsection{RQ3 --- Auditing the
 auditors}\label{rq3-auditing-the-auditors}}
 
 On identical Helm-arm input with default configurations, approximate
@@ -688,7 +688,7 @@ optionally, or not at all.
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 
 \hypertarget{discussion}{%
-\subsection{5. Discussion}\label{discussion}}
+\section{Discussion}\label{discussion}}
 
 \textbf{The risk is the default, and the default is a design outcome.}
 The practices with the highest prevalence --- automounted tokens, absent
@@ -736,7 +736,7 @@ genuine exposure by volume, and committed-Secret alerts should be routed
 to content inspection rather than counted.
 
 \hypertarget{threats-to-validity}{%
-\subsection{6. Threats to validity}\label{threats-to-validity}}
+\section{Threats to validity}\label{threats-to-validity}}
 
 \textbf{Construct validity} rests on the labeling protocol. We mitigate
 by \emph{disclosing} rather than concealing its evolution: three
@@ -781,10 +781,10 @@ snapshots are pinned by commit SHA; the corpus is rebuildable from the
 released collectors and logs.
 
 \hypertarget{related-work}{%
-\subsection{7. Related work}\label{related-work}}
+\section{Related work}\label{related-work}}
 
 \hypertarget{empirical-studies-of-kubernetes-misconfiguration}{%
-\subsubsection{7.1 Empirical studies of Kubernetes
+\subsection{Empirical studies of Kubernetes
 misconfiguration}\label{empirical-studies-of-kubernetes-misconfiguration}}
 
 The closest predecessor is Rahman et al.'s empirical study of security
@@ -883,7 +883,7 @@ defaults for nearly every field, which is what makes a uniform 25-rule
 measurement across two distribution channels possible.
 
 \hypertarget{scanner-evaluation-and-benchmarks}{%
-\subsubsection{7.2 Scanner evaluation and
+\subsection{Scanner evaluation and
 benchmarks}\label{scanner-evaluation-and-benchmarks}}
 
 Eom et al.~present the first systematic benchmark of Kubernetes
@@ -915,7 +915,7 @@ our conclusion that scanner outputs are not mutually comparable, reached
 there by guideline mapping rather than by validated findings.
 
 \hypertarget{benchmarks-and-hardening-guidance}{%
-\subsubsection{7.3 Benchmarks and hardening
+\subsection{Benchmarks and hardening
 guidance}\label{benchmarks-and-hardening-guidance}}
 
 The CIS Kubernetes Benchmark and the NSA/CISA Kubernetes Hardening Guide
@@ -930,7 +930,7 @@ exceptions that the documents themselves do not state
 (node-infrastructure agents being the largest).
 
 \hypertarget{positioning}{%
-\subsubsection{7.4 Positioning}\label{positioning}}
+\subsection{Positioning}\label{positioning}}
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 12\tabcolsep) * \real{0.1429}}
@@ -999,7 +999,7 @@ compared naively --- the measurement foundation these
 directions implicitly rely on.
 
 \hypertarget{conclusion}{%
-\subsection{8. Conclusion}\label{conclusion}}
+\section{Conclusion}\label{conclusion}}
 
 Across 16,243 real-world documents, Kubernetes misconfiguration is not a
 story of reckless operators but of permissive defaults accepted at
@@ -1016,7 +1016,7 @@ the ecosystem publishes --- not the private state of running clusters,
 which only their operators can observe.
 
 \hypertarget{data-availability-and-replication-package}{%
-\subsection{Data availability and replication
+\section*{Data availability and replication
 package}\label{data-availability-and-replication-package}}
 
 All artifacts are public: corpus collectors and per-source logs, the
