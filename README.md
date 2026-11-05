@@ -87,10 +87,13 @@ author labeled a blinded 30-row subset before seeing any pre-labels (agreement 8
 not two-human inter-rater reliability; the disagreement decomposition is in the protocol
 addendum), individually adjudicated the 92 protocol-sensitive divergence rows, and accepted
 the remaining pre-labels in a verification pass. Of the 451 sample rows that persist in engine
-v3, 111 carry author-produced or individually adjudicated labels and 340 retain accepted
+v3, 111 carry author-produced or individually adjudicated labels and 340 retained accepted
 pre-labels — the validation dataset is AI-annotated and author-adjudicated, with no
-independent second labeling. Per-rule precision (pooled 0.633 [0.527, 0.714];
-population-weighted 0.699 [0.623, 0.840], cluster bootstrap by source) is in
+independent second labeling. A later stability audit blind-re-labeled 100 findings drawn
+from the 340 retained labels (`results/self_audit/`): 16 of the 94 decided findings changed
+label, and the audit labels were adopted as finals, so 324 of the 340 rows carry the
+accepted pre-label and 16 an audit-corrected label. Per-rule precision (pooled 0.624 [0.519, 0.705];
+population-weighted 0.676 [0.601, 0.805], cluster bootstrap by source) is in
 `results/precision_provisional.md` and `results/cluster_bootstrap.md`.
 
 ## Status

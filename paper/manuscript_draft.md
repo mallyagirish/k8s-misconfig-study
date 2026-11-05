@@ -21,9 +21,9 @@ engine.
 We validated the engine on a 457-finding stratified sample: AI-generated
 pre-labels were author-checked — the 92 protocol-sensitive rows individually
 adjudicated, a blinded 30-row subset labeled blind (author–AI
-agreement: κ = 0.526 [0.17, 0.84]) — and the rest retain pre-labels accepted
-in the verification pass. Population-weighted precision is 0.699 [0.62, 0.84]
-(cluster bootstrap by source): ≈19,200 [17,100, 23,100] of 27,460 raw
+agreement: κ = 0.526 [0.17, 0.84]) — the rest retain accepted pre-labels,
+16 later corrected by a blinded re-labeling audit. Population-weighted precision is 0.676 [0.60, 0.81]
+(cluster bootstrap by source): ≈18,600 [16,500, 22,100] of 27,460 raw
 findings are estimated genuine. Precision is rule-dependent: unambiguous
 absence checks (seccomp, privilege escalation, root prevention) are
 essentially exact, while context-sensitive rules (committed secrets, host
@@ -34,11 +34,11 @@ GitHub workloads, CPU limits — a contested hardening practice — are missing 
 75.3%; 1.4% run a privileged container. Helm charts beat raw manifests on most
 practices, but by only 1.3–1.7× in workload-level prevalence.
 
-We also audit the auditors: on identical input, four widely used scanners
+We also audit the auditors: on identical input, four scanners
 cover at most 16 of the 25 practices, diverging up to 1.4× on the same
-practice largely through counting semantics. Scored against our reference
-labels (Helm arm, n = 126), they effectively detect 52–75% of the engine's
-reference-positive findings and flag 86–95% of reference-benign findings where a
+practice through counting semantics. Scored against our reference
+labels (Helm arm, n = 126), they effectively detect 51–72% of the engine's
+reference-positive findings and flag 84–95% of reference-benign findings where a
 check exists, under our contextual protocol.
 
 **Keywords:** Kubernetes; configuration errors; empirical study; misconfiguration;
@@ -231,7 +231,9 @@ between the author and AI-generated labels, not inter-rater reliability
 between two humans; and because the pre-labels follow v2 while the author's
 labels follow the emerging v3, κ also absorbs the protocol-version
 difference. The κ figure is the only agreement measurement in this study;
-no independent second labeling was performed. We report this number as
+no independent second labeling was performed (a same-author blind
+re-labeling audit of the retained labels follows in the verification
+paragraph below). We report this number as
 measured, with its decomposition, because the decomposition is the finding:
 four of six disagreements were resource/probe rows where the governing v3
 production-scoping amendment sides with the author against the v2 definitional
@@ -255,7 +257,27 @@ individually adjudicated** — the 30 blind-labeled rows and 87 adjudicated
 divergence rows, with 6 rows in both sets — while **340 (75%) retain the AI
 pre-labels** the author accepted during the pass. The validation dataset is
 thus AI-annotated and author-adjudicated, not independently human-labeled;
-what that does and does not establish is taken up in Section 6. Rows whose flagged property cannot be observed in the source
+what that does and does not establish is taken up in Section 6.
+
+**Stability audit of the retained labels.** As a check on the 340 retained
+labels, the author blindly re-labeled a stratified subsample of 100 findings
+drawn from them (seed 20261103; drawn per rule in proportion to the retained
+population, and spanning 22 of the 25 rules — the other three rules have no
+retained rows), without access to the original labels or their rationales.
+The subsample stands for 108 of the 340 rows. Of the 94 findings the author
+decided (6 unsure, labels kept), 16 changed label — 17.0% [95% CI 10.8,
+25.9] — 10 from TP to FP and 6 from FP to TP, each standing for exactly one
+sample row; the disagreements concentrate in the context-sensitive rules
+(service-account automount, run-as-root, literal secrets, wildcard RBAC),
+while the absence checks were unchanged. The author adopted the audit labels
+as finals for all 16 rows (adjudication by rule, 2026-11-04), so 324 of the
+340 rows carry the accepted pre-label and 16 an audit-corrected label; all
+headline figures are computed on the corrected labels. The audit is a
+same-author stability check — it measures how reproducibly one rater applies
+the frozen protocol to the retained labels, not agreement between
+independent raters.
+
+Rows whose flagged property cannot be observed in the source
 (7, e.g. images injected by kustomize overlays) are excluded from precision
 denominators with the count and reason disclosed.
 
@@ -271,24 +293,24 @@ the headline figures are computed on that matched frame, and a distinct-finding
 sensitivity check (one vote per unique key, collapsing the intentional
 duplicates) is reported alongside. Two aggregates of the per-rule precisions
 answer different questions and are kept distinct throughout: the rate across
-sampled rows (0.633) describes the *sample*, in which rare rules are
+sampled rows (0.624) describes the *sample*, in which rare rules are
 deliberately over-represented because all findings of the rarest rules were
 taken; the population-weighted aggregate — each rule's precision weighted by
 its v3 population, equivalently the adjusted finding count over all findings —
-is **0.699** (19,199 / 27,460) and is the figure that characterizes the corpus
+is **0.676** (18,556 / 27,460) and is the figure that characterizes the corpus
 as a whole. Propagating the per-rule binomial sampling variances, the adjusted
 intervals are cluster-bootstrapped by source (resampling repositories and
 charts, 2,000 replicates; `results/cluster_bootstrap.md`): the adjusted total's
-95% interval is [17,120, 23,071] and the weighted precision's is [0.623, 0.840].
+95% interval is [16,500, 22,118] and the weighted precision's is [0.601, 0.805].
 Row-level intervals that treat findings as independent are materially
 narrower and are not used, since findings within a source are correlated
 (52.9% of v3 findings repeat a seen key). The intervals are also insensitive
 to how a replicate treats a rule with no decided rows in the resample — an
 event in only 42 of 50,000 rule-replicates: full-sample, pooled-precision, and
-drop-and-renormalize fallbacks all yield [0.623, 0.840]. Every adjusted prevalence figure in Section 4 is built per rule
+drop-and-renormalize fallbacks all yield [0.601, 0.805] to within 0.001. Every adjusted prevalence figure in Section 4 is built per rule
 and is identical under either aggregate. As a standards sensitivity check,
 the same sample scored under the superseded v2 definitional standard (the
-pre-labels) gives ≈0.73; the gap to 0.633 is the v3 amendments — production
+pre-labels) gives ≈0.73; the gap to 0.624 is the v3 amendments — production
 scoping and the context classes of Section 4.3 — reclassifying findings that
 the purely definitional standard counted as genuine. Cluster-level prevalence (share of
 repositories/charts with ≥1 finding) addresses the non-independence of findings
@@ -351,14 +373,14 @@ underneath.
 
 ### 4.3 RQ2 — Precision and taxonomy: which numbers can be believed
 
-Overall precision on the reconciled, author-adjudicated sample is **0.633
-[0.527, 0.714]** (279 TP / 162 FP over decided rows; cluster-bootstrap
+Overall precision on the reconciled, author-adjudicated sample is **0.624
+[0.519, 0.705]** (275 TP / 166 FP over decided rows; cluster-bootstrap
 interval by source), adjusting the 27,460 raw
-findings to an estimated **≈19,200 genuine misconfigurations** (95% CI
-[17,100, 23,100] — a model-based extrapolation of the per-rule estimates, not
+findings to an estimated **≈18,600 genuine misconfigurations** (95% CI
+[16,500, 22,100] — a model-based extrapolation of the per-rule estimates, not
 a count of individually labeled findings). A
-distinct-finding sensitivity analysis gives 0.626 — the intentional duplicate
-rows do not move the result. Population-weighted, overall precision is 0.699
+distinct-finding sensitivity analysis gives 0.613 — the intentional duplicate
+rows do not move the result. Population-weighted, overall precision is 0.676
 (Section 3.5); the per-rule adjustments that follow are the same under either
 aggregate. But the aggregate conceals the paper's most useful
 variation: precision is a property of the *rule*, and it splits the taxonomy
@@ -366,20 +388,22 @@ into rules that can be read at face value and rules that cannot.
 
 **Face-value rules (precision ≈ 1.0).** Missing seccomp profile, privilege
 escalation not disabled, root not prevented, and `:latest` images are
-essentially never benign in context (all 1.000 on their samples); SA-token
-automount (0.857) and dangerous capabilities (0.824, under the addendum's
-infrastructure test) are close behind. For these, scanner output *is*
+essentially never benign in context (all 1.000 on their samples); dangerous
+capabilities (0.824, under the addendum's infrastructure test), wildcard RBAC
+(0.71–0.80, under the own-group test), and SA-token automount (0.643) follow.
+For these, scanner output *is*
 prevalence, up to sampling error.
 
 **Context-dominated rules (precision ≤ 0.4).** Committed Secret objects are the
 extreme: **0.125**. Under the credential-material test, most committed Secrets
 are empty, operator-populated, or documented placeholders; the genuine exposure
 is a credential-bearing minority that no content-blind rule can separate from
-the noise. Host network (0.250) and host PID (0.214) findings are mostly node
+the noise. Host network (0.312) and host PID (0.214) findings are mostly node
 infrastructure — CNI/CSI agents and node exporters whose function requires the
-access. Missing liveness probes (0.214) and the resource rules (0.375–0.47) are
+access. Missing liveness probes (0.214) and the resource rules (0.38–0.43) are
 dominated by production scoping: examples, fixtures, and one-shot Jobs that a
-context-free count grades as production gaps. Added capabilities (0.235) are
+context-free count grades as production gaps. Literal secrets in env values
+(0.267) are mostly test fixtures and template placeholders. Added capabilities (0.176) are
 mostly least-privilege patterns (default-set additions, or `NET_BIND_SERVICE`
 over a drop-ALL baseline).
 
@@ -392,19 +416,19 @@ Selected rules; full table in `results/precision_provisional.md`.
 | SEC_APE_NOT_DISABLED | 1.000 | [0.80, 1.00] | face value |
 | SEC_ROOT_NOT_PREVENTED | 1.000 | [0.78, 1.00] | face value |
 | IMG_LATEST | 1.000 | [0.80, 1.00] | face value |
-| SA_TOKEN_AUTOMOUNTED | 0.857 | [0.60, 0.96] | face value |
 | SEC_DANGEROUS_CAPABILITY | 0.824 | [0.59, 0.94] | face value |
-| RBAC_WILDCARD_VERBS | 0.733 | [0.48, 0.89] | mostly |
-| RBAC_WILDCARD_RESOURCES | 0.647 | [0.41, 0.83] | mostly |
-| SEC_PRIVILEGED | 0.608 | [0.50, 0.71] | mixed |
+| RBAC_WILDCARD_VERBS | 0.800 | [0.55, 0.93] | mostly |
+| RBAC_WILDCARD_RESOURCES | 0.706 | [0.47, 0.87] | mostly |
+| SA_TOKEN_AUTOMOUNTED | 0.643 | [0.39, 0.84] | mostly |
+| SEC_PRIVILEGED | 0.595 | [0.48, 0.70] | mixed |
 | REL_NO_READINESS_PROBE | 0.538 | [0.29, 0.77] | context-heavy |
-| RES_NO_REQUESTS | 0.471 | [0.26, 0.69] | context-heavy |
 | RES_NO_CPU_LIMIT | 0.429 | [0.21, 0.67] | context-heavy |
-| SECRET_LITERAL_ENV | 0.400 | [0.20, 0.64] | context-heavy |
+| RES_NO_REQUESTS | 0.412 | [0.22, 0.64] | context-heavy |
 | RES_NO_MEM_LIMIT | 0.375 | [0.18, 0.61] | context-heavy |
-| HOST_NETWORK | 0.250 | [0.10, 0.49] | context-dominated |
-| SEC_CAPABILITY_ADDED | 0.235 | [0.10, 0.47] | context-dominated |
+| HOST_NETWORK | 0.312 | [0.14, 0.56] | context-dominated |
+| SECRET_LITERAL_ENV | 0.267 | [0.11, 0.52] | context-dominated |
 | HOST_PID / REL_NO_LIVENESS_PROBE | 0.214 | [0.08, 0.48] | context-dominated |
+| SEC_CAPABILITY_ADDED | 0.176 | [0.06, 0.41] | context-dominated |
 | SECRET_COMMITTED | 0.125 | [0.03, 0.36] | context-dominated |
 
 **Taxonomy v2.** The validation exercise reorganizes the 25 rules into a
@@ -412,7 +436,7 @@ three-tier taxonomy, and the false positives into five reusable context classes:
 
 - **Tier 1 — Misconfigurations.** States that are wrong in essentially all
   contexts (the face-value rules above, plus wildcard RBAC and cluster-admin
-  binding at 0.65–0.80 with the own-group exception below).
+  binding at 0.71–0.90 with the own-group exception below).
 - **Tier 2 — Hardening gaps.** States that are genuine but lesser gaps, reported
   separately and never folded into misconfiguration precision: digest-unpinned
   images *with* an explicit version tag (7 of 14 sampled no-digest rows), and the
@@ -464,13 +488,13 @@ do with the underlying manifests.
 tool *can* check and how much it *reports*; the labeled sample lets us ask
 whether it is *right*. Where a tool has a check for a sampled practice, it
 detects reference-positive findings reliably — kubeaudit 0.98, Polaris 0.93,
-kube-linter 0.90 — with Checkov the outlier at 0.76 (its run-as-non-root check
-systematically misses containers that run as root *explicitly*: 8 of its 15
+kube-linter 0.90 — with Checkov the outlier at 0.77 (its run-as-non-root check
+systematically misses containers that run as root *explicitly*: 6 of its 14
 misses). Counting practices with no check as missed, effective detection of
-genuine misconfigurations is 0.52–0.75, and the ranking inverts the raw-count
-intuition: Polaris leads (0.75) on the strength of coverage, not per-check
+genuine misconfigurations is 0.51–0.72, and the ranking inverts the raw-count
+intuition: Polaris leads (0.72) on the strength of coverage, not per-check
 detection. The symmetric result is the more damning one: the same checks flag
-**86–95% of the findings verification judged benign (reference-benign findings)**. The taxonomy's
+**84–95% of the findings verification judged benign (reference-benign findings)**. The taxonomy's
 context classes — infrastructure agents, standard operator patterns,
 least-privilege capability sets — fool the production tools at about the same
 rate they fooled our unvalidated rules. The tools' deficit on real manifests
@@ -487,10 +511,10 @@ than vendor error against the tools' own specifications.
 
 | Tool | TP detection (check exists) | TP detection (effective) | FP-flagging (check exists) |
 |---|---:|---:|---:|
-| kube-linter | 0.90 [0.78, 0.96] | 0.52 | 0.92 |
+| kube-linter | 0.90 [0.77, 0.96] | 0.51 | 0.92 |
 | kubeaudit | 0.98 [0.87, 1.00] | 0.55 | 0.95 |
-| Polaris | 0.93 [0.84, 0.97] | 0.75 | 0.87 |
-| Checkov | 0.76 [0.64, 0.85] | 0.64 | 0.86 |
+| Polaris | 0.93 [0.83, 0.97] | 0.72 | 0.88 |
+| Checkov | 0.77 [0.66, 0.86] | 0.66 | 0.84 |
 
 *Reference labels: 73 reference-positive and 50 reference-benign Helm-arm sample rows; rates
 over rows where a mapped check exists, except the effective column, which
@@ -559,8 +583,12 @@ disagreement decomposition showing 4 of 6 tracing to the v2→v3 standards chang
 itself), adjudicated rule-level amendments, and author adjudication of the
 labels (Section 3.4 gives the row-level provenance). The ground truth is thus
 single-author and AI-assisted: every reference label rests on one author's
-adjudication, and no independent labeling pass checks it. We regard this as
-the validation's main limitation.
+adjudication, and no independent labeling pass checks it. The blinded
+re-labeling audit of Section 3.4 mitigates this only partly: it caught and
+corrected 16 retained labels, but a same-author audit measures the stability
+of the protocol's application, not its agreement with an independent rater.
+We regard the absence of independent labeling as the validation's main
+limitation.
 Readers who prefer the purely definitional standard can recompute precision
 under it from the released sample (the v2 pre-labels are preserved); the
 prevalence *rankings* are unchanged under either standard, though several
@@ -586,7 +614,7 @@ evolve, and the replication package is designed for re-collection.
 
 **Reliability.** Intra-rater consistency was 44/44 on hidden duplicates. The
 sample-to-population reconciliation (451/457 rows matched to engine v3) and the
-distinct-finding sensitivity analysis (0.626 vs 0.633) bound the effect of the
+distinct-finding sensitivity analysis (0.613 vs 0.624) bound the effect of the
 v2→v3 frame change. Corpus snapshots are pinned by commit SHA; the corpus is
 rebuildable from the released collectors and logs.
 
