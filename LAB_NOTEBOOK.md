@@ -298,3 +298,17 @@ the abstract is unchanged (249 words, as verified in the previous round).
 Clean-checkout check: `git archive` of this commit into a fresh directory
 and `python3 scripts/score_self_audit.py` there reproduces audit_results.md
 exactly — 16.4% [10.1, 23.1], 16/94 sample description, 288/301 coverage.
+
+## 2026-11-04 — Zenodo v1.0.3: archival copy updated to the consistency-bundle package
+
+Tagged release v1.0.3 on main at 4ab4ba8 (the consistency-bundle commits);
+Zenodo archived it as version DOI 10.5281/zenodo.23967708 (concept DOI
+unchanged: 10.5281/zenodo.23966669, resolving to the latest version). The
+cited DOI was swapped from 10.5281/zenodo.23967366 to
+10.5281/zenodo.23967708 in the manuscript draft, both LaTeX trees, the
+regenerated main_bbl.tex, and CITATION.cff — one line each; no other text
+changed. Package rebuilt: 18 pages, 0 undefined citations, 0 overfull boxes
+in all variants, and the new DOI verified in the rendered PDF. The v1.0.0,
+v1.0.1, and v1.0.2 entries above stand as the historical record. Release:
+https://github.com/mallyagirish/k8s-misconfig-study/releases/tag/v1.0.3 —
+record: https://doi.org/10.5281/zenodo.23967708
