@@ -33,3 +33,6 @@ paper/latex/*.out
 paper/latex/*.bbl
 paper/latex/*.blg
 paper/latex/main.pdf
+
+# Title page carries personal contact details; never commit it
+paper/submission/title_page.pdf
