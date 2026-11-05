@@ -1,9 +1,46 @@
 # Self-audit scoring output (2026-11-04)
 
+## Summary — design-weighted estimate (weighting correction, 2026-11-04)
+
+The packet was not a simple random sample: allocation was fixed per rule in
+proportion to the rule's share of the 301 distinct retained findings, floor 2,
+cap 14 (SEC_PRIVILEGED capped at 14 of its 72 findings), with each rule's
+allocation split across source groups proportionally (seed 20261103). The
+unweighted rate is therefore a description of the sample as drawn, not an
+estimate for the retained population, and the Wilson interval does not match
+the design. The scorer now also reports the design-based figures:
+
+- **Population estimate (primary): stratified population-weighted change
+  rate 16.4%** [stratified bootstrap 95% CI 10.1%, 23.1%; 2,000 replicates,
+  seed 20261104]. Strata are rules; each rule's decided findings are weighted
+  by the rule's population of distinct retained findings. Strata with decided
+  rows cover **288 of the 301** distinct retained findings.
+- **Sample description: 16 of 94 decided findings changed = 17.0%**
+  [95% Wilson CI 10.8%, 25.9%] — the unweighted rate over the draw.
+- **No decided rows: DEPRECATED_API** — all 5 of its draws were labeled
+  unsure, so its 13 findings contribute no decided rows and are outside the
+  estimate's coverage.
+- **Unsure sensitivity:** treating all 6 unsure findings as unchanged vs
+  changed bounds the weighted estimate at **[15.6%, 20.8%]** (unweighted
+  bounds [16.0%, 22.0%] over all 100 returned findings).
+- Sensitivity at the finer rule × source-group grid: 18.1% over 277 of 301
+  findings (11 one-finding cells received no draw, so that grid cannot carry
+  the primary estimate).
+
+Full scorer output (`python3 scripts/score_self_audit.py`):
+
 returned = 100   audit-unsure = 6   decided = 94
 
 label-change rate = 16/94 = 17.0%  [95% Wilson CI 10.8%, 25.9%]
 direction: FP->TP: 6, TP->FP: 10
+
+design-weighted estimate (stratified by rule; the unweighted rate above
+describes the sample as drawn, this estimates the retained population):
+  population-weighted change rate = 16.4%  [stratified bootstrap 95% CI 10.1%, 23.1%; 2,000 replicates, seed 20261104]
+  coverage: strata with decided rows hold 288 of the 301 distinct retained findings
+  no decided rows: DEPRECATED_API (13 findings; all their draws were unsure)
+  unsure sensitivity: weighted [15.6%, 20.8%] if all 6 unsure count as unchanged vs changed; unweighted [16.0%, 22.0%]
+  sensitivity, rule x source-group strata: 18.1% over 277 of 301 findings
 
 per rule family (decided rows):
   RBAC and secrets             6/24 changed  [12%, 45%]

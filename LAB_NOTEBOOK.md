@@ -202,3 +202,44 @@ Manuscript: abstract/§3.4 (κ note + new "Stability audit of the retained label
 ## 2026-11-04 — Zenodo v1.0.1: archival copy updated to the corrected package
 
 The v1.0.0 Zenodo archive predated the self-audit label correction, so the DOI cited in the paper pointed at a package with the old numbers. Tagged release v1.0.1 on main at 0c39c19 (the recompute commit); Zenodo archived it as version DOI 10.5281/zenodo.23966954 (concept DOI unchanged: 10.5281/zenodo.23966669, which resolves to the latest version). The cited DOI was swapped from 10.5281/zenodo.23966670 to 10.5281/zenodo.23966954 in the manuscript draft, both LaTeX trees, the regenerated main_bbl.tex, and CITATION.cff — one line each; the abstract and all other text are unchanged. Package rebuilt: still 18 pages, 0 undefined citations, 0 overfull boxes. The v1.0.0 entry above stands as the historical record of the first release. Release: https://github.com/mallyagirish/k8s-misconfig-study/releases/tag/v1.0.1 — record: https://doi.org/10.5281/zenodo.23966954
+
+## 2026-11-04 — Self-audit weighting correction: design-weighted change-rate estimate
+
+External review (round 10) flagged a real methodological error: the scorer's
+headline audit figure was the unweighted 16/94 = 17.0% with a plain Wilson
+interval, but the audit packet was not a simple random sample — allocation
+was fixed per rule in proportion to the rule's share of the 301 distinct
+retained findings (floor 2, cap 14; SEC_PRIVILEGED capped at 14 of its 72
+findings), with each rule's allocation split across source groups
+proportionally. Sampling fractions therefore differ by rule, and the Wilson
+interval does not match the design.
+
+Fix: scripts/score_self_audit.py now also computes the stratified
+population-weighted change rate. Strata are rules — the level at which
+allocation was set and the finest level at which every stratum but one has
+decided rows (the within-rule group split is proportional, i.e.
+self-weighting up to integer rounding, and 11 rule × source-group cells of
+one finding received no draw, so the finer grid cannot carry the estimate;
+reported as a sensitivity: 18.1% over 277 of 301 findings). Stratum
+populations are reconstructed with the builder's derivation; the 16
+self_audit_correction rows appended to verification_divergence.csv after the
+draw are excluded, so the frame is the one the packet was drawn from
+(asserted: 451 matched / 340 retained / 301 deduped). Interval: stratified
+bootstrap, resampling decided findings within each rule, 2,000 replicates,
+seed 20261104, percentile interval.
+
+Results (results/self_audit/audit_results.md): population-weighted change
+rate 16.4% [stratified bootstrap 95% CI 10.1, 23.2], covering 288 of the 301
+distinct retained findings. DEPRECATED_API contributes no decided rows — all
+5 of its draws were labeled unsure — so its 13 findings sit outside the
+coverage. Unsure sensitivity: counting all 6 unsure findings as unchanged vs
+changed bounds the weighted estimate at [15.6, 20.8] (unweighted bounds
+[16.0, 22.0] over all 100 returned findings). The unweighted 17.0% [Wilson
+10.8, 25.9] is retained as the description of the sample as drawn. The
+§3.4 stability-audit passage in all three manuscript sources now reports the
+weighted estimate as the population figure, keeps the 16-of-94 sample fact,
+and notes the DEPRECATED_API coverage gap and the unsure bounds; abstract
+and README state no audit rate and are unchanged (abstract still 249 words).
+Package rebuilt: 18 pages, 0 undefined citations, 0 overfull boxes in all
+variants. (Build note: the rule name needed a LaTeX-escaped underscore,
+DEPRECATED\_API, in the .tex sources.)

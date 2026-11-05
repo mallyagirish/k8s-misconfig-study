@@ -265,11 +265,17 @@ drawn from them (seed 20261103; drawn per rule in proportion to the retained
 population, and spanning 22 of the 25 rules — the other three rules have no
 retained rows), without access to the original labels or their rationales.
 The subsample stands for 108 of the 340 rows. Of the 94 findings the author
-decided (6 unsure, labels kept), 16 changed label — 17.0% [95% CI 10.8,
-25.9] — 10 from TP to FP and 6 from FP to TP, each standing for exactly one
-sample row; the disagreements concentrate in the context-sensitive rules
-(service-account automount, run-as-root, literal secrets, wildcard RBAC),
-while the absence checks were unchanged. The author adopted the audit labels
+decided (6 unsure, labels kept), 16 changed label — 10 from TP to FP and 6
+from FP to TP, each standing for exactly one sample row. Because allocation
+was stratified by rule with the largest rule capped, the change rate over
+the retained population is estimated by reweighting each rule's decided
+findings to that rule's share of the 301 distinct retained findings: 16.4%
+[stratified bootstrap 95% CI 10.1, 23.2], covering 288 of the 301 findings
+— the remaining 13 are DEPRECATED_API findings, all five of whose draws
+were unsure (counting all six unsure findings as changed or as unchanged
+bounds the estimate at 15.6–20.8%). The disagreements concentrate in the
+context-sensitive rules (service-account automount, run-as-root, literal
+secrets, wildcard RBAC), while the absence checks were unchanged. The author adopted the audit labels
 as finals for all 16 rows (adjudication by rule, 2026-11-04), so 324 of the
 340 rows carry the accepted pre-label and 16 an audit-corrected label; all
 headline figures are computed on the corrected labels. The audit is a
