@@ -456,6 +456,22 @@ Privileged container & 5.5\% & 1.4\% & --- \\
 tags, are in the replication package
 (\texttt{results/stats\_tagged\_v3.json}).}
 
+Figure~\ref{fig:prevalence} extends Table 1 to the remaining
+default-posture practices --- resource requests, memory limits, seccomp,
+and privilege-escalation prevention --- with privileged containers as
+the explicit-opt-in contrast.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig1_prevalence}
+\caption{Workload-level prevalence of default-posture practices, by arm
+(engine v3): the share of workloads with at least one finding for each
+practice, in rendered Helm charts and production-tagged GitHub manifests.
+Every practice above the last row is one a workload acquires by
+specifying nothing; a privileged container requires an explicit opt-in,
+and is rare in both arms.}\label{fig:prevalence}
+\end{figure}
+
 \hypertarget{rq4-curation-helps-less-than-it-looks}{%
 \subsection{RQ4 --- Curation helps, less than it
 looks}\label{rq4-curation-helps-less-than-it-looks}}
@@ -549,6 +565,22 @@ context-dominated \\
 SEC\_\allowbreak{}CAPABILITY\_\allowbreak{}ADDED & 0.176 & {[}0.06, 0.41{]} & context-dominated \\
 SECRET\_\allowbreak{}COMMITTED & 0.125 & {[}0.03, 0.36{]} & context-dominated \\
 \end{longtable}
+
+Figure~\ref{fig:precision} plots all 25 rules, including the
+low-count rules Table 2 omits.
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig2_precision_forest}
+\caption{Per-rule precision against the reference labels (reconciled
+validation sample, post-audit labels). Points are TP/(TP+FP) over decided
+sample rows, sorted descending; whiskers are Wilson 95\% intervals and
+the right column gives the TP/FP counts. Precision is a property of the
+rule: the absence checks at the top can be read at face value, while the
+bottom cluster is where context dominates. IMG\_NO\_DIGEST is scored
+over its 7 decided rows; 7 further sampled rows form the TP-hardening
+tier described below.}\label{fig:precision}
+\end{figure}
 
 \textbf{Taxonomy v2.} The validation exercise reorganizes the 25 rules
 into a three-tier taxonomy, and the false positives into five reusable
@@ -645,6 +677,7 @@ classes, so the flagging rates measure the distance between definitional
 checking and context-aware judgment --- the quantity a user who trusts
 the output experiences --- rather than vendor error against the tools'
 own specifications.
+Figure~\ref{fig:scanners} plots the three rates per tool.
 
 \begin{longtable}[]{@{}
   >{\raggedright\arraybackslash}p{(\columnwidth - 6\tabcolsep) * \real{0.2000}}
@@ -675,6 +708,19 @@ Checkov & 0.77 {[}0.66, 0.86{]} & 0.66 & 0.84 \\
 Helm-arm sample rows; rates over rows where a mapped check exists, except the effective
 column, which counts no-check practices as missed. Method, joins, and
 caveats: \texttt{results/tool\_accuracy.md}.}
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig3_scanners}
+\caption{Scanner accuracy against the Helm-arm reference labels (126
+sampled findings, default configurations). Conditional detection scores
+only the practices a tool checks; effective detection counts unchecked
+practices as missed; benign-flagging is the share of reference-benign
+findings flagged where a check exists. Whiskers are Wilson 95\%
+intervals. The tools detect what they check; coverage decides the
+effective ranking, and every tool flags most of the benign findings it
+can check.}\label{fig:scanners}
+\end{figure}
 
 \textbf{Defaults decide what gets found.} kube-linter's probe checks
 validate probe \emph{port correctness}, not probe existence; its

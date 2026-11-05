@@ -368,6 +368,19 @@ defaults.
 *Full per-rule tables for all 25 rules, both arms and all source tags, are in the
 replication package (`results/stats_tagged_v3.json`).*
 
+Figure 1 extends Table 1 to the remaining default-posture practices —
+resource requests, memory limits, seccomp, and privilege-escalation
+prevention — with privileged containers as the explicit-opt-in contrast.
+
+![Figure 1](figures/fig1_prevalence.png)
+
+**Figure 1.** Workload-level prevalence of default-posture practices, by
+arm (engine v3): the share of workloads with at least one finding for each
+practice, in rendered Helm charts and production-tagged GitHub manifests.
+Every practice above the last row is one a workload acquires by specifying
+nothing; a privileged container requires an explicit opt-in, and is rare
+in both arms.
+
 ### 4.2 RQ4 — Curation helps, less than it looks
 
 Rendered Helm charts are better hardened than raw GitHub manifests, but the gap
@@ -440,6 +453,19 @@ Selected rules; full table in `results/precision_provisional.md`.
 | HOST_PID / REL_NO_LIVENESS_PROBE | 0.214 | [0.08, 0.48] | context-dominated |
 | SEC_CAPABILITY_ADDED | 0.176 | [0.06, 0.41] | context-dominated |
 | SECRET_COMMITTED | 0.125 | [0.03, 0.36] | context-dominated |
+
+Figure 2 plots all 25 rules, including the low-count rules Table 2 omits.
+
+![Figure 2](figures/fig2_precision_forest.png)
+
+**Figure 2.** Per-rule precision against the reference labels (reconciled
+validation sample, post-audit labels). Points are TP/(TP+FP) over decided
+sample rows, sorted descending; whiskers are Wilson 95% intervals and the
+right column gives the TP/FP counts. Precision is a property of the rule:
+the absence checks at the top can be read at face value, while the bottom
+cluster is where context dominates. IMG_NO_DIGEST is scored over its 7
+decided rows; 7 further sampled rows form the TP-hardening tier described
+below.
 
 **Taxonomy v2.** The validation exercise reorganizes the 25 rules into a
 three-tier taxonomy, and the false positives into five reusable context classes:
@@ -518,6 +544,7 @@ of each practice and do not claim the v3 context classes, so the flagging
 rates measure the distance between definitional checking and context-aware
 judgment — the quantity a user who trusts the output experiences — rather
 than vendor error against the tools' own specifications.
+Figure 3 plots the three rates per tool.
 
 | Tool | TP detection (check exists) | TP detection (effective) | FP-flagging (check exists) |
 |---|---:|---:|---:|
@@ -530,6 +557,16 @@ than vendor error against the tools' own specifications.
 over rows where a mapped check exists, except the effective column, which
 counts no-check practices as missed. Method, joins, and caveats:
 `results/tool_accuracy.md`.*
+
+![Figure 3](figures/fig3_scanners.png)
+
+**Figure 3.** Scanner accuracy against the Helm-arm reference labels (126
+sampled findings, default configurations). Conditional detection scores
+only the practices a tool checks; effective detection counts unchecked
+practices as missed; benign-flagging is the share of reference-benign
+findings flagged where a check exists. Whiskers are Wilson 95% intervals.
+The tools detect what they check; coverage decides the effective ranking,
+and every tool flags most of the benign findings it can check.
 
 **Defaults decide what gets found.** kube-linter's probe checks validate probe
 *port correctness*, not probe existence; its SA-token and wildcard checks are
