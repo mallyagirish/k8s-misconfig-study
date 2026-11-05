@@ -35,6 +35,14 @@ Agyekum and Santos (ESEM 2026), **Does Fixing Break Security? An Empirical Study
 
 The replication package describes 5,968 IaC-Eval scenario timelines across 15 LLM configurations and measures security regressions during iterative repair. This makes security-regression measurement an established research direction. Our proposed distinction must be the serving-specific operational oracle: authentication across sibling API routes, mock OpenAI-compatible API behavior, model-load/readiness invariants, and Helm chart semantics.
 
+### Runtime-informed Kubernetes hardening
+
+Sgan Cohen et al. (2025), **KubeGuard: LLM-Assisted Kubernetes Hardening via Configuration Files and Runtime Logs Analysis**. arXiv:2509.04191. https://arxiv.org/abs/2509.04191
+
+KubeGuard uses Kubernetes manifests together with audit, network-flow, and provenance logs to generate/refine Roles, NetworkPolicies, and Deployments. It evaluates generic microservice applications and shows that runtime context is already a research direction for Kubernetes hardening.
+
+**Implication:** Our benchmark must distinguish itself through LLM-inference-specific security and serving invariants (route authentication, model readiness/load behavior, GPU/model-cache contracts), not generic runtime-aware configuration repair.
+
 ## Revised research question
 
 Can AI-assisted systems remediate security weaknesses in Kubernetes-based LLM inference stacks while preserving endpoint authentication semantics, serving API behavior, readiness/model-loading behavior, Helm chart semantics, and GPU/model-cache constraints?
