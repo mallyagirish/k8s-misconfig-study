@@ -451,3 +451,21 @@ record: https://doi.org/10.5281/zenodo.23968269
   0 undefined references, 0 overfull boxes; figure captions and
   numbering (1 = prevalence, 2 = precision, 3 = scanners) verified in
   the rendered PDF.
+
+## 2026-11-04 — Zenodo v1.0.6: archival copy updated to the three-figures package
+
+- GitHub release v1.0.6 cut on the figures commit; Zenodo archived it as
+  version DOI 10.5281/zenodo.23968533 (concept DOI unchanged:
+  10.5281/zenodo.23966669, resolving to the latest version). v1.0.6
+  supersedes v1.0.5: the only change is the three figures and their
+  captions/references — no result, number, or other text changed. The
+  cited DOI was swapped from 10.5281/zenodo.23968269 to
+  10.5281/zenodo.23968533 in the manuscript draft, both LaTeX trees, the
+  regenerated main_bbl.tex, and CITATION.cff — one line each. Package
+  rebuilt and re-verified: 21 pages, 0 undefined citations, 0 undefined
+  references, 0 overfull boxes in all variants, all three figure
+  captions present in the rendered PDF, and the new DOI verified in the
+  rendered PDF. The v1.0.0–v1.0.5 entries above stand as the historical
+  record. Release:
+  https://github.com/mallyagirish/k8s-misconfig-study/releases/tag/v1.0.6 —
+  record: https://doi.org/10.5281/zenodo.23968533
