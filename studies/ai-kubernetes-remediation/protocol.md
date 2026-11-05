@@ -1,168 +1,162 @@
-# Study Protocol — AI-Driven Kubernetes Security Remediation
+# Study Protocol — Safe AI Remediation for Kubernetes-Based LLM Inference
 
-**Version:** 0.1 (draft; not preregistered)  
-**Status:** Design phase. Freeze this protocol before the confirmatory evaluation.
+**Version:** 0.2 (scope revised after preliminary related-work scan; draft, not preregistered)  
+**Status:** Design phase. Freeze before confirmatory evaluation.
 
-## 1. Motivation
+## 1. Motivation and research gap
 
-A scanner finding is only the beginning of remediation. A patch can remove one warning while creating another vulnerability or making a service unavailable. The meaningful unit of success is a patch that passes independently specified security checks and operational invariants—not merely one that parses or suppresses a scanner finding.
+Generic Kubernetes security remediation is already an active research topic. This study narrows the question to LLM inference serving, where security changes interact with route-level API behavior, model loading, readiness, streaming, distributed serving components, GPU access, and model-cache storage.
+
+The study evaluates whether an AI-assisted patch is both secure and operationally safe for an LLM-serving workload. A syntactically valid YAML patch or a suppressed scanner alert is not sufficient.
 
 ## 2. Scope and unit of analysis
 
-The unit is a **remediation task**: a Kubernetes workload configuration, a target finding, the context supplied to the system, and ground-truth acceptance tests.
+The unit is a remediation task: a versioned Helm chart or Kubernetes configuration, a target LLM-serving security weakness, the context provided to a remediation system, and independently specified security and serving acceptance tests.
 
-Candidate task families, aligned with the existing study's taxonomy:
+Candidate task families:
+- API authentication and route coverage, including sibling inference/operational endpoints;
+- Ingress/Gateway exposure, TLS, and route allowlisting;
+- NetworkPolicy and distributed/Ray/KV-transfer port isolation;
+- secret references for model registry/Hugging Face tokens and API credentials;
+- GPU device/resource configuration and privileged GPU access;
+- model/cache PVCs, hostPath, writable mounts, and initContainers;
+- workload securityContext (non-root, privilege escalation, seccomp) where image behavior is known;
+- readiness/startup and model-loading behavior;
+- image provenance and immutable references.
 
-- service-account token automounting and workload identity;
-- privileged containers and Linux capability minimization;
-- privilege escalation and non-root execution;
-- host namespaces and hostPath exposure;
-- resource requests/limits where operational invariants can be specified;
-- image tag/digest integrity;
-- RBAC scope and wildcard permissions;
-- Secret references and secret-handling patterns (never real secret values);
-- seccomp/AppArmor or related pod/container settings with explicit version support.
+Do not include a task unless its target security property and serving invariants can be tested. Where a property depends on cloud load balancers, external identity providers, real GPUs, or undocumented application behavior, either construct a controlled test fixture or mark it out of scope.
 
-Do not include a task unless its expected secure state and operational invariants can be stated and tested.
+## 3. Remediation systems
 
-## 3. Systems to compare
+1. No-op baseline: unchanged configuration.
+2. Deterministic baseline: documented, hand-authored transformation for cases with a safe generic fix.
+3. Prompt-only LLM: finding and relevant manifest/chart values only.
+4. Context-grounded LLM: bounded repository context plus version-pinned official serving/Kubernetes documentation.
+5. Constrained agent: read repository files and run read-only validators, then propose a patch. No external credentials, production access, or persistent-cluster deployment.
 
-1. **No-op / unchanged configuration:** negative control.
-2. **Deterministic baseline:** hand-authored transformation where a safe generic fix exists.
-3. **Prompt-only LLM:** finding and relevant manifest; no retrieval or tool loop.
-4. **Context-grounded LLM:** prompt-only inputs plus bounded repository context and version-pinned authoritative guidance.
-5. **Constrained tool-using agent:** may inspect files and run read-only validators, then propose a patch. It cannot deploy to persistent clusters or access external credentials.
-
-Record exact provider/model/version, API date, prompts, decoding settings, tool definitions, context limits, retries, and cost. Capture resolved model versions when available.
+For every run, record exact provider/model/version, API date, prompt, decoding settings, tool permissions, context selection, retries, token use, cost, and latency.
 
 ## 4. Benchmark construction
 
 ### Inclusion criteria
 
 Each task must:
-- represent a real Kubernetes configuration pattern or justified synthetic variant;
-- have a reproducible starting manifest;
-- map to a clearly defined security objective;
+- be a public, synthetic, or author-created LLM inference configuration with documented provenance and license;
+- have a reproducible starting point and pinned chart/manifest version;
+- target one clearly stated security weakness;
 - include an independent security acceptance test;
-- include functional/operational invariants appropriate to the workload;
-- identify Kubernetes API and cluster versions;
-- have provenance and licensing recorded;
-- be reviewed by someone other than its author where feasible.
+- include serving invariants appropriate to the task (for example, expected HTTP route behavior, readiness, or model API contract);
+- identify Kubernetes and Helm versions;
+- be reviewed by someone other than the task author where feasible.
 
 ### Exclusion criteria
 
-Exclude tasks with unavailable application context, no reliable oracle, real credentials/customer data/private employer material, unclear redistribution rights, or YAML parsing as the sole success criterion.
+Exclude tasks with no reliable oracle, unavailable application context, real secrets/customer data/employer material, unclear redistribution rights, or success criteria based only on YAML parsing or scanner silence.
 
 ### Pilot and scale
 
-Start with a pilot of **20–30 tasks** across at least five task families. Use it to validate the harness, task clarity, and scoring; do not treat pilot results as confirmatory. After revision and protocol freeze, target **100–150 tasks** only if task quality and independent review support that scale. Report the actual count and rationale.
+Start with 15–25 carefully reviewed tasks across at least four LLM-serving task families. Use the pilot to validate test oracles and setup/teardown; do not treat it as confirmatory. Expand only if task quality and independent review justify it. A smaller, high-quality domain-specific benchmark is preferable to an inflated task count.
 
-## 5. Inputs and context conditions
+## 5. Context conditions and patch targets
 
-- **Manifest-only:** finding, relevant manifest, and minimal schema/version metadata.
-- **Repository-context:** the above plus a bounded set of related manifests, Helm values/templates, or workload metadata selected by a documented deterministic procedure.
+Evaluate matched tasks under:
+- Manifest-only context: target finding, relevant rendered YAML, and API/version metadata.
+- Chart/repository context: the above plus relevant Helm templates, values schema, related resources, and bounded documentation selected by a deterministic procedure.
 
-Evaluate each task under each applicable condition. Do not give one system privileged information unavailable to others in the same comparison.
+Where the source is Helm, distinguish:
+- patching the chart's values/configuration;
+- patching chart templates;
+- patching only the rendered Kubernetes output.
 
-## 6. Execution and isolation
+A valid chart-level patch must preserve parameterization and render successfully for the pinned chart version. A rendered-manifest patch must not be presented as a chart fix.
 
-- Use disposable, isolated environments; pin Kubernetes distribution/version, admission policies, and validator versions.
-- Use network restrictions and no cloud credentials by default.
-- Never apply generated patches to production or shared clusters.
-- Run each attempt from a clean copy with timeouts, quotas, and retry limits.
-- Capture stdout/stderr and structured outcomes; redact sensitive values.
-- Preserve failed runs rather than silently dropping them.
+## 6. Isolation and serving test harness
+
+- Use disposable local clusters or isolated CI environments with pinned Kubernetes versions.
+- Use mock inference containers or deterministic test servers for HTTP, streaming, readiness, and health invariants.
+- Do not require paid cloud resources or real secrets.
+- For GPU-related tasks, use static manifest/device-plugin contract checks unless actual GPU hardware is explicitly available; report this boundary.
+- Apply patches only to clean disposable copies.
+- Capture test output, patch diffs, resource usage, timeouts, and failures.
+- Never test third-party live infrastructure or deploy to production.
 
 ## 7. Outcomes
 
 ### Primary outcome
 
-**Safe remediation success (binary):** the patch passes all required security acceptance tests **and** all required operational/functionality invariants for that task.
-
-A patch that merely parses or removes the target scanner finding is not a success.
+Safe remediation success (binary): the patch passes every required security acceptance test and every required serving/operational invariant for that task.
 
 ### Secondary outcomes
 
-- **Security fix rate:** target weakness no longer present.
-- **Regression rate:** one or more previously passing operational invariants fail.
-- **New-risk rate:** patch introduces a separately defined security weakness.
-- **Patch minimality:** changed lines/fields and proportion unrelated to the target fix, using a predeclared definition.
-- **Completeness:** all required controls are addressed.
-- **Explanation fidelity:** explanation accurately describes the patch and security effect, judged against a rubric.
-- **Human review burden:** time and edits needed to reach an accepted patch, if a separate reviewer exercise is feasible.
-- **Cost/latency:** wall-clock time, token usage, API cost, retries, and tool calls.
+- target weakness fixed;
+- route-level authentication and allowlist correctness;
+- serving/API contract regression rate;
+- readiness/model-loading invariant pass rate;
+- new security-risk rate;
+- chart render/schema validation success;
+- patch minimality and unrelated-change rate;
+- explanation fidelity;
+- human review time/edits, if independently measured;
+- latency, tokens, API cost, retries, and tool calls.
 
 ### Failure taxonomy
 
-One or more labels per attempt:
-- no patch, refusal, or timeout;
-- syntactic/schema-invalid patch;
-- target finding remains;
-- incomplete remediation;
-- insecure workaround (for example, broad privilege granted to make a workload run);
-- operational regression;
-- unrelated or excessive changes;
-- hallucinated API field/resource;
-- explanation does not match patch;
-- nondeterministic or unreproducible result.
+- no patch/refusal/timeout;
+- YAML/schema/chart-render invalid;
+- target weakness remains;
+- route bypass or incomplete authentication;
+- insecure workaround (for example, privileged mode or broad network exposure);
+- model-serving/API/streaming/readiness regression;
+- GPU/device configuration regression;
+- cache/storage or secret-handling regression;
+- unrelated/excessive edits;
+- hallucinated API/chart value;
+- explanation mismatch;
+- nondeterministic/unreproducible output.
 
-## 8. Ground truth and labeling
+## 8. Ground truth and independent review
 
-Task authors define expected security properties and operational invariants before evaluating systems. A second reviewer independently inspects each task and oracle. Resolve disagreements before confirmatory runs.
+Task authors define expected security properties and serving invariants before system evaluation. A second reviewer independently inspects each task and oracle. Resolve disagreements before confirmatory runs.
 
-For subjective outcomes:
-- use a written rubric with examples;
-- blind raters to system identity where feasible;
-- use at least two independent human raters for a subset or all examples, depending on feasibility;
-- report raw agreement and an appropriate chance-corrected statistic with confidence intervals;
-- adjudicate disagreements and retain original ratings.
+For subjective patch-quality outcomes, use a written rubric, blind raters to system identity where feasible, report agreement and confidence intervals, and preserve adjudication history. Do not treat author-versus-model agreement as inter-rater reliability.
 
-Do not describe author-versus-model agreement as inter-rater reliability.
+## 9. Statistical analysis
 
-## 9. Statistical analysis plan
-
-The task is the principal paired unit. Compare systems on the same tasks and context conditions.
-
-- Report numerator/denominator and confidence intervals for binary outcomes.
-- Report paired differences in safe-remediation success.
-- Use task-family stratification and paired/cluster-aware methods as appropriate.
-- Do not treat repeated model attempts on one task as independent tasks.
-- Predefine handling of timeouts, refusals, malformed output, and missing observations. Default: a system failure counts as not safely remediated for the primary outcome.
-- Report per-family results, not only pooled averages.
-- Conduct sensitivity analyses excluding ambiguous tasks and separating synthetic from public-derived tasks.
-- Correct for multiple comparisons when making multiple confirmatory claims.
-- Publish analysis scripts and a data dictionary.
-
-Choose the final method (for example, paired bootstrap, McNemar test, or mixed-effects logistic regression) after the final sample structure is known, then freeze it before confirmatory evaluation.
+The task is the paired unit. Compare systems on the same tasks and context conditions.
+- Report numerator/denominator and confidence intervals for primary binary outcomes.
+- Report paired differences and per-task-family results.
+- Repeated model attempts are not independent tasks.
+- Predefine treatment of timeouts/refusals; default is failure for primary outcome.
+- Separate synthetic and public-derived tasks in sensitivity analysis.
+- Correct for multiple comparisons where relevant.
+- Choose final tests after benchmark structure is fixed, then freeze analysis before confirmatory evaluation.
 
 ## 10. Threats to validity
 
-- **Construct validity:** benchmark checks may not capture all operational constraints.
-- **External validity:** synthetic/public tasks may not represent private production environments.
-- **Oracle validity:** tests may be incomplete or tailored to expected fixes.
-- **Model drift:** providers and aliases change; preserve versions and dates.
-- **Prompt sensitivity:** document prompts and run sensitivity analysis.
-- **Task leakage:** public tasks may occur in model training data; do not claim contamination-free evaluation.
-- **Researcher degrees of freedom:** freeze selection, scoring, and primary comparisons before confirmatory runs.
-- **Cost representativeness:** report measurement date and usage.
+- External validity: public/synthetic configs may not represent production inference clusters.
+- Oracle validity: mock services may not capture full model/GPU behavior.
+- Construct validity: static checks can overstate exposure if external controls are unknown.
+- Model drift: record immutable model/version information and dates.
+- Task leakage: public configs may occur in model training data.
+- Researcher bias: authors create tasks and oracles; independent review is essential.
+- Domain coverage: selected serving engines and charts may not represent all inference stacks.
 
-## 11. Ethics and data management
+## 11. Ethics and reproducibility
 
-Use only public, synthetic, or author-created manifests that can lawfully be analyzed and redistributed. Never put real secrets in fixtures. Keep non-redistributable manifests out of the public artifact and publish derived metadata only when permitted. Do not test third-party live infrastructure. Disclose model/API use and comply with provider terms.
+Use only redistributable public, synthetic, or author-created artifacts. Never include real credentials or employer data. Publish task provenance, chart/Kubernetes versions, prompts, validators, environment definitions, raw outputs with sensitive values redacted, and analysis scripts where licensing permits.
 
-## 12. Reproducibility checklist
+## 12. Release gates
 
-- [ ] Task IDs, provenance, license, Kubernetes version, and task-family metadata
-- [ ] Immutable benchmark release/tag
-- [ ] Versioned prompts and model identifiers
-- [ ] Pinned validators, scanners, and cluster images
-- [ ] Deterministic clean-room runner
-- [ ] Explicit primary outcome and failure policy
-- [ ] Independent oracle review
-- [ ] Raw results and analysis scripts
-- [ ] Environment and cost measurement documentation
-- [ ] Limitations and deviations log
+- [ ] Related-work review and novelty positioning completed
+- [ ] Every task has independent security and serving oracles
+- [ ] Chart-level and rendered-manifest patches are distinguished
+- [ ] Mock-serving harness is reproducible
+- [ ] GPU limitations are explicitly documented
+- [ ] Independent task/oracle review completed
+- [ ] Pilot exit criteria passed
+- [ ] Protocol and analysis plan frozen before confirmatory runs
+- [ ] All results regenerate from a pinned artifact release
 
 ## 13. Protocol deviations
 
-Timestamp every change after protocol freeze, record its reason and affected tasks/outcomes, and state whether it occurred before or after confirmatory evaluation. Never silently revise the primary outcome after inspecting results.
+Timestamp every change after protocol freeze, explain its reason and affected tasks/outcomes, and state whether it occurred before or after confirmatory evaluation. Never silently revise the primary outcome after inspecting results.
