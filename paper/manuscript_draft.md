@@ -767,8 +767,8 @@ validation sample with evidence packets and final labels, and the analysis
 scripts, at https://github.com/mallyagirish/k8s-misconfig-study (Apache-2.0).
 GitHub sources are pinned by commit SHA (`results/github_commit_shas.json`)
 and Helm charts by name and version (`results/helm_render_log.json`), so the
-corpus is reconstructible as collected. An archival DOI (Zenodo) will be
-minted at submission. The corpus manifests
+corpus is reconstructible as collected. An archival copy is deposited on Zenodo
+(DOI: 10.5281/zenodo.23966670). The corpus manifests
 themselves remain under their original licenses and are rebuilt, not
 redistributed.
 
