@@ -7,7 +7,7 @@ authors:
     given-names: Girish
 repository-code: "https://github.com/mallyagirish/k8s-misconfig-study"
 license: Apache-2.0
-doi: "10.5281/zenodo.23968533"
+doi: "10.5281/zenodo.23969482"
 abstract: >-
   Replication package and checker for an empirical study of Kubernetes
   configuration practices across 16,243 YAML documents (151 rendered Helm

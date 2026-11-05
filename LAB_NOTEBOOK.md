@@ -490,3 +490,22 @@ placement in the rebuilt PDF: §4.1 starts p7, Fig. 1 p8; §4.3 starts
 p9, Fig. 2 p11; §4.4 starts p12, Fig. 3 p13; §5 Discussion p14. All
 variants: 21 pages, 0 undefined citations, 0 undefined references,
 0 overfull boxes.
+
+## 2026-11-04 — Zenodo v1.0.7: archival copy updated to the placement-fixed package
+
+Tagged release v1.0.7 on main at the figure-placement fix commit;
+Zenodo archived it as version DOI 10.5281/zenodo.23969482 (concept DOI
+unchanged: 10.5281/zenodo.23966669, which resolves to the latest
+version). v1.0.7 supersedes v1.0.6: the only change is the corrected
+figure placement described in the entry above — no result, number, or
+other text changed. The cited DOI was swapped from
+10.5281/zenodo.23968533 to 10.5281/zenodo.23969482 in the manuscript
+draft, both LaTeX trees, the regenerated main_bbl.tex, and
+CITATION.cff — one line each. Package rebuilt and re-verified after
+the swap: 21 pages, 0 undefined citations, 0 undefined references,
+0 overfull boxes in all variants; placement unchanged (Fig. 1 p8,
+Fig. 2 p11, Fig. 3 p13; Discussion p14); the new DOI verified in the
+rendered PDF. The v1.0.0–v1.0.6 entries above stand as the historical
+record. Release:
+https://github.com/mallyagirish/k8s-misconfig-study/releases/tag/v1.0.7 —
+record: https://doi.org/10.5281/zenodo.23969482
