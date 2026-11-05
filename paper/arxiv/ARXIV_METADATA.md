@@ -16,14 +16,25 @@ Girish Mallya (sole author; affiliation as in the manuscript: Independent Resear
 
 Kubernetes manifests are the de facto interface to production infrastructure, with permissive defaults: a workload specifying nothing runs with an automounted token, no resource limits, and no explicitly configured seccomp profile. We measure configuration in 151 Helm charts and 60 public GitHub repositories (16,243 documents, 2,811 workloads) with a 25-rule engine. We validated the engine on a 457-finding stratified sample: AI-generated pre-labels were author-checked -- the 92 protocol-sensitive rows adjudicated, a blinded 30-row subset (author--AI agreement: kappa = 0.526 [0.17, 0.84]) -- the rest retain accepted pre-labels, 16 corrected by a blinded re-labeling audit. Population-weighted precision is 0.676 [0.60, 0.81] (cluster bootstrap by source): ~18,600 [16,500, 22,100] of 27,460 raw findings are estimated genuine. Precision is rule-dependent: absence checks (seccomp, privilege escalation, root prevention) showed no false positives in the validation sample, while context-sensitive rules (committed secrets, host namespaces, probes) are mostly benign-by-design. The defaults dominate: tokens automount in 88.6% of production GitHub workloads, CPU limits -- a contested hardening practice -- are missing in 75.3%; 1.4% run a privileged container. Helm charts beat raw manifests on most practices, but by only 1.3--1.7x in workload-level prevalence. We also audit the auditors: on identical input, four scanners cover at most 16 of the 25 practices, diverging up to 1.4x on the same practice through counting semantics. Scored against reference labels (Helm arm, n = 126), they effectively detect 51--72% of the engine's reference-positive findings and flag 84--95% of reference-benign findings where a check exists, under our contextual protocol.
 
-> Note for review: the LaTeX source's `\abstract{...}` block ends with a trailing
-> fragment — "static analysis tools; measurement validity" — the tail of the
-> keywords line that was absorbed into the abstract's closing brace during the
-> Markdown→LaTeX conversion. It renders at the end of the abstract in the
-> submitted EMSE PDF as well (both PDFs are text-identical). The 247-word
-> abstract above excludes that fragment. Left as-is for fidelity to the
-> submitted manuscript; flagging in case Girish wants it treated differently
-> for arXiv.
+> Note: the 247-word abstract above is the clean text. The arXiv LaTeX source
+> previously rendered with a trailing keywords fragment at the end of the
+> abstract; see "Note on divergence from the submitted version" below.
+
+## Note on divergence from the submitted version
+
+The arXiv copy differs from the EMSE-submitted PDF in exactly one place,
+fixed 2026-11-04 at Girish's direction (the EMSE copy is left as submitted).
+In the submitted source, the tail of the keyword list — "static analysis
+tools; measurement validity" — had leaked into the `\abstract{...}` block
+during the Markdown→LaTeX conversion and rendered as a dangling line at the
+end of the abstract; the `\keywords{...}` entry itself stopped at
+"misconfiguration". In this arXiv copy the fragment is removed from the
+abstract (which now ends at "...under our contextual protocol.") and the two
+keywords it carried are restored to `\keywords{...}`, so the rendered keyword
+list is the full submitted list: Kubernetes, configuration errors, empirical
+study, misconfiguration, static analysis tools, measurement validity. No
+other content differs — a full-text diff of the rebuilt arXiv PDF against
+the submitted PDF shows only those abstract/keywords lines.
 
 ## Categories
 
@@ -67,7 +78,8 @@ current plan requires it.
 
 ## Package contents (`arxiv_submission.tar.gz`)
 
-- `main.tex` — manuscript source (v1.0.7, identical to the EMSE submission source)
+- `main.tex` — manuscript source (v1.0.7; identical to the EMSE submission source
+  except the abstract/keywords fix in the divergence note above)
 - `main.bbl` — compiled bibliography (arXiv does not run BibTeX; the `.tex` keeps
   `\bibliography{references}` and uses this `.bbl`)
 - `sn-jnl.cls`, `sn-basic.bst` — Springer class/style, bundled because arXiv does
@@ -78,4 +90,5 @@ current plan requires it.
 Verified 2026-11-04: a clean-room copy of exactly these files compiles with
 pdflatex only (no BibTeX) to a 21-page PDF with all 3 figures, 0 undefined
 citations/references, and extracted text identical to the submitted
-`paper/submission/main.pdf`. See `arxiv_preview.pdf` in this folder.
+`paper/submission/main.pdf` except the abstract/keywords lines described in
+the divergence note. See `arxiv_preview.pdf` in this folder.

@@ -509,3 +509,24 @@ rendered PDF. The v1.0.0–v1.0.6 entries above stand as the historical
 record. Release:
 https://github.com/mallyagirish/k8s-misconfig-study/releases/tag/v1.0.7 —
 record: https://doi.org/10.5281/zenodo.23969482
+
+## 2026-11-04 — arXiv copy: leaked keywords fragment removed from the abstract
+
+At Girish's direction, the arXiv package (`paper/arxiv/`) was fixed while
+the EMSE-submitted files were left byte-untouched. In the submitted
+source, the tail of the keyword list — "static analysis tools;
+measurement validity" — had leaked into the `\abstract{...}` block during
+the Markdown→LaTeX conversion and rendered as a dangling line after the
+abstract's last sentence; the `\keywords{...}` entry itself stopped at
+"misconfiguration". The arXiv `main.tex` now closes the abstract at
+"...under our contextual protocol." and carries the full six-keyword list
+in `\keywords{...}` (Kubernetes, configuration errors, empirical study,
+misconfiguration, static analysis tools, measurement validity).
+Clean-room rebuild of the package files only (pdflatex ×3, no BibTeX):
+21 pages, 3 figures, 0 undefined citations, 0 undefined references,
+0 overfull boxes; a full-text diff against the submitted
+`paper/submission/main.pdf` shows only the abstract/keywords lines
+differing. `arxiv_submission.tar.gz` and `arxiv_preview.pdf` were
+regenerated, and the divergence is also recorded in
+`paper/arxiv/ARXIV_METADATA.md`. The EMSE submission (EMSE-D-26-00027)
+is unchanged.
