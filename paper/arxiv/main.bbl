@@ -1,0 +1,69 @@
+\begin{thebibliography}{12}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{{#1}}
+\providecommand{\urlprefix}{URL }
+\providecommand{\doi}[1]{\url{https://doi.org/#1}}
+\providecommand{\eprint}[2][]{\url{#2}}
+ \bibcommenthead
+
+\bibitem[{Bufalino et~al(2025)Bufalino, Martin-Navarro, Di~Francesco, and
+  Aura}]{Bufalino2025}
+Bufalino J, Martin-Navarro JL, Di~Francesco M, et~al (2025) Inside job:
+  Defending {Kubernetes} clusters against network misconfigurations. In:
+  Proceedings of the ACM on Networking, \doi{10.1145/3749220}
+
+\bibitem[{{Center for Internet Security}(2026)}]{CISBenchmark}
+{Center for Internet Security} (2026) {CIS Kubernetes Benchmark}. Version
+  current at time of study (accessed October 2026)
+
+\bibitem[{Eom et~al(2026)Eom, Suk, and Hwang}]{Eom2026}
+Eom H, Suk B, Hwang S (2026) An empirical study and benchmark of {Kubernetes}
+  misconfiguration scanners. In: Proceedings of the ACM SIGSOFT International
+  Symposium on Software Testing and Analysis (ISSTA), \doi{10.1145/3832297}
+
+\bibitem[{Ghorab et~al(2026)Ghorab, Abdel~Latif, and Saied}]{Ghorab2026}
+Ghorab MA, Abdel~Latif A, Saied MA (2026) Kubernetes misconfigurations in the
+  wild: Taxonomy, evolution, and automated repair with large language models.
+  ArXiv:2609.27030
+
+\bibitem[{{kube-linter, kubeaudit, Polaris, and Checkov
+  projects}(2026)}]{ToolDocs}
+{kube-linter, kubeaudit, Polaris, and Checkov projects} (2026) Tool
+  documentation and check catalogues. Versions as recorded in the replication
+  package
+
+\bibitem[{{Kubernetes Project}(2026)}]{K8sPSS}
+{Kubernetes Project} (2026) {Pod Security Standards} and security context
+  documentation. Kubernetes.io/docs (accessed October 2026)
+
+\bibitem[{Minna et~al(2025)Minna, Massacci, and Tuma}]{Minna2025}
+Minna F, Massacci F, Tuma K (2025) Analyzing and mitigating (with {LLMs}) the
+  security misconfigurations of {Helm} charts from {Artifact Hub}. Empirical
+  Software Engineering 30:132. \doi{10.1007/s10664-025-10688-0}
+
+\bibitem[{{National Security Agency} and {Cybersecurity and Infrastructure
+  Security Agency}(2022)}]{NSA2022}
+{National Security Agency}, {Cybersecurity and Infrastructure Security Agency}
+  (2022) {Kubernetes Hardening Guide}
+
+\bibitem[{Rahman et~al(2023)Rahman, Shamim, Bose, and Pandita}]{Rahman2023}
+Rahman A, Shamim SI, Bose DB, et~al (2023) Security misconfigurations in open
+  source {Kubernetes} manifests: An empirical study. ACM Transactions on
+  Software Engineering and Methodology 32(4):1--36. \doi{10.1145/3579639}
+
+\bibitem[{Xu and Zhou(2015)}]{XuZhou2015}
+Xu T, Zhou Y (2015) Systems approaches to tackling configuration errors: A
+  survey. ACM Computing Surveys 47(4):70:1--70:41. \doi{10.1145/2791577}
+
+\bibitem[{Yin et~al(2011)Yin, Ma, Zheng, Zhou, Bairavasundaram, and
+  Pasupathy}]{Yin2011}
+Yin Z, Ma X, Zheng J, et~al (2011) An empirical study on configuration errors
+  in commercial and open source systems. In: Proceedings of the 23rd ACM
+  Symposium on Operating Systems Principles (SOSP), pp 159--172
+
+\bibitem[{Zhang et~al(2026)Zhang, Paul, d'Amorim, and Rahman}]{Zhang2026}
+Zhang Y, Paul U, d'Amorim M, et~al (2026) Configuration defects in
+  {Kubernetes}. IEEE Transactions on Software Engineering
+  \doi{10.1109/TSE.2026.3659785}
+
+\end{thebibliography}
