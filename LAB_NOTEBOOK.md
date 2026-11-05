@@ -243,3 +243,19 @@ and README state no audit rate and are unchanged (abstract still 249 words).
 Package rebuilt: 18 pages, 0 undefined citations, 0 overfull boxes in all
 variants. (Build note: the rule name needed a LaTeX-escaped underscore,
 DEPRECATED\_API, in the .tex sources.)
+
+## 2026-11-04 — Zenodo v1.0.2: archival copy updated to the weighting-corrected package
+
+The v1.0.1 archive predated the self-audit weighting correction, so the cited
+DOI again pointed at a package whose Section 3.4 reported the superseded
+unweighted audit figure. Tagged release v1.0.2 on main at 79f3182 (the
+weighting-fix commit); Zenodo archived it as version DOI
+10.5281/zenodo.23967366 (concept DOI unchanged: 10.5281/zenodo.23966669,
+which resolves to the latest version). The cited DOI was swapped from
+10.5281/zenodo.23966954 to 10.5281/zenodo.23967366 in the manuscript draft,
+both LaTeX trees, the regenerated main_bbl.tex, and CITATION.cff — one line
+each; no other text changed. Package rebuilt: still 18 pages, 0 undefined
+citations, 0 overfull boxes. The v1.0.0 and v1.0.1 entries above stand as the
+historical record. Release:
+https://github.com/mallyagirish/k8s-misconfig-study/releases/tag/v1.0.2 —
+record: https://doi.org/10.5281/zenodo.23967366
