@@ -9,6 +9,7 @@
 \usepackage{array}
 \usepackage{calc}
 \usepackage{etoolbox}
+\usepackage{placeins}
 \providecommand{\tightlist}{\setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
 \AtBeginEnvironment{longtable}{\footnotesize\setlength{\tabcolsep}{4pt}}
 
@@ -461,7 +462,7 @@ default-posture practices --- resource requests, memory limits, seccomp,
 and privilege-escalation prevention --- with privileged containers as
 the explicit-opt-in contrast.
 
-\begin{figure}[t]
+\begin{figure}[!t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig1_prevalence}
 \caption{Workload-level prevalence of default-posture practices, by arm
@@ -569,7 +570,7 @@ SECRET\_\allowbreak{}COMMITTED & 0.125 & {[}0.03, 0.36{]} & context-dominated \\
 Figure~\ref{fig:precision} plots all 25 rules, including the
 low-count rules Table 2 omits.
 
-\begin{figure}[t]
+\begin{figure}[!t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig2_precision_forest}
 \caption{Per-rule precision against the reference labels (reconciled
@@ -616,6 +617,8 @@ capability additions), and \textbf{not-exploitable} (root/APE findings
 with no escalation path: non-root enforced and no added capabilities). A
 scanner --- or a study --- that implements these five distinctions
 recovers most of the precision the naive rules lose.
+
+\FloatBarrier
 
 \hypertarget{rq3-auditing-the-auditors}{%
 \subsection{RQ3 --- Auditing the
@@ -709,7 +712,7 @@ Helm-arm sample rows; rates over rows where a mapped check exists, except the ef
 column, which counts no-check practices as missed. Method, joins, and
 caveats: \texttt{results/tool\_accuracy.md}.}
 
-\begin{figure}[t]
+\begin{figure}[!t]
 \centering
 \includegraphics[width=\textwidth]{figures/fig3_scanners}
 \caption{Scanner accuracy against the Helm-arm reference labels (126
@@ -730,6 +733,8 @@ tool's default configuration is tuned to the explicit-danger tier of the
 taxonomy, and the default-insecure tier --- where Sections 4.1 and 4.3
 show most genuine misconfiguration lives --- is covered partially,
 optionally, or not at all.
+
+\FloatBarrier
 
 \begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
 

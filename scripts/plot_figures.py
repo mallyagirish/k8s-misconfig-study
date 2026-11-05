@@ -161,7 +161,7 @@ def figure_precision_forest():
 
     order = sorted(rows.items(), key=lambda kv: (-kv[1][3], -kv[1][4],
                                                  -(kv[1][0] + kv[1][1])))
-    fig, ax = plt.subplots(figsize=(5.2, 6.6))
+    fig, ax = plt.subplots(figsize=(5.2, 6.0))
     for i, (rule, (tp, fp, _hard, p, lo, hi)) in enumerate(order):
         yy = len(order) - 1 - i
         ax.plot([lo, hi], [yy, yy], color="#888888", lw=1.1, zorder=2)
