@@ -291,5 +291,10 @@ Four small fixes from an external review of the weighting-fix commit
    2026-10-28 bibliography-verification parenthetical stands — that is when
    verification happened).
 
-Package rebuilt after the edits; verification results recorded with the
-commit.
+Package rebuilt after the edits: all three variants (submission main,
+submission main_bbl, latex main) compile to 18 pages with 0 undefined
+citations and 0 overfull boxes; the submission main.pdf was refreshed, and
+the abstract is unchanged (249 words, as verified in the previous round).
+Clean-checkout check: `git archive` of this commit into a fresh directory
+and `python3 scripts/score_self_audit.py` there reproduces audit_results.md
+exactly — 16.4% [10.1, 23.1], 16/94 sample description, 288/301 coverage.
